@@ -5,17 +5,16 @@ import { NextResponse } from "next/server";
 
 export async function DELETE(
   req: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = context.params;
-
   const session = await getServerSession(authOptions);
+
   if (!session?.user?.email) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   await prisma.job.delete({
-    where: { id },
+    where: { id: params.id },
   });
 
   return NextResponse.json({ success: true });
