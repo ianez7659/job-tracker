@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Job Tracker (`my-jobflow`)
+
+A full-stack job application tracking web app built with [Next.js](https://nextjs.org), [Prisma](https://www.prisma.io/), and [PostgreSQL](https://www.postgresql.org/). Easily track your job applications, interview stages, and outcomes with a clean and responsive UI.
+
+---
+
+## Features
+
+- ✅ Add/Edit/Delete job applications
+- 🗂 Filter by status and search by company/title
+- 📈 Track stats: applications, interviews, offers, rejections
+- 🗑 Soft delete with trash bin
+- 📱 Fully responsive (mobile-friendly)
+- 🔐 Authentication-ready (if added)
+
+---
+
+## Tech Stack
+
+- **Framework**: [Next.js 14 App Router](https://nextjs.org/docs/app)
+- **Database**: PostgreSQL with [Prisma ORM](https://www.prisma.io/)
+- **Styling**: Tailwind CSS
+- **Deployment**: [Vercel](https://vercel.com)
+- **Charts**: [Recharts](https://recharts.org/)
+- **Icons**: [Lucide](https://lucide.dev)
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone the repository
 
-```bash
-npm run dev
+- git clone https://github.com/your-username/job-tracker.git
+- cd job-tracker
+
+### 2. Install dependencies
+
+- npm install
+
 # or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- yarn install
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Set up environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
 
-## Learn More
+### 4. Set up the database with Prisma
 
-To learn more about Next.js, take a look at the following resources:
+- npx prisma migrate dev --name init
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 5. Start the development server
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- npm run dev
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project is ready to be deployed on Vercel.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# 1. Push your project to GitHub
+
+# 2. Go to vercel.com and import your repository
+
+# 3. Add your DATABASE_URL under Environment Variables
+
+# 4. Click Deploy
