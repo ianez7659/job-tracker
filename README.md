@@ -57,10 +57,10 @@ A full-stack job application tracking web app built with [Next.js](https://nextj
 
 This project is ready to be deployed on Vercel.
 
-# 1. Push your project to GitHub
+1. Push your project to GitHub
 
-# 2. Go to vercel.com and import your repository
+2. Go to vercel.com and import your repository
 
-# 3. Add your DATABASE_URL under Environment Variables
+3. Add your DATABASE_URL under Environment Variables
 
-# 4. Click Deploy
+4. Click Deploy
