@@ -21,6 +21,8 @@ model User {
   password  String? 
   jobs      Job[]
   createdAt DateTime @default(now())
+
+  @@map("User")
 }
 
 model Job {
