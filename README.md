@@ -37,7 +37,7 @@ A full-stack job application tracking web app built with [Next.js](https://nextj
 
 - npm install
 
-# or
+or
 
 - yarn install
 
