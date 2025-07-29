@@ -2,6 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  inputBase,
+  selectBase,
+  labelBase,
+  headingBase,
+  buttonBase,
+  helperText,
+} from "@/lib/styles";
 // import { url } from "inspector";
 
 const titleOptions = [
@@ -89,13 +97,13 @@ export default function EditJobClient({ job }: Props) {
 
   return (
     <section className="max-w-xl shadow-md mx-auto mt-4 p-6 bg-white rounded">
-      <h1 className="text-2xl font-bold mb-6">Edit Position</h1>
+      <h1 className={headingBase}>Edit Position</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <select
           name="title"
           value={form.title}
           onChange={handleChange}
-          className="border px-3 py-2 rounded"
+          className={selectBase}
           required
         >
           <option value="">Select position</option>
@@ -106,7 +114,7 @@ export default function EditJobClient({ job }: Props) {
           ))}
         </select>
         <div>
-          <label htmlFor="url" className="block text-sm font-medium mb-1">
+          <label htmlFor="url" className={labelBase}>
             Job Posting URL (optional)
           </label>
           <input
@@ -115,11 +123,11 @@ export default function EditJobClient({ job }: Props) {
             value={form.url}
             onChange={handleChange}
             placeholder="https://example.com/job-posting"
-            className="border px-3 py-2 rounded"
+            className={inputBase}
             required={false}
           />
           <p className="text-xs text-gray-500 mt-1">
-            ※ 현재는 자동 추출 기능 없이, URL은 기록용으로만 사용됩니다.
+            You can add a link to the job posting if available.
           </p>
         </div>
         <input
@@ -128,14 +136,14 @@ export default function EditJobClient({ job }: Props) {
           value={form.company}
           onChange={handleChange}
           placeholder="Company name"
-          className="border px-3 py-2 rounded"
+          className={inputBase}
           required
         />
         <select
           name="status"
           value={form.status}
           onChange={handleChange}
-          className="border px-3 py-2 rounded"
+          className={selectBase}
         >
           {statusOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -148,7 +156,7 @@ export default function EditJobClient({ job }: Props) {
           name="appliedAt"
           value={form.appliedAt}
           onChange={handleChange}
-          className="border px-3 py-2 rounded"
+          className={inputBase}
           required
         />
         <input
@@ -156,13 +164,10 @@ export default function EditJobClient({ job }: Props) {
           name="tags"
           value={form.tags}
           onChange={handleChange}
-          placeholder="tags (쉼표로 구분: React,Node.js)"
-          className="border px-3 py-2 rounded"
+          placeholder="tags (Using commas: React,Node.js)"
+          className={inputBase}
         />
-        <button
-          type="submit"
-          className="bg-green-600 text-white py-2 rounded hover:bg-green-700"
-        >
+        <button type="submit" className={buttonBase}>
           Save Changes
         </button>
       </form>

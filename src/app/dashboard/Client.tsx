@@ -140,7 +140,7 @@ export default function DashboardClient({ user }: Props) {
         </div>
         <div className="flex gap-2 py-4">
           <Link
-            href="/jobs/new"
+            href="/dashboard/jobs/new"
             className="flex gap-2 items-center bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 text-sm"
           >
             <Plus size={20} className="" /> Add New

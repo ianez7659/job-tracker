@@ -89,7 +89,7 @@ export async function DELETE(req: Request, context: any) {
     );
   } catch (error) {
     console.error(" Soft delete error:", error);
-    return new Response(JSON.stringify({ message: "서버 오류" }), {
+    return new Response(JSON.stringify({ message: "server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });

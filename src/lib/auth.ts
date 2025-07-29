@@ -5,8 +5,10 @@ import { prisma } from "@/lib/prisma";
 import { compare } from "bcryptjs";
 import { JWT } from "next-auth/jwt";
 import { Session, User } from "next-auth";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID!,

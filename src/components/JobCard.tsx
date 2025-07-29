@@ -90,7 +90,7 @@ export default function JobCard({
         {/* Action Buttons */}
         <div className="flex justify-end gap-4 border-t pt-3 mt-4">
           <Link
-            href={`/jobs/edit/${id}`}
+            href={`/dashboard/jobs/edit/${id}`}
             className="flex items-center gap-1 text-xs text-gray-600 hover:text-indigo-600 px-2 py-1 rounded hover:bg-gray-100"
           >
             <Pencil size={14} />
