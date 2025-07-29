@@ -45,23 +45,8 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: "jwt" },
   callbacks: {
-    async signIn({ user }: { user: User }) {
-      if (!user.email) return false;
-
-      const existingUser = await prisma.user.findUnique({
-        where: { email: user.email },
-      });
-
-      if (!existingUser && !user.id) {
-        await prisma.user.create({
-          data: {
-            email: user.email,
-            name: user.name ?? "",
-          },
-        });
-      }
-
-      return true;
+    async signIn({ user }) {
+      return !!user.email;
     },
     async jwt({ token, user }: { token: JWT; user?: User }) {
       if (user) token.id = user.id;
