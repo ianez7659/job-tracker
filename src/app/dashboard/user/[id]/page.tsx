@@ -6,7 +6,13 @@ interface Props {
   params: { id: string };
 }
 
-export default async function PublicUserPage({ params }: Props) {
+export const dynamic = "force-dynamic";
+
+export default async function PublicUserPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const user = await prisma.user.findUnique({
     where: { id: params.id },
     select: {
