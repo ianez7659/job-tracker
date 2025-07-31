@@ -49,12 +49,31 @@ export const authOptions: NextAuthOptions = {
       return !!user.email;
     },
     async jwt({ token, user }: { token: JWT; user?: User }) {
-      if (user) token.id = user.id;
+      if (user) {
+        console.log("user object from provider", user);
+        token.id = user.id;
+        token.image = user.image; // add image to token
+      }
       return token;
     },
     async session({ session, token }: { session: Session; token: JWT }) {
-      if (token && session.user) session.user.id = token.id as string;
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        session.user.image = token.image as string; // add image to session
+      }
       return session;
+    },
+  },
+  events: {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "github" && (profile as any)?.avatar_url) {
+        await prisma.user.update({
+          where: { email: user.email! }, // or use user.id if reliable
+          data: {
+            image: (profile as any).avatar_url,
+          },
+        });
+      }
     },
   },
 };
