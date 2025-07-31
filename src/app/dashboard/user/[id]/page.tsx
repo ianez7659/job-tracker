@@ -4,13 +4,19 @@ import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function PublicUserPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export async function generateStaticParams(): Promise<{ id: string }[]> {
+  return [];
+}
+
+export default async function PublicUserPage({ params }: PageProps) {
+  const { id } = await params;
+
   const user = await prisma.user.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: {
       name: true,
       image: true,
