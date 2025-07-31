@@ -7,6 +7,7 @@ import {
   Home,
   BarChart,
   User,
+  Search,
   LogOut,
   Menu,
   X,
@@ -131,7 +132,7 @@ export default function Navbar() {
                       className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-md z-50"
                     >
                       <Link
-                        href="/profile"
+                        href="/dashboard/profile"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={() => setProfileOpen(false)}
                       >
@@ -142,7 +143,18 @@ export default function Navbar() {
                       </Link>
 
                       <Link
-                        href="/settings"
+                        href="/dashboard/user"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setProfileOpen(false)}
+                      >
+                        <span className="flex items-center gap-2">
+                          <Search size={16} />
+                          Explore Users
+                        </span>
+                      </Link>
+
+                      <Link
+                        href="/dashboard/settings"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={() => setProfileOpen(false)}
                       >

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BarChart, Trash2, User, Archive } from "lucide-react";
+import { Home, BarChart, Trash2, User, Archive, Search } from "lucide-react";
 
 export default function MobileNav() {
   const pathname = usePathname();
@@ -9,10 +9,10 @@ export default function MobileNav() {
   const navItems = [
     { href: "/dashboard", icon: <Home />, label: "Home" },
     { href: "/dashboard/archive", icon: <Archive />, label: "Archive" },
-
     { href: "/dashboard/stats", icon: <BarChart />, label: "Stats" },
+    { href: "/dashboard/user", icon: <Search />, label: "Users" },
     { href: "/dashboard/trash", icon: <Trash2 />, label: "Trash" },
-    { href: "/profile", icon: <User />, label: "Profile" },
+    { href: "/dashboard/profile", icon: <User />, label: "Profile" },
   ];
 
   return (
