@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function PATCH(req: NextRequest, context: any) {
+export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
   const { id } = context.params;
 
   const session = await getServerSession(authOptions);

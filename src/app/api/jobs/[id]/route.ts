@@ -1,14 +1,12 @@
-// import { PrismaClient } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
-// import { authOptions } from "../../auth/[...nextauth]/route";
 import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 // const prisma = new PrismaClient();
 
-export async function PATCH(req: Request, context: any) {
-  console.log("✅ PATCH 호출됨");
+export async function PATCH(req: Request, context: { params: { id: string } }) {
+  console.log("✅ PATCH called");
   const { id } = context.params;
   const session = await getServerSession(authOptions);
 
@@ -17,7 +15,7 @@ export async function PATCH(req: Request, context: any) {
   }
 
   const body = await req.json();
-  console.log("✅ PATCH 요청 도착:", body);
+  console.log("✅ PATCH requested:", body);
 
   // soft delete
   if (body.softDelete === true) {
@@ -72,7 +70,7 @@ export async function PATCH(req: Request, context: any) {
   }
 }
 
-export async function DELETE(req: Request, context: any) {
+export async function DELETE(req: Request, context: { params: { id: string } }) {
   const { id } = context.params;
 
   try {
