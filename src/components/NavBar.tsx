@@ -246,13 +246,13 @@ export default function Navbar() {
                 <User size={16} /> View Profile
               </Link>
 
-              <Link
+              {/* <Link
                 href="/dashboard/settings"
                 className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 text-gray-700"
                 onClick={() => setMobileOpen(false)}
               >
                 <Settings size={16} /> Settings
-              </Link>
+              </Link> */}
 
               {session && (
                 <button
