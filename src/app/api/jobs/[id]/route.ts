@@ -5,9 +5,9 @@ import { NextResponse } from "next/server";
 
 // const prisma = new PrismaClient();
 
-export async function PATCH(req: Request, context: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   console.log("✅ PATCH called");
-  const { id } = context.params;
+  const { id } = params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
@@ -70,8 +70,8 @@ export async function PATCH(req: Request, context: { params: { id: string } }) {
   }
 }
 
-export async function DELETE(req: Request, context: { params: { id: string } }) {
-  const { id } = context.params;
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  const { id } = params;
 
   try {
     const updated = await prisma.job.update({
