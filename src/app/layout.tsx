@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <html lang="en" className="bg-slate-50">
+    <html lang="en" className="bg-slate-100">
       <body className="text-gray-900">
         <SessionProvider>
           <AnimatePresence mode="wait">

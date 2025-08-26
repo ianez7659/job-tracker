@@ -24,14 +24,14 @@ export default function JobCard({
 }: JobCardProps) {
   const statusColors: Record<string, string> = {
     resume: "bg-gray-200 text-gray-800",
-    interview: "bg-blue-200 text-blue-800",
-    interview2: "bg-indigo-300 text-indigo-900",
-    interview3: "bg-purple-200 text-perple-800",
+    interview1: "bg-yellow-100 text-yellow-800",
+    interview2: "bg-orange-200 text-orange-900",
+    interview3: "bg-orange-400 text-orange-900",
     offer: "bg-green-200 text-green-800",
     rejected: "bg-red-200 text-red-800",
   };
   return (
-    <li className="relative rounded-xl border shadow hover:shadow-lg transition bg-white overflow-hidden flex">
+    <li className="relative rounded-xl border border-gray-400 shadow hover:shadow-lg transition bg-white overflow-hidden flex">
       {/* Status Indicator */}
       <div
         className={`w-2 sm:w-3 h-full ${statusColors[status]} absolute left-0 top-0`}
@@ -39,7 +39,7 @@ export default function JobCard({
 
       <div className="p-4 pl-6 flex-1 flex flex-col gap-3">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
           <div className="text-sm text-gray-600 flex items-center gap-1 mt-1">
             <Building2 size={14} />
             {company}
@@ -78,7 +78,7 @@ export default function JobCard({
               className="text-xs border px-2 py-1 rounded bg-white"
             >
               <option value="resume">Resume</option>
-              <option value="interview">Interview</option>
+              <option value="interview1">Interview1</option>
               <option value="interview2">Interview2</option>
               <option value="interview3">Interview3</option>
               <option value="offer">Offer</option>

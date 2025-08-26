@@ -14,7 +14,7 @@ import {
 
 const STATUS_COLORS: Record<string, string> = {
   resume: "#9fa8b7",
-  interview: "#5694f7",
+  interview1: "#5694f7",
   interview2: "#4625cb",
   interview3: "#a213b2",
   offer: "#10b981",
@@ -34,7 +34,7 @@ export default function StatsPage() {
       .then(setAllJobs);
   }, []);
 
-  const chartData = ["resume", "interview", "interview2", "interview3"].map(
+  const chartData = ["resume", "interview1", "interview2", "interview3"].map(
     (status) => ({
       statusKey: status,
       status: status.charAt(0).toUpperCase() + status.slice(1),
@@ -84,7 +84,6 @@ export default function StatsPage() {
         </div>
       </div>
 
-      {/* 최종 결과 그래프 */}
       <div className="bg-white rounded-xl shadow-md p-4">
         <div className="flex justify-between mb-4">
           <h2 className="flex text-lg font-semibold mb-4">

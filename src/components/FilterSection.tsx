@@ -26,7 +26,7 @@ export default function FilterSection({
   const statuses = [
     { value: "all", label: "All Status" },
     { value: "resume", label: "Resume" },
-    { value: "interview", label: "Interview" },
+    { value: "interview1", label: "Interview1" },
     { value: "interview2", label: "Interview2" },
     { value: "interview3", label: "Interview3" },
     // { value: "offer", label: "Offer" },
@@ -37,7 +37,7 @@ export default function FilterSection({
     <>
       {/* Toggles for the mobile view */}
       <button
-        className="md:hidden text-sm text-blue-600 mb-2 flex items-center gap-1 justify-end"
+        className="md:hidden p-4 text-sm text-blue-600 mb-2 flex items-center gap-1 justify-end"
         onClick={() => setShowFilters(!showFilters)}
       >
         {showFilters ? (
@@ -60,7 +60,7 @@ export default function FilterSection({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="mb-4 md:hidden"
+            className="mb-2 px-4 md:hidden"
           >
             <div className="flex items-center border rounded w-full mb-1 px-2">
               <Search className="text-gray-400" size={20} />
@@ -119,7 +119,7 @@ export default function FilterSection({
       </AnimatePresence>
 
       {/* Desktop Filter */}
-      <div className="hidden md:flex gap-2 w-full justify-start mb-6">
+      <div className="hidden md:flex p-4 gap-2 w-full justify-start mb-2">
         {/* Search Input */}
         <div className="flex items-center border rounded w-full md:w-64 px-2">
           <Search className="text-gray-400" size={20} />

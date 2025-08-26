@@ -23,7 +23,7 @@ const titleOptions = [
 
 const statusOptions = [
   { value: "resume", label: "Resume" },
-  { value: "interview", label: "Interview" },
+  { value: "interview1", label: "Interview1" },
   { value: "interview2", label: "Interview2" },
   { value: "interview3", label: "Interview3" },
   { value: "offer", label: "Offer" },

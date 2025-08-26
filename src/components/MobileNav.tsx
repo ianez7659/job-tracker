@@ -10,7 +10,7 @@ export default function MobileNav() {
     { href: "/dashboard", icon: <Home />, label: "Home" },
     { href: "/dashboard/archive", icon: <Archive />, label: "Archive" },
     { href: "/dashboard/stats", icon: <BarChart />, label: "Stats" },
-    { href: "/dashboard/user", icon: <Search />, label: "Users" },
+    // { href: "/dashboard/user", icon: <Search />, label: "Users" },
     { href: "/dashboard/trash", icon: <Trash2 />, label: "Trash" },
     { href: "/dashboard/profile", icon: <User />, label: "Profile" },
   ];

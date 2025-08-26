@@ -35,13 +35,22 @@ export default function ArchiveClient({ jobs: initialJobs }: Props) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ...job, status: newStatus }),
               });
-              if (res.ok) {
-                setJobs((prev) =>
-                  prev.map((j) =>
-                    j.id === id ? { ...j, status: newStatus } : j
-                  )
-                );
+
+              if (!res.ok) {
+                alert("Failed to update status");
+                return;
               }
+
+              const data = await res.json();
+              const updatedJob = data.job;
+
+              setJobs((prev) =>
+                prev
+                  .map((j) => (j.id === id ? updatedJob : j))
+                  .filter(
+                    (j) => j.status === "offer" || j.status === "rejected"
+                  )
+              );
             }}
           />
         ))}

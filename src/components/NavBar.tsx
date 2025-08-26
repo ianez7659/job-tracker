@@ -142,7 +142,7 @@ export default function Navbar() {
                         </span>
                       </Link>
 
-                      <Link
+                      {/* <Link
                         href="/dashboard/user"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={() => setProfileOpen(false)}
@@ -151,9 +151,9 @@ export default function Navbar() {
                           <Search size={16} />
                           Explore Users
                         </span>
-                      </Link>
+                      </Link> */}
 
-                      <Link
+                      {/* <Link
                         href="/dashboard/settings"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={() => setProfileOpen(false)}
@@ -162,7 +162,7 @@ export default function Navbar() {
                           <Settings size={16} />
                           Settings
                         </span>
-                      </Link>
+                      </Link> */}
 
                       <button
                         onClick={() => {
@@ -237,7 +237,7 @@ export default function Navbar() {
               </Link>
 
               <Link
-                href="/profile"
+                href="/dashboard/profile"
                 className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 ${isActive(
                   "/profile"
                 )}`}
@@ -247,7 +247,7 @@ export default function Navbar() {
               </Link>
 
               <Link
-                href="/settings"
+                href="/dashboard/settings"
                 className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 text-gray-700"
                 onClick={() => setMobileOpen(false)}
               >

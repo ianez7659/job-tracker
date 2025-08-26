@@ -12,10 +12,11 @@ export default async function ArchivePage() {
     where: {
       user: { email: session.user.email },
       status: { in: ["offer", "rejected"] },
-      deletedAt: null,
+      // deletedAt: null,
     },
     orderBy: { appliedAt: "desc" },
   });
 
+  console.log(jobs);
   return <ArchiveClient jobs={jobs} />;
 }
