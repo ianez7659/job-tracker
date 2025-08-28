@@ -1,6 +1,7 @@
 "use client";
 
 import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -11,6 +12,7 @@ interface Props {
 export default function ProfileClient({ session }: Props) {
   if (!session) return <p>Not logged in.</p>;
   const { user } = session;
+  const { update: updateSession } = useSession();
 
   const [preview, setPreview] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -20,12 +22,22 @@ export default function ProfileClient({ session }: Props) {
     console.log("🖼 preview", preview);
   }
 
-  // ✅ session.user.image 업데이트되면 preview도 업데이트
   useEffect(() => {
     if (user.image) {
       setPreview(user.image);
     }
   }, [user.image]);
+
+  // Force refresh session after image update
+  const refreshSession = async () => {
+    try {
+      await updateSession();
+      // Force a page refresh to ensure all components update
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to refresh session:", error);
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -48,6 +60,7 @@ export default function ProfileClient({ session }: Props) {
     setUploading(true);
 
     const base64 = await toBase64(selectedFile);
+    console.log("📤 Uploading image, length:", base64.length);
 
     const res = await fetch("/api/user/image", {
       method: "PATCH",
@@ -56,8 +69,18 @@ export default function ProfileClient({ session }: Props) {
     });
 
     if (res.ok) {
+      const result = await res.json();
+      console.log("✅ Upload successful:", result);
+
       alert("Save complete!");
+      // Update the UI immediately after successful upload
+      setPreview(base64);
+      setSelectedFile(null);
+      // Force session refresh and page reload to ensure all components update
+      await refreshSession();
     } else {
+      const error = await res.text();
+      console.error("❌ Upload failed:", error);
       alert("Save failed");
     }
 
@@ -74,6 +97,7 @@ export default function ProfileClient({ session }: Props) {
             width={64}
             height={64}
             unoptimized
+            priority
             className="rounded-full border"
           />
         )}

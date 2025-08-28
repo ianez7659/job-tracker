@@ -131,29 +131,9 @@ export default function Navbar() {
                       transition={{ duration: 0.1 }}
                       className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-md z-50"
                     >
+
+
                       <Link
-                        href="/dashboard/profile"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setProfileOpen(false)}
-                      >
-                        <span className="flex items-center gap-2">
-                          <User size={16} />
-                          View Profile
-                        </span>
-                      </Link>
-
-                      {/* <Link
-                        href="/dashboard/user"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setProfileOpen(false)}
-                      >
-                        <span className="flex items-center gap-2">
-                          <Search size={16} />
-                          Explore Users
-                        </span>
-                      </Link> */}
-
-                      {/* <Link
                         href="/dashboard/settings"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={() => setProfileOpen(false)}
@@ -162,7 +142,7 @@ export default function Navbar() {
                           <Settings size={16} />
                           Settings
                         </span>
-                      </Link> */}
+                      </Link>
 
                       <button
                         onClick={() => {
@@ -237,22 +217,14 @@ export default function Navbar() {
               </Link>
 
               <Link
-                href="/dashboard/profile"
+                href="/dashboard/settings"
                 className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 ${isActive(
-                  "/profile"
+                  "/dashboard/settings"
                 )}`}
                 onClick={() => setMobileOpen(false)}
               >
-                <User size={16} /> View Profile
-              </Link>
-
-              {/* <Link
-                href="/dashboard/settings"
-                className="flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 text-gray-700"
-                onClick={() => setMobileOpen(false)}
-              >
                 <Settings size={16} /> Settings
-              </Link> */}
+              </Link>
 
               {session && (
                 <button

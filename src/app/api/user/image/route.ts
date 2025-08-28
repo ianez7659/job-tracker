@@ -11,15 +11,20 @@ export async function PATCH(req: Request) {
   }
 
   const { image } = await req.json();
+  
+  console.log("🔄 API called with:", { email: session.user.email, imageLength: image ? image.length : 0 });
 
   try {
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { email: session.user.email },
       data: { image },
     });
 
-    return NextResponse.json({ success: true });
+    console.log("✅ Database updated successfully:", { userId: updatedUser.id, hasImage: !!updatedUser.image });
+
+    return NextResponse.json({ success: true, user: updatedUser });
   } catch (err) {
+    console.error("❌ Database update failed:", err);
     return NextResponse.json({ error: "Update failed" }, { status: 500 });
   }
 }
