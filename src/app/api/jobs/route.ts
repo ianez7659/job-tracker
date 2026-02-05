@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@/generated/prisma";
-// import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-
-const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
@@ -16,13 +13,13 @@ export async function POST(req: Request) {
     if (!title || !company || !status || !appliedAt) {
       return NextResponse.json(
         { message: "Missing required fields." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const session = await getServerSession(authOptions);
 
-    console.log("📧 Logged in as:", session?.user?.email);
+    console.log("Logged in as:", session?.user?.email);
 
     if (!session?.user?.email) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -57,35 +54,55 @@ export async function POST(req: Request) {
 
 // GET: Fetch all jobs for the authenticated user
 export async function GET() {
-  const session = await getServerSession(authOptions);
+  try {
+    console.log("🔍 GET /api/jobs - Starting request");
+    const session = await getServerSession(authOptions);
+    console.log("🔍 Session:", session ? { email: session.user?.email, name: session.user?.name } : "null");
 
-  if (!session?.user?.email) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    if (!session?.user?.email) {
+      console.log("❌ Unauthorized - no session or email");
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    console.log("🔍 Attempting to fetch jobs from database...");
+    const jobs = await prisma.job.findMany({
+      where: {
+        user: {
+          email: session.user.email,
+        },
+        deletedAt: null,
+        NOT: {
+          status: { in: ["offer", "rejected"] }, // Offer and Rejected jobs are not included
+        },
+      },
+      orderBy: { appliedAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        company: true,
+        status: true,
+        appliedAt: true,
+        tags: true,
+        url: true,
+        userId: true,
+        deletedAt: true,
+      },
+    });
+
+    console.log("✅ Successfully fetched jobs:", jobs.length);
+    return NextResponse.json(jobs);
+  } catch (error) {
+    console.error("❌ Error fetching jobs:", error);
+    if (error instanceof Error) {
+      console.error("❌ Error details:", {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+      });
+    }
+    return NextResponse.json(
+      { message: "Failed to fetch jobs", error: error instanceof Error ? error.message : "Unknown error" },
+      { status: 500 }
+    );
   }
-
-  const jobs = await prisma.job.findMany({
-    where: {
-      user: {
-        email: session.user.email,
-      },
-      deletedAt: null,
-      NOT: {
-        status: { in: ["offer", "rejected"] }, // Offet and Rejected jobs are not included
-      },
-    },
-    orderBy: { appliedAt: "desc" },
-    select: {
-      id: true,
-      title: true,
-      company: true,
-      status: true,
-      appliedAt: true,
-      tags: true,
-      url: true,
-      userId: true,
-      deletedAt: true,
-    },
-  });
-
-  return NextResponse.json(jobs);
 }

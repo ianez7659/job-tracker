@@ -9,10 +9,18 @@ export const isFinal = (j: Job) =>
 export const isActive = (j: Job) => j.deletedAt === null;
 
 export function activeOnly(all: Job[]) {
+  if (!Array.isArray(all)) {
+    console.warn("activeOnly received non-array:", all);
+    return [];
+  }
   return all.filter(isActive);
 }
 
 export function statusCountsActive(active: Job[]) {
+  if (!Array.isArray(active)) {
+    console.warn("statusCountsActive received non-array:", active);
+    return {};
+  }
   return active.reduce<Record<string, number>>((acc, j) => {
     if (!isFinal(j)) acc[j.status] = (acc[j.status] || 0) + 1;
     return acc;
@@ -35,6 +43,10 @@ export function toDate(val: unknown): Date | null {
 }
 
 export function countToday(all: Job[]) {
+  if (!Array.isArray(all)) {
+    console.warn("countToday received non-array:", all);
+    return 0;
+  }
   const { start, end } = startEndOfToday();
   return all.filter((j) => {
     const d = toDate((j as any).createdAt);
@@ -43,9 +55,17 @@ export function countToday(all: Job[]) {
 }
 
 export function countDecided(all: Job[]) {
+  if (!Array.isArray(all)) {
+    console.warn("countDecided received non-array:", all);
+    return 0;
+  }
   return all.filter(isFinal).length;
 }
 
 export function countWaitingActive(active: Job[]) {
+  if (!Array.isArray(active)) {
+    console.warn("countWaitingActive received non-array:", active);
+    return 0;
+  }
   return active.filter((j) => j.status === "resume").length;
 }

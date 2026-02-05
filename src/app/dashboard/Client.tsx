@@ -40,11 +40,15 @@ export default function DashboardClient({ user }: Props) {
   const { jobs, setJobs } = useJobs();
   const { allJobs, setAllJobs } = useAllJobs();
 
+  // Ensure arrays are always arrays (defensive programming)
+  const safeJobs = Array.isArray(jobs) ? jobs : [];
+  const safeAllJobs = Array.isArray(allJobs) ? allJobs : [];
+
   // Derived sets and counts
-  const activeJobs = useMemo(() => activeOnly(jobs), [jobs]);
+  const activeJobs = useMemo(() => activeOnly(safeJobs), [safeJobs]);
   const counts = useMemo(() => statusCountsActive(activeJobs), [activeJobs]);
-  const todayCount = useMemo(() => countToday(allJobs), [allJobs]);
-  const decidedCount = useMemo(() => countDecided(allJobs), [allJobs]);
+  const todayCount = useMemo(() => countToday(safeAllJobs), [safeAllJobs]);
+  const decidedCount = useMemo(() => countDecided(safeAllJobs), [safeAllJobs]);
   const waitingCount = useMemo(
     () => countWaitingActive(activeJobs),
     [activeJobs]
@@ -62,7 +66,7 @@ export default function DashboardClient({ user }: Props) {
 
   // Filtered list (active, non-finalized)
   const filteredJobs = useMemo(() => {
-    return jobs
+    return safeJobs
       .filter((job) => job.status !== "offer" && job.status !== "rejected")
       .filter((job) => {
         const q = searchTerm.toLowerCase();
@@ -73,17 +77,19 @@ export default function DashboardClient({ user }: Props) {
           filterStatus === "all" || job.status === filterStatus;
         return matchesSearch && matchesStatus;
       });
-  }, [jobs, searchTerm, filterStatus]);
+  }, [safeJobs, searchTerm, filterStatus]);
 
   // Actions
   const onDelete = async (id: string) => {
     // Optimistically remove from active list; mirror deletedAt in allJobs
-    const prevJobs = jobs;
-    const prevAll = allJobs;
+    const prevJobs = safeJobs;
+    const prevAll = safeAllJobs;
 
-    setJobs((p) => p.filter((j) => j.id !== id));
+    setJobs((p) => (Array.isArray(p) ? p : []).filter((j) => j.id !== id));
     setAllJobs((p) =>
-      p.map((j) => (j.id === id ? { ...j, deletedAt: new Date() } : j))
+      (Array.isArray(p) ? p : []).map((j) =>
+        j.id === id ? { ...j, deletedAt: new Date() } : j
+      )
     );
 
     const res = await fetch(`/api/jobs/${id}`, {
@@ -103,22 +109,24 @@ export default function DashboardClient({ user }: Props) {
   const onStatusChange = async (id: string, newStatus: Job["status"]) => {
     // Optimistic update with Date-safe fields, keep allJobs in sync
     const isFinal = newStatus === "offer" || newStatus === "rejected";
-    const prevJobs = jobs;
-    const prevAll = allJobs;
+    const prevJobs = safeJobs;
+    const prevAll = safeAllJobs;
 
     if (isFinal) {
-      setJobs((p) => p.filter((j) => j.id !== id));
+      setJobs((p) => (Array.isArray(p) ? p : []).filter((j) => j.id !== id));
       setAllJobs((p) =>
-        p.map((j) =>
+        (Array.isArray(p) ? p : []).map((j) =>
           j.id === id ? { ...j, status: newStatus, deletedAt: new Date() } : j
         )
       );
     } else {
       setJobs((p) =>
-        p.map((j) => (j.id === id ? { ...j, status: newStatus } : j))
+        (Array.isArray(p) ? p : []).map((j) =>
+          j.id === id ? { ...j, status: newStatus } : j
+        )
       );
       setAllJobs((p) =>
-        p.map((j) =>
+        (Array.isArray(p) ? p : []).map((j) =>
           j.id === id ? { ...j, status: newStatus, deletedAt: null } : j
         )
       );
