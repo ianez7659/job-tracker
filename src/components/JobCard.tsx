@@ -31,7 +31,7 @@ export default function JobCard({
     rejected: "bg-red-200 text-red-800",
   };
   return (
-    <li className="relative rounded-xl border border-gray-400 shadow hover:shadow-lg transition bg-white overflow-hidden flex">
+    <div className="relative rounded-xl border border-gray-400 shadow hover:shadow-lg transition bg-white overflow-hidden flex">
       {/* Status Indicator */}
       <div
         className={`w-2 sm:w-3 h-full ${statusColors[status]} absolute left-0 top-0`}
@@ -118,6 +118,6 @@ export default function JobCard({
           </button>
         </div>
       </div>
-    </li>
+    </div>
   );
 }

@@ -16,8 +16,8 @@ export default function ArchiveClient({ jobs: initialJobs }: Props) {
       <h1 className="text-xl font-bold mb-4">Archived Applications</h1>
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {jobs.map((job) => (
-          <JobCard
-            key={job.id}
+          <li key={job.id}>
+            <JobCard
             {...job}
             onDelete={async (id) => {
               const res = await fetch(`/api/jobs/${id}`, {
@@ -53,6 +53,7 @@ export default function ArchiveClient({ jobs: initialJobs }: Props) {
               );
             }}
           />
+          </li>
         ))}
       </ul>
     </section>
