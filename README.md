@@ -1,66 +1,154 @@
-# Job Tracker (`my-jobflow`)
+# Jobflow – Job Tracking Dashboard
 
-A full-stack job application tracking web app built with [Next.js](https://nextjs.org), [Prisma](https://www.prisma.io/), and [PostgreSQL](https://www.postgresql.org/). Easily track your job applications, interview stages, and outcomes with a clean and responsive UI.
+Production-style job application tracking dashboard built with **Next.js + Prisma + PostgreSQL + NextAuth**.
+
+Designed to help you manage job applications, track interview stages, and analyze your job search activity with a clean, responsive UI.
+
+**Live Demo:** [https://job-tracker-wheat.vercel.app/]
 
 ---
 
-## Features
+## Demo Account
 
-- ✅ Add/Edit/Delete job applications
-- 🗂 Filter by status and search by company/title
-- 📈 Track stats: applications, interviews, offers, rejections
-- 🗑 Soft delete with trash bin
-- 📱 Fully responsive (mobile-friendly)
-- 🔐 Authentication-ready (if added)
+- Sign in with **GitHub** or **Email/Password** (register first).
+- Visit the landing page and use "Log in to get started" to explore the dashboard.
 
 ---
 
 ## Tech Stack
 
-- **Framework**: [Next.js 14 App Router](https://nextjs.org/docs/app)
-- **Database**: PostgreSQL with [Prisma ORM](https://www.prisma.io/)
-- **Styling**: Tailwind CSS
-- **Deployment**: [Vercel](https://vercel.com)
-- **Charts**: [Recharts](https://recharts.org/)
-- **Icons**: [Lucide](https://lucide.dev)
+**Frontend**
+
+- Next.js 15 (App Router)
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- Recharts
+
+**Backend**
+
+- Next.js API Routes
+- Prisma ORM
+- PostgreSQL (Render)
+- NextAuth.js (GitHub OAuth + Credentials)
+
+**Deployment**
+
+- Vercel (App)
+- Render PostgreSQL (database)
 
 ---
 
-## Getting Started
+## Core Features
 
-### 1. Clone the repository
+**Job Management**
 
-- git clone https://github.com/your-username/job-tracker.git
-- cd job-tracker
+- Add / Edit / Delete job applications
+- Status workflow: Resume → Interview 1/2/3 → Offer / Rejected
+- Company, title, applied date, tags, job URL
+- Soft delete with restore & archive system
 
-### 2. Install dependencies
+**Dashboard & Analytics**
 
-- npm install
+- Real-time status overview (Waiting / Decided / Interviews)
+- Interview progress tracking
+- Charts for offer vs rejected distribution
+- Search & filter functionality
 
-or
+**Auth & Profile**
 
-- yarn install
+- GitHub OAuth
+- Email/password registration and login
+- Protected routes with session management
 
-### 3. Set up environment variables
+**Responsive Design**
 
-- DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
+- Mobile-first layout
+- Optimized desktop navigation
+- Clean component-based UI system
 
-### 4. Set up the database with Prisma
+---
 
-- npx prisma migrate dev --name init
+## Architecture
 
-### 5. Start the development server
+```
+Next.js (Frontend + API)
+    ↓
+Prisma ORM
+    ↓
+PostgreSQL (Render)
+```
 
-- npm run dev
+Single codebase with separation between UI components and API route handlers.
 
-## Deployment
+**Project structure**
 
-This project is ready to be deployed on Vercel.
+- `src/app/` – App Router pages and API routes
+- `src/components/` – Reusable UI components
+- `src/lib/` – Auth, Prisma client, utilities
+- `prisma/` – Schema and migrations
 
-1. Push your project to GitHub
+---
 
-2. Go to vercel.com and import your repository
+## What This Project Shows
 
-3. Add your DATABASE_URL under Environment Variables
+- Fullstack architecture with Next.js App Router
+- REST-style API design with Next.js Route Handlers
+- Auth (NextAuth.js) with GitHub and credentials
+- State management and optimistic updates
+- Production-style UI and responsive layout
+- Deployable stack (Vercel + Render PostgreSQL)
+- Reusable React components and shared types
+- SEO metadata and error handling
 
-4. Click Deploy
+---
+
+## Future Improvements
+
+- Role-based access
+- Advanced filters and saved views
+- Export (CSV/PDF)
+- Analytics by period and position type
+- Email reminders for follow-ups
+- File attachments (resume, notes)
+
+---
+
+## Local Setup
+
+```bash
+git clone https://github.com/your-username/job-tracker.git
+cd job-tracker
+npm install
+```
+
+###Create `.env.local`:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-secret"
+GITHUB_ID="your-github-client-id"
+GITHUB_SECRET="your-github-client-secret"
+```
+
+### Run:
+
+```bash
+npx prisma migrate dev --name init
+npx prisma generate
+```
+
+### 4. Run dev server
+
+```bash
+npm run dev
+```
+
+App runs at **http://localhost:3000** (or next available port).
+
+---
+
+## About
+
+Job search tracker focused on clarity and simplicity. Built to practice fullstack Next.js, Prisma, and deployment (Vercel + Render).
