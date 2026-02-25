@@ -4,10 +4,6 @@ import OpenAI from "openai";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export type AiAssistAction = "skills" | "interview";
 
 const PROMPTS: Record<
@@ -39,6 +35,8 @@ export async function POST(req: Request) {
         { status: 503 }
       );
     }
+
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const body = await req.json();
     const { jobId, action } = body as { jobId?: string; action?: AiAssistAction };
