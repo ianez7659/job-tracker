@@ -54,18 +54,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     }
   }
 
-  const { title, company, status, appliedAt, tags, url } = body;
+  const { title, company, status, tags, url, jd } = body;
 
-  if (!title || !company || !status || !appliedAt) {
+  if (!title || !company || !status) {
     return NextResponse.json({ message: "Missing fields" }, { status: 400 });
-  }
-
-  const parsedDate = new Date(appliedAt);
-  if (isNaN(parsedDate.getTime())) {
-    return NextResponse.json(
-      { message: "Invalid appliedAt date" },
-      { status: 400 }
-    );
   }
 
   try {
@@ -75,9 +67,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         title,
         company,
         status,
-        appliedAt: parsedDate,
         tags: Array.isArray(tags) ? tags.join(",") : tags ?? null,
-        url,
+        url: url ?? undefined,
+        jd: typeof jd === "string" ? (jd.trim() || null) : undefined,
         deletedAt:
           status === "offer" || status === "rejected" ? new Date() : null,
       },

@@ -41,21 +41,23 @@ export default function NewJobClient() {
   //   "bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-sm";
 
   const [url, setUrl] = useState("");
-  // const [loading, setLoading] = useState(false);
+  const [fetchJdError, setFetchJdError] = useState<string | null>(null);
+  const [fetchJdLoading, setFetchJdLoading] = useState(false);
   const [form, setForm] = useState({
     title: "",
     company: "",
     status: "resume",
-    appliedAt: "",
     tags: "",
     url: "",
+    jd: "",
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    if (name === "url") setFetchJdError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,15 +87,48 @@ export default function NewJobClient() {
         title: "",
         company: "",
         status: "resume",
-        appliedAt: "",
         tags: "",
         url: "",
+        jd: "",
       });
+      setFetchJdError(null);
 
       router.push("/dashboard");
     } catch (error) {
       console.error(error);
       alert("Submission failed");
+    }
+  };
+
+  const handleTryAutoFetch = async () => {
+    const urlToFetch = form.url?.trim();
+    if (!urlToFetch) {
+      setFetchJdError("Please enter a URL first.");
+      return;
+    }
+    setFetchJdError(null);
+    setFetchJdLoading(true);
+    try {
+      const res = await fetch(
+        `/api/jobs/fetch-jd?url=${encodeURIComponent(urlToFetch)}`,
+        { cache: "no-store" }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setFetchJdError(
+          "Could not fetch automatically. Please paste the job description."
+        );
+        return;
+      }
+      if (data.text) {
+        setForm((prev) => ({ ...prev, jd: data.text }));
+      }
+    } catch {
+      setFetchJdError(
+        "Could not fetch automatically. Please paste the job description."
+      );
+    } finally {
+      setFetchJdLoading(false);
     }
   };
 
@@ -123,6 +158,35 @@ export default function NewJobClient() {
           <p className="text-xs text-gray-500 mt-1">
             You can add a link to the job posting if available.
           </p>
+        </div>
+        <div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <label htmlFor="jd" className={labelBase}>
+              Job description (optional)
+            </label>
+            <button
+              type="button"
+              onClick={handleTryAutoFetch}
+              disabled={fetchJdLoading || !form.url?.trim()}
+              className="text-sm px-3 py-1.5 rounded border border-violet-500 text-violet-600 hover:bg-violet-50 disabled:opacity-50 disabled:pointer-events-none"
+            >
+              {fetchJdLoading ? "Fetching…" : "Try Auto-Fetch"}
+            </button>
+          </div>
+          <textarea
+            id="jd"
+            name="jd"
+            value={form.jd}
+            onChange={handleChange}
+            placeholder="Paste or auto-fetch the job description for AI features later."
+            rows={6}
+            className={`${inputBase} resize-y`}
+          />
+          {fetchJdError && (
+            <p className="text-sm text-amber-600 mt-1">
+              {fetchJdError}
+            </p>
+          )}
         </div>
         <select
           name="title"
@@ -159,14 +223,6 @@ export default function NewJobClient() {
             </option>
           ))}
         </select>
-        <input
-          type="date"
-          name="appliedAt"
-          value={form.appliedAt}
-          onChange={handleChange}
-          className={inputBase}
-          required
-        />
         <input
           type="text"
           name="tags"

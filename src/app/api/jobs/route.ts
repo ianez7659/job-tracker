@@ -7,10 +7,10 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const { title, company, status, appliedAt, tags, url } = body;
+    const { title, company, status, tags, url, jd } = body;
 
-    // Validate required fields
-    if (!title || !company || !status || !appliedAt) {
+    // Validate required fields (appliedAt is set automatically to now)
+    if (!title || !company || !status) {
       return NextResponse.json(
         { message: "Missing required fields." },
         { status: 400 },
@@ -38,9 +38,10 @@ export async function POST(req: Request) {
         title,
         company,
         status,
-        appliedAt: new Date(appliedAt),
+        appliedAt: new Date(),
         tags: tags?.join(",") || null,
         url: url?.trim() || null,
+        jd: (typeof jd === "string" ? jd.trim() : null) || null,
         userId: user.id,
       },
     });
@@ -84,6 +85,7 @@ export async function GET() {
         appliedAt: true,
         tags: true,
         url: true,
+        jd: true,
         userId: true,
         deletedAt: true,
       },

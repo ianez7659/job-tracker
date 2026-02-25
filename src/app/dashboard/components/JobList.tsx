@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import JobCard from "@/components/JobCard";
 import type { Job } from "@/generated/prisma";
 
-const INITIAL_SIZE = 10;
-const LOAD_MORE_SIZE = 10;
+const INITIAL_SIZE = 6;
+const LOAD_MORE_SIZE = 6;
 
 const cardTransition = {
   duration: 0.28,
@@ -26,9 +26,11 @@ type Props = {
 export default function JobList({ jobs, onDelete, onStatusChange }: Props) {
   const [visibleCount, setVisibleCount] = useState(INITIAL_SIZE);
 
-  // Reset visible count when filter/search reduces the list
+  // When jobs load (or filter changes): show at least INITIAL_SIZE if there are jobs, or reduce if list shrank
   useEffect(() => {
     if (jobs.length < visibleCount) {
+      setVisibleCount(Math.min(INITIAL_SIZE, jobs.length));
+    } else if (visibleCount < INITIAL_SIZE && jobs.length > 0) {
       setVisibleCount(Math.min(INITIAL_SIZE, jobs.length));
     }
   }, [jobs.length, visibleCount]);

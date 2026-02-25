@@ -38,6 +38,7 @@ type Job = {
   appliedAt: string;
   tags: string | null;
   url?: string | null;
+  jd?: string | null;
 };
 
 type Props = {
@@ -47,20 +48,55 @@ type Props = {
 export default function EditJobClient({ job }: Props) {
   const router = useRouter();
 
+  const [fetchJdError, setFetchJdError] = useState<string | null>(null);
+  const [fetchJdLoading, setFetchJdLoading] = useState(false);
   const [form, setForm] = useState({
     title: job.title,
     company: job.company,
     status: job.status,
-    appliedAt: job.appliedAt.slice(0, 10),
     tags: job.tags || "",
     url: job.url || "",
+    jd: job.jd || "",
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    if (name === "url") setFetchJdError(null);
+  };
+
+  const handleTryAutoFetch = async () => {
+    const urlToFetch = form.url?.trim();
+    if (!urlToFetch) {
+      setFetchJdError("Please enter a URL first.");
+      return;
+    }
+    setFetchJdError(null);
+    setFetchJdLoading(true);
+    try {
+      const res = await fetch(
+        `/api/jobs/fetch-jd?url=${encodeURIComponent(urlToFetch)}`,
+        { cache: "no-store" }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setFetchJdError(
+          "Could not fetch automatically. Please paste the job description."
+        );
+        return;
+      }
+      if (data.text) {
+        setForm((prev) => ({ ...prev, jd: data.text }));
+      }
+    } catch {
+      setFetchJdError(
+        "Could not fetch automatically. Please paste the job description."
+      );
+    } finally {
+      setFetchJdLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -84,6 +120,7 @@ export default function EditJobClient({ job }: Props) {
       body: JSON.stringify({
         ...form,
         tags: tagsArray,
+        jd: form.jd?.trim() || null,
       }),
     });
 
@@ -97,6 +134,12 @@ export default function EditJobClient({ job }: Props) {
 
   return (
     <section className="max-w-xl shadow-md mx-auto mt-4 p-6 bg-white rounded">
+      <a
+        href="/dashboard"
+        className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm mb-4"
+      >
+        Back to Dashboard
+      </a>
       <h1 className={headingBase}>Edit Position</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <select
@@ -130,6 +173,33 @@ export default function EditJobClient({ job }: Props) {
             You can add a link to the job posting if available.
           </p>
         </div>
+        <div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <label htmlFor="jd" className={labelBase}>
+              Job description (optional)
+            </label>
+            <button
+              type="button"
+              onClick={handleTryAutoFetch}
+              disabled={fetchJdLoading || !form.url?.trim()}
+              className="text-sm px-3 py-1.5 rounded border border-violet-500 text-violet-600 hover:bg-violet-50 disabled:opacity-50 disabled:pointer-events-none"
+            >
+              {fetchJdLoading ? "Fetching…" : "Try Auto-Fetch"}
+            </button>
+          </div>
+          <textarea
+            id="jd"
+            name="jd"
+            value={form.jd}
+            onChange={handleChange}
+            placeholder="Paste or auto-fetch the job description for AI features later."
+            rows={6}
+            className={`${inputBase} resize-y`}
+          />
+          {fetchJdError && (
+            <p className="text-sm text-amber-600 mt-1">{fetchJdError}</p>
+          )}
+        </div>
         <input
           type="text"
           name="company"
@@ -151,14 +221,6 @@ export default function EditJobClient({ job }: Props) {
             </option>
           ))}
         </select>
-        <input
-          type="date"
-          name="appliedAt"
-          value={form.appliedAt}
-          onChange={handleChange}
-          className={inputBase}
-          required
-        />
         <input
           type="text"
           name="tags"
