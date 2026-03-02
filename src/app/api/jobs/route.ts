@@ -56,7 +56,12 @@ export async function POST(req: Request) {
 // GET: Fetch all jobs for the authenticated user
 export async function GET() {
   try {
-    console.log("🔍 GET /api/jobs - Starting request");
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json(
+        { message: "Failed to fetch jobs", error: "DATABASE_URL is not set" },
+        { status: 500 }
+      );
+    }
     const session = await getServerSession(authOptions);
     console.log("🔍 Session:", session ? { email: session.user?.email, name: session.user?.name } : "null");
 
