@@ -61,20 +61,20 @@ export default function Navbar() {
 
   const isActive = (href: string) =>
     pathname === href
-      ? "text-blue-600 font-medium"
-      : "text-gray-600 hover:text-blue-600";
+      ? "text-blue-600 dark:text-blue-400 font-medium"
+      : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400";
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-white shadow">
+    <header className="fixed top-0 left-0 w-full z-50 bg-white dark:bg-slate-800 shadow dark:shadow-slate-900/50">
       <div className=" mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/dashboard" className="text-lg font-bold text-indigo-700">
+        <Link href="/dashboard" className="text-lg font-bold text-indigo-700 dark:text-indigo-400">
           JobFlow
         </Link>
 
         {/* Hamburger menu for mobile view */}
         <button
-          className="md:hidden text-gray-700"
+          className="md:hidden text-gray-700 dark:text-gray-300"
           onClick={() => setMobileOpen((prev) => !prev)}
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -115,9 +115,19 @@ export default function Navbar() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setProfileOpen((prev) => !prev)}
-                  className="flex items-center gap-1 text-sm text-gray-700 hover:text-indigo-600 hover:underline"
+                  className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline"
                 >
-                  <User size={16} />
+                  {(session.user as { image?: string | null })?.image ? (
+                    <img
+                      src={(session.user as { image?: string | null }).image!}
+                      alt="Profile"
+                      className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                    />
+                  ) : (
+                    <span className="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-600 flex items-center justify-center flex-shrink-0">
+                      <User size={16} className="text-gray-500 dark:text-gray-400" />
+                    </span>
+                  )}
                   {session.user?.name}
                   <ChevronDown size={16} />
                 </button>
@@ -129,13 +139,13 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.1 }}
-                      className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-md z-50"
+                      className="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-700 border dark:border-slate-600 rounded shadow-md z-50"
                     >
 
 
                       <Link
                         href="/dashboard/settings"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-600"
                         onClick={() => setProfileOpen(false)}
                       >
                         <span className="flex items-center gap-2">
@@ -149,7 +159,7 @@ export default function Navbar() {
                           setProfileOpen(false);
                           signOut();
                         }}
-                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-600"
                       >
                         <span className="flex items-center gap-2">
                           <LogOut size={16} />
@@ -183,12 +193,30 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="md:hidden bg-white px-4 pb-4 pt-2 border-t shadow z-40"
+            className="md:hidden bg-white dark:bg-slate-800 px-4 pb-4 pt-2 border-t dark:border-slate-600 shadow z-40"
           >
             <div className="flex flex-col gap-2 text-sm">
+              {session && (
+                <div className="flex items-center gap-3 px-2 py-3 mb-2 border-b dark:border-slate-600">
+                  {(session.user as { image?: string | null })?.image ? (
+                    <img
+                      src={(session.user as { image?: string | null }).image!}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                    />
+                  ) : (
+                    <span className="w-10 h-10 rounded-full bg-gray-200 dark:bg-slate-600 flex items-center justify-center flex-shrink-0">
+                      <User size={20} className="text-gray-500 dark:text-gray-400" />
+                    </span>
+                  )}
+                  <span className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                    {session.user?.name || "User"}
+                  </span>
+                </div>
+              )}
               <Link
                 href="/dashboard"
-                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 ${isActive(
+                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 ${isActive(
                   "/dashboard"
                 )}`}
                 onClick={() => setMobileOpen(false)}
@@ -198,7 +226,7 @@ export default function Navbar() {
 
               <Link
                 href="/dashboard/archive"
-                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 ${isActive(
+                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 ${isActive(
                   "/dashboard/archive"
                 )}`}
                 onClick={() => setMobileOpen(false)}
@@ -208,7 +236,7 @@ export default function Navbar() {
 
               <Link
                 href="/dashboard/stats"
-                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 ${isActive(
+                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 ${isActive(
                   "/dashboard/stats"
                 )}`}
                 onClick={() => setMobileOpen(false)}
@@ -218,7 +246,7 @@ export default function Navbar() {
 
               <Link
                 href="/dashboard/settings"
-                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 ${isActive(
+                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 ${isActive(
                   "/dashboard/settings"
                 )}`}
                 onClick={() => setMobileOpen(false)}
@@ -232,7 +260,7 @@ export default function Navbar() {
                     setMobileOpen(false);
                     signOut();
                   }}
-                  className="flex items-center gap-2 px-2 py-2 rounded text-red-600 hover:bg-gray-100"
+                  className="flex items-center gap-2 px-2 py-2 rounded text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700"
                 >
                   <LogOut size={16} /> Logout
                 </button>
