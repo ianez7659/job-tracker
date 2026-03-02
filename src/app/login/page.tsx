@@ -4,6 +4,8 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import { Github } from "lucide-react";
+import { SiGoogle } from "react-icons/si";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -108,12 +110,24 @@ export default function LoginPage() {
 
             <div className="my-4 text-sm text-gray-500">Or</div>
 
-            <button
-              onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
-              className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 w-full transition-all hover:scale-[1.02]"
-            >
-              Login with GitHub
-            </button>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
+                className="flex-1 flex items-center justify-center gap-2 bg-black text-white px-4 py-2.5 rounded hover:bg-gray-800 transition-all hover:scale-[1.02]"
+              >
+                <Github className="w-5 h-5" />
+                <span>GitHub</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+                className="flex-1 flex items-center justify-center gap-2 bg-white text-gray-700 px-4 py-2.5 rounded border border-gray-300 hover:bg-gray-50 transition-all hover:scale-[1.02]"
+              >
+                <SiGoogle className="w-5 h-5" />
+                <span>Google</span>
+              </button>
+            </div>
 
             <p
               className="mt-4 text-sm text-gray-600 cursor-pointer underline"

@@ -6,12 +6,15 @@ import { compare } from "bcryptjs";
 import { JWT } from "next-auth/jwt";
 import { Session, User } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import GoogleProvider from "next-auth/providers/google";
 
 // Check environment variables on startup
 if (process.env.NODE_ENV === "development") {
   console.log("🔍 Environment check:", {
     hasGithubId: !!process.env.GITHUB_ID,
     hasGithubSecret: !!process.env.GITHUB_SECRET,
+    hasGoogleId: !!process.env.GOOGLE_CLIENT_ID,
+    hasGoogleSecret: !!process.env.GOOGLE_CLIENT_SECRET,
     hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
     hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
     nextAuthUrl: process.env.NEXTAUTH_URL,
@@ -31,6 +34,10 @@ export const authOptions: NextAuthOptions = {
           scope: "read:user user:email",
         },
       },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     CredentialsProvider({
       name: "credentials",
@@ -149,6 +156,15 @@ export const authOptions: NextAuthOptions = {
             },
           });
           console.log("✅ User image updated successfully");
+        }
+        if (account?.provider === "google" && (profile as any)?.picture) {
+          await prisma.user.update({
+            where: { email: user.email! },
+            data: {
+              image: (profile as any).picture,
+            },
+          });
+          console.log("✅ Google user image updated successfully");
         }
       } catch (error) {
         console.error("❌ Error updating user image:", error);
