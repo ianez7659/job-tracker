@@ -16,6 +16,7 @@ model User {
   password      String?
   image         String?
   emailVerified DateTime?
+  category      String?   // e.g. web_developer, software_developer (for future search/community)
   accounts      Account[]
   jobs          Job[]
   sessions      Session[]

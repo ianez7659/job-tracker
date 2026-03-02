@@ -113,8 +113,22 @@ export const authOptions: NextAuthOptions = {
       try {
         if (token && session.user) {
           session.user.id = token.id as string;
-          // Don't include image in session to avoid cookie size issues
-          // Images will be fetched from DB when needed
+          if (token.id) {
+            try {
+              const dbUser = await prisma.user.findUnique({
+                where: { id: token.id },
+                select: { category: true, image: true },
+              });
+              if (dbUser) {
+                session.user.category = dbUser.category;
+                (session.user as { image?: string | null }).image = dbUser.image;
+              }
+            } catch (dbErr: unknown) {
+              // P2022 = column missing; don't crash, just leave category undefined
+              if ((dbErr as { code?: string })?.code !== "P2022") throw dbErr;
+              (session.user as { category?: string | null }).category = undefined;
+            }
+          }
         }
         return session;
       } catch (error) {
