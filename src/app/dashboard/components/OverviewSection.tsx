@@ -71,8 +71,8 @@ const OverviewSection: React.FC<Props> = ({
   ];
 
   return (
-    <section className="mb-4 border border-gray-400 rounded-lg bg-white shadow-sm p-4">
-      <h2 className="flex items-center gap-2 font-bold text-xl text-gray-700 mb-4">
+    <section className="mb-4 border border-gray-400 dark:border-slate-200 rounded-lg bg-white dark:bg-slate-800 shadow-sm p-4">
+      <h2 className="flex items-center gap-2 font-bold text-xl text-gray-700 dark:text-gray-200 mb-4">
         <ClipboardList size={24} aria-hidden="true" />
         Application Overview
       </h2>

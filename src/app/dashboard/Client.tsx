@@ -147,14 +147,14 @@ export default function DashboardClient({ user }: Props) {
   };
 
   return (
-    <section className="p-4 sm:p-6 bg-slate-200 min-h-screen">
+    <section className="p-4 sm:p-6 bg-slate-200 dark:bg-slate-900 min-h-screen">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
-            Welcome, <span className="text-indigo-600">{user.name}</span>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+            Welcome, <span className="text-indigo-600 dark:text-indigo-400">{user.name}</span>
           </h1>
-          <p className="text-md sm:text-lg text-gray-600 ">
+          <p className="text-md sm:text-lg text-gray-600 dark:text-gray-300 ">
             Here is your current applications
           </p>
         </div>
@@ -176,7 +176,7 @@ export default function DashboardClient({ user }: Props) {
       </div>
 
       {/* Summary Section shell */}
-      <div className="rounded-lg border border-gray-300 p-4 grid gap-4 mb-6 bg-slate-50 shadow-md">
+      <div className="rounded-lg border border-gray-300 dark:border-slate-600 p-4 grid gap-4 mb-6 bg-slate-50 dark:bg-slate-800 shadow-md">
         <OverviewSection
           todayCount={todayCount}
           totalActive={activeJobs.length}

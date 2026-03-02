@@ -62,12 +62,12 @@ export default function FilterSection({
             transition={{ duration: 0.2 }}
             className="mb-2 px-4 md:hidden"
           >
-            <div className="flex items-center border rounded w-full mb-1 px-2">
-              <Search className="text-gray-400" size={20} />
+            <div className="flex items-center border rounded w-full mb-1 px-2 dark:border-slate-200 dark:bg-slate-800 dark:text-gray-200">
+              <Search className="text-gray-400 dark:text-gray-300" size={20} />
               <input
                 type="text"
                 placeholder="Search company or title..."
-                className="p-2 pl-2 w-full outline-none text-sm"
+                className="p-2 pl-2 w-full outline-none text-sm dark:bg-slate-800 dark:text-gray-200"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -79,7 +79,7 @@ export default function FilterSection({
                 className="p-2 border rounded text-sm w-full flex items-center justify-between"
               >
                 <span className="flex items-center gap-2">
-                  <NotebookPen className="text-gray-400" size={20} />
+                  <NotebookPen className="text-gray-400 dark:text-gray-300" size={20} />
                   {statuses.find((s) => s.value === filterStatus)?.label ||
                     "Select Status"}
                 </span>
@@ -94,7 +94,7 @@ export default function FilterSection({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.1 }}
-                    className="absolute left-0 right-0 mt-1 bg-white border rounded shadow z-50"
+                    className="absolute left-0 right-0 mt-1 bg-white dark:bg-slate-800 border rounded shadow z-50"
                   >
                     {statuses.map((status) => (
                       <li
@@ -103,8 +103,8 @@ export default function FilterSection({
                           setFilterStatus(status.value);
                           setShowDropdown(false);
                         }}
-                        className={`px-3 py-2 cursor-pointer hover:bg-indigo-100 ${
-                          filterStatus === status.value ? "bg-indigo-200" : ""
+                        className={`px-3 py-2 cursor-pointer hover:bg-indigo-100 dark:hover:bg-indigo-900 ${
+                          filterStatus === status.value ? "bg-indigo-200 dark:bg-indigo-900" : ""
                         }`}
                       >
                         {status.label}
@@ -122,7 +122,7 @@ export default function FilterSection({
       <div className="hidden md:flex p-4 gap-2 w-full justify-start mb-2">
         {/* Search Input */}
         <div className="flex items-center border rounded w-full md:w-64 px-2">
-          <Search className="text-gray-400" size={20} />
+          <Search className="text-gray-400 dark:text-gray-300" size={20} />
           <input
             type="text"
             placeholder="Search company or title..."
@@ -139,7 +139,7 @@ export default function FilterSection({
             className="p-2 border rounded text-sm w-full flex justify-between items-center"
           >
             <span className="flex items-center gap-2">
-              <NotebookPen className="text-gray-400" size={20} />
+              <NotebookPen className="text-gray-400 dark:text-gray-300" size={20} />
               {statuses.find((s) => s.value === filterStatus)?.label ||
                 "Select Status"}
             </span>
@@ -153,7 +153,7 @@ export default function FilterSection({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="absolute left-0 right-0 mt-1 bg-white border rounded shadow z-10"
+                className="absolute left-0 right-0 mt-1 bg-white dark:bg-slate-700 border rounded shadow z-10"
               >
                 {statuses.map((status) => (
                   <li
@@ -162,8 +162,8 @@ export default function FilterSection({
                       setFilterStatus(status.value);
                       setShowDropdownDesktop(false);
                     }}
-                    className={`px-3 py-2 cursor-pointer hover:bg-indigo-100 ${
-                      filterStatus === status.value ? "bg-indigo-200" : ""
+                    className={`px-3 py-2 cursor-pointer hover:bg-indigo-100 dark:hover:bg-indigo-900 ${
+                      filterStatus === status.value ? "bg-indigo-200 dark:bg-indigo-900" : ""
                     }`}
                   >
                     {status.label}

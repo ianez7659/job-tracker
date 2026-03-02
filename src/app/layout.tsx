@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { ReactNode } from "react";
 import SessionProvider from "@/components/provider/SessionWraper";
 import PageTransition from "@/components/PageTransition";
+import ThemeProvider from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "Jobflow - Job Tracking Dashboard",
@@ -21,13 +23,27 @@ export const metadata: Metadata = {
   },
 };
 
+const themeScript = `
+(function() {
+  var t = localStorage.getItem('theme');
+  var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (t === 'dark' || (t !== 'light' && d)) document.documentElement.classList.add('dark');
+  else document.documentElement.classList.remove('dark');
+})();
+`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="bg-slate-100">
-      <body className="text-gray-900">
-        <SessionProvider>
-          <PageTransition>{children}</PageTransition>
-        </SessionProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeScript}
+        </Script>
+        <ThemeProvider>
+          <SessionProvider>
+            <PageTransition>{children}</PageTransition>
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

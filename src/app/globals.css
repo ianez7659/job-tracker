@@ -1,26 +1,32 @@
 @import "tailwindcss";
 
+/* Class-based dark mode (toggle via .dark on html) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #e2e8f0;
   --foreground: #171717;
 }
 
-/* @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
-
 body {
-  background: #e2e8f0;
+  background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Dark theme when .dark is on html */
+.dark {
+  --background: #0f172a;
+  --foreground: #e2e8f0;
+}
+
+.dark body {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+/* Recharts axis/labels in dark mode */
+.dark .recharts-cartesian-axis-tick text,
+.dark .recharts-label {
+  fill: #e2e8f0 !important;
 }

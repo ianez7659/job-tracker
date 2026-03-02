@@ -73,7 +73,7 @@ export default function JobList({ jobs, onDelete, onStatusChange }: Props) {
             onClick={() =>
               setVisibleCount((n) => Math.min(n + LOAD_MORE_SIZE, jobs.length))
             }
-            className="px-5 py-2.5 rounded-lg border border-indigo-500 text-indigo-600 hover:bg-indigo-50 font-medium transition-colors"
+            className="px-5 py-2.5 rounded-lg border border-indigo-500 text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-200 dark:hover:bg-indigo-900 hover:bg-indigo-50 font-medium transition-colors"
           >
             Load more ({jobs.length - visibleCount} remaining)
           </motion.button>

@@ -64,7 +64,7 @@ export default function JobCard({
   };
 
   return (
-    <div className="relative rounded-xl border border-gray-400 shadow hover:shadow-lg transition bg-white overflow-hidden flex">
+    <div className="relative  rounded-xl border border-gray-400 dark:border-slate-200 shadow hover:shadow-lg transition bg-white dark:bg-slate-600 overflow-hidden flex">
       {/* Status Indicator */}
       <div
         className={`w-2 sm:w-3 h-full ${statusColors[status]} absolute left-0 top-0`}
@@ -72,14 +72,14 @@ export default function JobCard({
 
       <div className="p-4 pl-6 flex-1 flex flex-col gap-3">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-          <div className="text-sm text-gray-600 flex items-center gap-1 mt-1">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">{title}</h3>
+          <div className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-1 mt-1">
             <Building2 size={14} />
             {company}
           </div>
         </div>
 
-        <div className="flex justify-between items-center text-xs text-gray-500">
+        <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-300">
           <div className="flex items-center gap-1">
             <Calendar size={14} />
             {appliedAt ? new Date(appliedAt).toLocaleDateString() : "No date"}
@@ -89,7 +89,7 @@ export default function JobCard({
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 flex items-center gap-1 hover:underline"
+              className="text-blue-600 flex items-center gap-1 hover:underline dark:text-blue-300"
             >
               <Link2 size={14} />
               Link to original posting
@@ -108,7 +108,7 @@ export default function JobCard({
             <select
               value={status}
               onChange={(e) => onStatusChange?.(id, e.target.value)}
-              className="text-xs border px-2 py-1 rounded bg-white"
+              className="text-xs border px-2 py-1 rounded bg-white dark:bg-slate-700 dark:text-gray-200"
             >
               <option value="resume">Resume</option>
               <option value="interview1">Interview1</option>
@@ -128,14 +128,14 @@ export default function JobCard({
               setAiError(null);
               setAiOpen(true);
             }}
-            className="flex items-center gap-1 text-xs text-violet-600 hover:text-violet-700 px-2 py-1 rounded hover:bg-violet-50"
+            className="flex items-center gap-1 text-xs text-violet-600 hover:text-violet-700 px-2 py-1 rounded hover:bg-violet-50 dark:text-violet-400 dark:hover:text-violet-200 dark:hover:bg-violet-900"
           >
             <Sparkles size={14} />
             AI
           </button>
           <Link
             href={`/dashboard/jobs/edit/${id}`}
-            className="flex items-center gap-1 text-xs text-gray-600 hover:text-indigo-600 px-2 py-1 rounded hover:bg-gray-100"
+            className="flex items-center gap-1 text-xs text-gray-600 hover:text-indigo-600 px-2 py-1 rounded hover:bg-gray-100 dark:text-gray-300 dark:hover:text-indigo-300 dark:hover:bg-slate-700"
           >
             <Pencil size={14} />
             Edit
@@ -155,7 +155,7 @@ export default function JobCard({
                 alert("Failed to delete job");
               }
             }}
-            className="flex items-center gap-1 text-xs text-gray-600 hover:text-red-600 px-2 py-1 rounded hover:bg-gray-100"
+            className="flex items-center gap-1 text-xs text-gray-600 hover:text-red-600 px-2 py-1 rounded hover:bg-gray-100 dark:text-gray-300 dark:hover:text-red-300 dark:hover:bg-slate-700"
           >
             <Trash2 size={14} />
             Delete
