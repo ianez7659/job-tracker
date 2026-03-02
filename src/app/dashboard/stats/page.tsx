@@ -132,12 +132,12 @@ export default function StatsPage() {
       : "N/A";
 
   return (
-    <section className="p-6 bg-slate-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6">Application Statistics</h1>
+    <section className="p-6 bg-slate-50 dark:bg-slate-900 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">Application Statistics</h1>
 
       {/* Current Application Status */}
-      <div className="bg-white rounded-xl shadow-md p-4 mb-8">
-        <h2 className="flex text-lg font-semibold mb-4">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md dark:shadow-slate-900/50 p-4 mb-8 border border-transparent dark:border-slate-600">
+        <h2 className="flex text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
           <ChartNoAxesCombined className="mr-2" size={25} />
           Current Application Status
         </h2>
@@ -157,18 +157,18 @@ export default function StatsPage() {
       </div>
 
       {/* Monthly posts created - one year at a time, year dropdown */}
-      <div className="bg-white rounded-xl shadow-md p-4 mb-8 overflow-x-auto">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md dark:shadow-slate-900/50 p-4 mb-8 overflow-x-auto border border-transparent dark:border-slate-600">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-          <h2 className="flex text-lg font-semibold">
+          <h2 className="flex text-lg font-semibold text-gray-900 dark:text-gray-100">
             <Calendar className="mr-2" size={25} />
             Monthly posts created
           </h2>
-          <label className="flex items-center gap-2 text-sm text-gray-700">
+          <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
             Year
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
-              className="border border-gray-300 rounded px-3 py-1.5 bg-white text-gray-800"
+              className="border border-gray-300 dark:border-slate-600 rounded px-3 py-1.5 bg-white dark:bg-slate-700 text-gray-800 dark:text-gray-100"
             >
               {availableYears.map((y) => (
                 <option key={y} value={y}>
@@ -180,45 +180,45 @@ export default function StatsPage() {
         </div>
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="text-left py-2 px-2 font-semibold text-gray-700">Year</th>
+            <tr className="border-b border-gray-200 dark:border-slate-600">
+              <th className="text-left py-2 px-2 font-semibold text-gray-700 dark:text-gray-200">Year</th>
               {selectedYearMonthsOnly.map((m) => (
-                <th key={m.label} className="text-center py-2 px-1 font-semibold text-gray-700">
+                <th key={m.label} className="text-center py-2 px-1 font-semibold text-gray-700 dark:text-gray-200">
                   {m.label}
                 </th>
               ))}
-              <th className="text-center py-2 px-2 font-semibold text-gray-700">Total</th>
+              <th className="text-center py-2 px-2 font-semibold text-gray-700 dark:text-gray-200">Total</th>
             </tr>
           </thead>
           <tbody>
             {selectedYearMonthsOnly.length === 0 ? (
               <tr>
-                <td colSpan={2} className="py-4 text-center text-gray-500">
+                <td colSpan={2} className="py-4 text-center text-gray-500 dark:text-gray-400">
                   No applications in {selectedYear}.
                 </td>
               </tr>
             ) : (
-              <tr className="border-b border-gray-100 hover:bg-slate-50">
-                <td className="py-2 px-2 font-medium text-gray-800">{selectedYearRow.year}</td>
+              <tr className="border-b border-gray-100 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
+                <td className="py-2 px-2 font-medium text-gray-800 dark:text-gray-100">{selectedYearRow.year}</td>
                 {selectedYearMonthsOnly.map((m) => (
-                  <td key={m.label} className="text-center py-2 px-1">
+                  <td key={m.label} className="text-center py-2 px-1 text-gray-900 dark:text-gray-100">
                     {m.count}
                   </td>
                 ))}
-                <td className="text-center py-2 px-2 font-medium text-gray-800">{selectedYearRow.total}</td>
+                <td className="text-center py-2 px-2 font-medium text-gray-800 dark:text-gray-100">{selectedYearRow.total}</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      <div className="bg-white rounded-xl shadow-md p-4">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md dark:shadow-slate-900/50 p-4 border border-transparent dark:border-slate-600">
         <div className="flex justify-between mb-4">
-          <h2 className="flex text-lg font-semibold mb-4">
+          <h2 className="flex text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             <ChartNoAxesCombined className="mr-2" size={25} />
             Final Outcomes
           </h2>
-          <p className="text-gray-600 flex flex-row gap-2">
+          <p className="text-gray-600 dark:text-gray-300 flex flex-row gap-2">
             <ThumbsUp size={18} />
             Rate: {offerRate === "N/A" ? "Not available yet" : `${offerRate}%`}
           </p>
@@ -227,11 +227,11 @@ export default function StatsPage() {
         <div className="w-full h-[180px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={outcomeData} layout="vertical">
-              <XAxis type="number" tick={{ fontSize: 12 }} />
+              <XAxis type="number" tick={{ fontSize: 14 }} />
               <YAxis
                 type="category"
                 dataKey="status"
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 16 }}
                 width={80}
               />
               <Bar dataKey="count" radius={[0, 4, 4, 0]}>
