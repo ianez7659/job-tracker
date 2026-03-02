@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import NavBar from "@/components/NavBar";
 import MobileNav from "@/components/MobileNav";
+import CategoryGuard from "./CategoryGuard";
 
 export const metadata: Metadata = {
   title: "Dashboard - Jobflow",
@@ -17,7 +18,10 @@ export default async function DashboardLayout({
 }) {
   const session = await getServerSession(authOptions);
 
-  // Redirect to login if session is not available
+  if (!session) {
+    redirect("/login");
+  }
+
   if (!session) {
     redirect("/login");
   }
@@ -25,7 +29,9 @@ export default async function DashboardLayout({
   return (
     <>
       <NavBar />
-      <div className="pt-16 pb-16">{children}</div>
+      <div className="pt-16 pb-16">
+        <CategoryGuard session={session}>{children}</CategoryGuard>
+      </div>
       <MobileNav />
     </>
   );
