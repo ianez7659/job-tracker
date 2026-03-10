@@ -3,7 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import { ReactNode } from "react";
 import SessionProvider from "@/components/provider/SessionWraper";
-import PageTransition from "@/components/PageTransition";
+// import PageTransition from "@/components/PageTransition";
 import ThemeProvider from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
@@ -41,7 +41,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </Script>
         <ThemeProvider>
           <SessionProvider>
-            <PageTransition>{children}</PageTransition>
+            {/* <PageTransition>{children}</PageTransition> */}
+            {children}
           </SessionProvider>
         </ThemeProvider>
       </body>

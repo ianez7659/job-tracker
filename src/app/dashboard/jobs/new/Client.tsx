@@ -9,22 +9,7 @@ import {
   headingBase,
   buttonBase,
 } from "@/lib/styles";
-
-const titleOptions = [
-  "Frontend Developer",
-  "Backend Developer",
-  "Fullstack Developer",
-  "DevOps Engineer",
-  "Data Scientist",
-  "etc.",
-];
-
-const statusOptions = [
-  { value: "resume", label: "Resume" },
-  // { value: "interview", label: "Interview" },
-  // { value: "offer", label: "Offer" },
-  // { value: "rejected", label: "Rejected" },
-];
+import { POSITION_LEVELS } from "@/lib/constants/positions";
 
 export default function NewJobClient() {
   const router = useRouter();
@@ -143,6 +128,26 @@ export default function NewJobClient() {
       <h1 className={headingBase}>Applying Position</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
+          <label htmlFor="title" className={labelBase}>
+            Position level
+          </label>
+        <select
+          id="title"
+          name="title"
+          value={form.title}
+          onChange={handleChange}
+          className={selectBase}
+          required
+        >
+          <option value="">Select position level</option>
+          {POSITION_LEVELS.map((level) => (
+            <option key={level} value={level}>
+              {level}
+            </option>
+          ))}
+        </select>
+        </div>
+        <div>
           <label htmlFor="url" className={labelBase}>
             Job Posting URL (optional)
           </label>
@@ -188,20 +193,6 @@ export default function NewJobClient() {
             </p>
           )}
         </div>
-        <select
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          className={selectBase}
-          required
-        >
-          <option value="">Select position</option>
-          {titleOptions.map((title) => (
-            <option key={title} value={title}>
-              {title}
-            </option>
-          ))}
-        </select>
         <input
           type="text"
           name="company"
@@ -211,18 +202,6 @@ export default function NewJobClient() {
           className={inputBase}
           required
         />
-        <select
-          name="status"
-          value={form.status}
-          onChange={handleChange}
-          className={selectBase}
-        >
-          {statusOptions.map(({ value, label }) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
         <input
           type="text"
           name="tags"

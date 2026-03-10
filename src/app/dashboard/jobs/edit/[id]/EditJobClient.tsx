@@ -10,16 +10,7 @@ import {
   buttonBase,
   helperText,
 } from "@/lib/styles";
-// import { url } from "inspector";
-
-const titleOptions = [
-  "Frontend Developer",
-  "Backend Developer",
-  "Fullstack Developer",
-  "DevOps Engineer",
-  "Data Scientist",
-  "etc.",
-];
+import { POSITION_LEVELS } from "@/lib/constants/positions";
 
 const statusOptions = [
   { value: "resume", label: "Resume" },
@@ -142,20 +133,33 @@ export default function EditJobClient({ job }: Props) {
       </a>
       <h1 className={headingBase}>Edit Position</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <select
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          className={selectBase}
-          required
-        >
-          <option value="">Select position</option>
-          {titleOptions.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
+        <div>
+          <label htmlFor="title" className={labelBase}>
+            Position level
+          </label>
+          <select
+            id="title"
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            className={selectBase}
+            required
+          >
+            <option value="">Select position level</option>
+            {(
+              form.title && !POSITION_LEVELS.includes(form.title as (typeof POSITION_LEVELS)[number])
+                ? [form.title, ...POSITION_LEVELS]
+                : [...POSITION_LEVELS]
+            ).map((value) => (
+              <option key={value} value={value}>
+                {value}
+                {value === form.title && !POSITION_LEVELS.includes(value as (typeof POSITION_LEVELS)[number])
+                  ? " (current)"
+                  : ""}
+              </option>
+            ))}
+          </select>
+        </div>
         <div>
           <label htmlFor="url" className={labelBase}>
             Job Posting URL (optional)

@@ -17,12 +17,18 @@ export default function CategoryGuard({
   useEffect(() => {
     if (!session?.user) return;
     const category = (session.user as { category?: string | null }).category;
-    const needsCategory = category === null || category === undefined || category === "";
+    const hasCategory = category != null && category !== "";
     const onCategoryPage = pathname === "/dashboard/category";
-    if (needsCategory && !onCategoryPage) {
+
+    if (!hasCategory && !onCategoryPage) {
       router.replace("/dashboard/category");
+      return;
+    }
+    if (hasCategory && onCategoryPage) {
+      router.replace("/dashboard");
     }
   }, [session, pathname, router]);
 
   return <>{children}</>;
 }
+

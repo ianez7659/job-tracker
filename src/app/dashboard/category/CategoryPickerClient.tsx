@@ -27,8 +27,9 @@ export default function CategoryPickerClient() {
         setLoading(false);
         return;
       }
-      router.refresh();
-      router.replace("/dashboard");
+      
+      // redirect to dashboard
+      window.location.href = "/dashboard";
     } catch {
       setError("Something went wrong");
       setLoading(false);

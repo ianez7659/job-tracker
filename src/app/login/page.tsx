@@ -56,8 +56,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="bg-white p-6 rounded shadow-md w-full max-w-md text-center">
+    <div className="min-h-screen flex items-center justify-center px-4" suppressHydrationWarning>
+      <div className="bg-white dark:bg-gray-700 p-6 rounded shadow-md w-full max-w-md text-center" suppressHydrationWarning>
         <AnimatePresence mode="wait">
           <motion.div
             key={isRegistering ? "register" : "login"}
@@ -66,7 +66,7 @@ export default function LoginPage() {
             exit={{ opacity: 0, x: -30 }}
             transition={{ duration: 0.3 }}
           >
-            <h1 className="text-2xl font-bold mb-4">
+            <h1 className="text-2xl font-bold mb-4 ">
               {isRegistering ? "Registration" : "Login"}
             </h1>
 
@@ -108,7 +108,7 @@ export default function LoginPage() {
                 : "Login with Email"}
             </button>
 
-            <div className="my-4 text-sm text-gray-500">Or</div>
+            <div className="my-4 text-sm text-gray-600 dark:text-gray-300">Or</div>
 
             <div className="flex gap-3">
               <button
@@ -130,7 +130,7 @@ export default function LoginPage() {
             </div>
 
             <p
-              className="mt-4 text-sm text-gray-600 cursor-pointer underline"
+              className="mt-4 text-sm text-gray-600 dark:text-gray-300 cursor-pointer underline"
               onClick={() => setIsRegistering(!isRegistering)}
             >
               {isRegistering

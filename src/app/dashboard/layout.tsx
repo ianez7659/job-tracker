@@ -22,10 +22,6 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  if (!session) {
-    redirect("/login");
-  }
-
   return (
     <>
       <NavBar />
