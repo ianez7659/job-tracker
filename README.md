@@ -6,9 +6,10 @@ Designed to help you manage job applications, track interview stages, and analyz
 
 **Live Demo:** [https://job-tracker-wheat.vercel.app/]
 
-| | | | |
-| :---: | :---: | :---: | :---: |
-| ![1](./screenshots/jf1.png) | ![2](./screenshots/jf1d.png) | ![3](./screenshots/jf3.png) | ![4](./screenshots/jf3d.png) |
+| | |
+| :---: | :---: |
+| ![1](./screenshots/jf1.png) | ![2](./screenshots/jf1d.png) |
+| ![3](./screenshots/jf3.png) | ![4](./screenshots/jf3d.png) |
 
 ---
 
