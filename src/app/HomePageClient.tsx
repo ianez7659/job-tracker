@@ -11,18 +11,18 @@ export default function HomePageClient() {
   if (status === "loading") return <p>loading...</p>;
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen text-center px-4 bg-gradient-to-br from-indigo-50 to-white">
-      <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-800 mb-4">
-        Welcome to <span className="text-indigo-600">Job Tracker</span>
+    <main className="flex flex-col items-center justify-center min-h-screen text-center px-4 bg-gradient-to-b from-slate-200 to-slate-400 dark:from-slate-950 dark:to-slate-500">
+      <h1 className="text-3xl sm:text-5xl font-extrabold mb-4 bg-gradient-to-r from-indigo-500 to-violet-200 dark:from-yellow-500 dark:to-yellow-100 bg-clip-text text-transparent ">
+        Welcome to <span className="text-red-600 dark:text-orange-600 ">Job</span> <span className="text-indigo-700 dark:text-yellow-500">Tracker</span>
       </h1>
-      <p className="text-gray-600 mb-10 text-sm sm:text-xl max-w-lg">
+      <p className="text-gray-600 dark:text-gray-300 mb-10 text-sm sm:text-xl max-w-lg">
         Keep track of your job applications with ease and clarity.
       </p>
 
       {session ? (
         <button
           onClick={() => router.push("/dashboard")}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-full text-lg shadow-lg transition-all duration-200 hover:scale-105"
+          className="bg-indigo-600 hover:bg-indigo-700 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-white px-6 py-3 rounded-full text-xl shadow-lg transition-all duration-200 hover:scale-105"
         >
           Go to Dashboard
         </button>

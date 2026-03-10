@@ -25,7 +25,7 @@ export default async function DashboardLayout({
   return (
     <>
       <NavBar />
-      <div className="pt-16 pb-16">
+      <div className="min-h-screen pt-16 pb-16 bg-gradient-to-b from-slate-300 to-slate-400 dark:from-slate-950 dark:to-slate-500">
         <CategoryGuard session={session}>{children}</CategoryGuard>
       </div>
       <MobileNav />

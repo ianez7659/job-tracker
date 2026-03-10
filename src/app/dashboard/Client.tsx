@@ -147,12 +147,12 @@ export default function DashboardClient({ user }: Props) {
   };
 
   return (
-    <section className="p-4 sm:p-6 bg-slate-200 dark:bg-slate-900 min-h-screen">
+    <section className="p-4 sm:p-6 min-h-screen">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
-            Welcome, <span className="text-indigo-600 dark:text-indigo-400">{user.name}</span>
+            Welcome, <span className="text-indigo-600 dark:text-yellow-400">{user.name}</span>
           </h1>
           <p className="text-md sm:text-lg text-gray-600 dark:text-gray-300 ">
             Here is your current applications
@@ -161,13 +161,13 @@ export default function DashboardClient({ user }: Props) {
         <div className="flex gap-2 py-4">
           <Link
             href="/dashboard/jobs/new"
-            className="flex gap-2 shadow-md items-center bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 text-sm"
+            className="flex gap-2 border border-indigo-800 dark:border-yellow-800 shadow-md items-center bg-indigo-500 dark:bg-yellow-500 text-white px-4 py-2 rounded hover:bg-indigo-600 dark:hover:bg-yellow-600 text-sm"
           >
             <Plus size={20} /> Add New
           </Link>
           <Link
             href="/dashboard/trash"
-            className="flex items-center gap-2 shadow-md bg-red-200 text-red-700 px-4 py-2 rounded hover:bg-red-200 transition-all text-sm"
+            className="flex items-center gap-2 border border-red-400 dark:border-red-800 shadow-md bg-red-200 dark:bg-red-600 text-red-700 dark:text-red-100 px-4 py-2 rounded hover:bg-red-200 dark:hover:bg-red-700 transition-all text-sm"
           >
             <Trash2 size={20} />
             Trash Bin
@@ -176,7 +176,7 @@ export default function DashboardClient({ user }: Props) {
       </div>
 
       {/* Summary Section shell */}
-      <div className="rounded-lg border border-gray-300 dark:border-slate-600 p-4 grid gap-4 mb-6 bg-slate-50 dark:bg-slate-800 shadow-md">
+      <div className="rounded-lg border border-gray-300 dark:border-slate-300 p-4 grid gap-4 mb-6 bg-slate-50 dark:bg-slate-800 shadow-md">
         <OverviewSection
           todayCount={todayCount}
           totalActive={activeJobs.length}
@@ -187,7 +187,7 @@ export default function DashboardClient({ user }: Props) {
 
         <InterviewProgress counts={counts} setFilterStatus={setFilterStatus} />
 
-        <section className="border-t border-gray-400 py-4">
+        <section className="border-t border-gray-400 dark:border-slate-300 py-4">
           <FilterSection
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
