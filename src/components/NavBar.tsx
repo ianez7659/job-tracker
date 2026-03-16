@@ -65,7 +65,7 @@ export default function Navbar() {
       : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400";
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-white dark:bg-slate-800 shadow dark:shadow-slate-900/50">
+    <header className="md:hidden fixed top-0 left-0 w-full z-50 bg-white dark:bg-slate-800 shadow dark:shadow-slate-900/50">
       <div className=" mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/dashboard" className="text-lg font-bold text-indigo-700 dark:text-indigo-400">

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import NavBar from "@/components/NavBar";
 import MobileNav from "@/components/MobileNav";
+import Sidebar from "@/components/Sidebar";
 import CategoryGuard from "./CategoryGuard";
 
 export const metadata: Metadata = {
@@ -25,8 +26,11 @@ export default async function DashboardLayout({
   return (
     <>
       <NavBar />
-      <div className="min-h-screen pt-16 pb-16 bg-gradient-to-b from-slate-300 to-slate-400 dark:from-slate-950 dark:to-slate-500">
-        <CategoryGuard session={session}>{children}</CategoryGuard>
+      <div className="flex">
+        <Sidebar />
+        <div className="flex-1 min-h-screen pt-16 pb-16 md:pt-6 md:pb-6 md:pl-56 bg-gradient-to-br from-indigo-200 via-white to-indigo-200 dark:from-slate-950 dark:via-slate-700 dark:to-slate-800">
+          <CategoryGuard session={session}>{children}</CategoryGuard>
+        </div>
       </div>
       <MobileNav />
     </>

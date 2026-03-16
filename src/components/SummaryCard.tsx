@@ -1,6 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
+import { useMotionValue, useMotionValueEvent, animate } from "framer-motion";
 
 export default function SummaryCard({
   title,
@@ -19,8 +21,22 @@ export default function SummaryCard({
   onClick?: () => void;
   icon?: ReactNode;
 }) {
-  // Add button-like semantics for better accessibility
   const isClickable = typeof onClick === "function";
+  const motionValue = useMotionValue(0);
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useMotionValueEvent(motionValue, "change", (v) => {
+    setDisplayValue(Math.round(v));
+  });
+
+  useEffect(() => {
+    const controls = animate(motionValue, value, {
+      type: "tween",
+      duration: 1.0,
+      ease: [0.25, 0.1, 0.35, 1],
+    });
+    return () => controls.stop();
+  }, [value, motionValue]);
 
   return (
     <div
@@ -38,23 +54,23 @@ export default function SummaryCard({
         }
       }}
     >
-      <p
-        className={`text-md sm:text-lg text-center font-semibold ${textColor}`}
-      >
-        {/* Mobile shows shortTitle, desktop shows full title */}
-        <span className="inline-flex items-center justify-center gap-1">
-          {icon ? (
-            <span aria-hidden="true" className="shrink-0">
-              {icon}
-            </span>
-          ) : null}
-          <span className="block sm:hidden">{shortTitle ?? title}</span>
-          <span className="hidden sm:block">{title}</span>
-        </span>
-      </p>
-      <h2 className={`text-md sm:text-xl text-center font-medium ${textColor}`}>
-        {value}
-      </h2>
+      {/* Mobile: stacked, centered. Desktop: number left, icon+title right */}
+      <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:justify-between sm:text-left sm:gap-3">
+        <p className={`text-md font-medium ${textColor}`}>
+          <span className="inline-flex items-center justify-center gap-1 sm:justify-end">
+            {icon ? (
+              <span aria-hidden="true" className="shrink-0">
+                {icon}
+              </span>
+            ) : null}
+            <span className="block sm:hidden">{shortTitle ?? title}</span>
+            <span className="hidden sm:block">{title}</span>
+          </span>
+        </p>
+        <h2 className={`text-xl sm:text-4xl font-medium ${textColor}`}>
+          {displayValue}
+        </h2>
+      </div>
     </div>
   );
 }

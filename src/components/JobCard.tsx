@@ -70,7 +70,7 @@ export default function JobCard({
         className={`w-2 sm:w-3 h-full ${statusColors[status]} absolute left-0 top-0`}
       />
 
-      <div className="p-4 pl-6 flex-1 flex flex-col gap-3">
+      <div className="py-2 px-6 pl-6 flex-1 flex flex-col gap-3">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{title}</h3>
           <div className="text-sm text-gray-600 dark:text-gray-200 flex items-center gap-1 mt-1">
@@ -121,7 +121,7 @@ export default function JobCard({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-end gap-4 border-t pt-3 mt-4">
+        <div className="flex justify-end gap-4 border-t pt-1 mt-4">
           <button
             type="button"
             onClick={() => {
