@@ -4,6 +4,7 @@ import { FileInput, Send, MessageSquare, Gavel } from "lucide-react";
 
 type FilterStatus =
   | "all"
+  | "applying"
   | "resume"
   | "interview1"
   | "interview2"
@@ -35,15 +36,15 @@ export default function ProgressSection({
       label: "Applying",
       value: resumeCount,
       icon: <FileInput size={18} />,
-      onClick: () => setFilterStatus("resume"),
-      isActive: (s?: FilterStatus) => s === "resume",
+      onClick: () => setFilterStatus("applying"),
+      isActive: (s?: FilterStatus) => s === "applying",
     },
     {
       label: "Applied",
       value: totalActive,
       icon: <Send size={18} />,
-      onClick: () => setFilterStatus("all"),
-      isActive: (s?: FilterStatus) => s === "all",
+      onClick: () => setFilterStatus("resume"),
+      isActive: (s?: FilterStatus) => s === "resume",
     },
     {
       label: "Interviews",

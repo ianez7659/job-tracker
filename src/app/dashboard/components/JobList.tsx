@@ -21,9 +21,10 @@ type Props = {
     id: string,
     newStatus: Job["status"] | string
   ) => Promise<void>;
+  singleColumn?: boolean;
 };
 
-export default function JobList({ jobs, onDelete, onStatusChange }: Props) {
+export default function JobList({ jobs, onDelete, onStatusChange, singleColumn }: Props) {
   const [visibleCount, setVisibleCount] = useState(INITIAL_SIZE);
 
   // When jobs load (or filter changes): show at least INITIAL_SIZE if there are jobs, or reduce if list shrank
@@ -40,7 +41,7 @@ export default function JobList({ jobs, onDelete, onStatusChange }: Props) {
 
   return (
     <div>
-      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <ul className={`grid gap-4 ${singleColumn ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}>
         {visibleJobs.map((job, index) => (
           <motion.li
             key={job.id}

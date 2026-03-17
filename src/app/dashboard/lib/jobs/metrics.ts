@@ -67,5 +67,6 @@ export function countWaitingActive(active: Job[]) {
     console.warn("countWaitingActive received non-array:", active);
     return 0;
   }
-  return active.filter((j) => j.status === "resume").length;
+  // Now treating "applying" as the waiting/initial stage
+  return active.filter((j) => j.status === "applying").length;
 }
