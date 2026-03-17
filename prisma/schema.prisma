@@ -29,6 +29,7 @@ model Job {
   title     String
   company   String
   status    String
+  resumeFile String?
   appliedAt DateTime
   tags      String?
   userId    String

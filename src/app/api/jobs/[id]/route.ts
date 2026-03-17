@@ -54,7 +54,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     }
   }
 
-  const { title, company, status, tags, url, jd } = body;
+  const { title, company, status, tags, url, jd, resumeFile } = body;
 
   if (!title || !company || !status) {
     return NextResponse.json({ message: "Missing fields" }, { status: 400 });
@@ -74,6 +74,24 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
           status === "offer" || status === "rejected" ? new Date() : null,
       },
     });
+
+    if (
+      resumeFile !== undefined &&
+      (resumeFile === null || resumeFile === "" || typeof resumeFile === "string")
+    ) {
+      const value = resumeFile === null || resumeFile === "" ? null : resumeFile;
+      try {
+        await prisma.$executeRaw`
+          UPDATE "Job" SET "resumeFile" = ${value} WHERE "id" = ${id}
+        `;
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e);
+        if (!msg.includes("42703") && !(msg.includes("resumeFile") && msg.includes("does not exist"))) {
+          throw e;
+        }
+        // Column missing: migration not applied; skip resumeFile update
+      }
+    }
 
     return NextResponse.json({ message: "Updated", job: updated });
   } catch (error) {
