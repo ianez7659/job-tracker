@@ -1,16 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import type { Job } from "@/generated/prisma";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import FilterSection from "@/components/FilterSection";
-import { Plus, Trash2, LayoutList, LayoutDashboard } from "lucide-react";
+import { Plus, Trash2, LayoutList, LayoutDashboard, Search } from "lucide-react";
 
 // Dashboard-local pieces
 import OverviewSection from "@/app/dashboard/components/OverviewSection";
 import ProgressSection from "@/app/dashboard/components/ProgressSection";
+import RecentActivitySection from "@/app/dashboard/components/RecentActivitySection";
 import JobList from "@/app/dashboard/components/JobList";
 import NewJobModal from "@/app/dashboard/components/NewJobModal";
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
@@ -41,6 +41,7 @@ type FilterStatus =
 
 export default function DashboardClient({ user }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   // Data fetching hooks
   const { jobs, setJobs } = useJobs();
   const { allJobs, setAllJobs } = useAllJobs();
@@ -71,11 +72,13 @@ export default function DashboardClient({ user }: Props) {
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
   const [showNewModal, setShowNewModal] = useState(false);
 
-  // Adapter for components that expect a string setter (e.g., FilterSection)
-  const setFilterStatusFromString = (s: string) => {
-    // Coerce to FilterStatus; adjust here if you add more filter values
-    setFilterStatus(s as FilterStatus);
-  };
+  // Open new job modal when sidebar "Add job" navigates with ?newJob=1
+  useEffect(() => {
+    if (searchParams.get("newJob") === "1") {
+      setShowNewModal(true);
+      router.replace("/dashboard", { scroll: false });
+    }
+  }, [searchParams, router]);
 
   const setFilterStatusFromFilter = (s: FilterStatus) => {
     setFilterStatus(s);
@@ -211,16 +214,26 @@ export default function DashboardClient({ user }: Props) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.08, ease: [0.25, 0.1, 0.35, 1] }}
         >
-          <h2 className="flex items-center gap-2 font-bold text-2xl text-gray-700 dark:text-gray-200 p-4 pb-0 flex-shrink-0">
-            <LayoutDashboard size={24} aria-hidden="true" />
-            Overview & Filters
-          </h2>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 p-4 pb-0 flex-shrink-0">
+            <h2 className="flex items-center gap-2 font-bold text-2xl text-gray-700 dark:text-gray-200">
+              <LayoutDashboard size={24} aria-hidden="true" />
+              Overview & Filters
+            </h2>
+            <div className="flex items-center gap-1 border border-gray-300 dark:border-slate-500 rounded-lg bg-white dark:bg-slate-800 pl-2 pr-2 min-w-0 w-full lg:max-w-[12rem] xl:max-w-[19rem]">
+              <Search size={18} className="flex-shrink-0 text-gray-400 dark:text-gray-400" aria-hidden />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="p-2 w-full outline-none text-sm bg-transparent text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
           <div className="flex-1 min-h-0 overflow-y-auto p-4 pt-3">
             <OverviewSection
               todayCount={todayCount}
               totalActive={activeJobs.length}
-              // waitingCount={waitingCount}
-              // decidedCount={decidedCount}
               setFilterStatus={setFilterStatus}
               embedded
             />
@@ -234,14 +247,7 @@ export default function DashboardClient({ user }: Props) {
               embedded
               currentStatus={filterStatus}
             />
-            <section className="border-t border-gray-400 dark:border-slate-300 pt-4 mt-4">
-              <FilterSection
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                filterStatus={filterStatus}
-                setFilterStatus={setFilterStatusFromString}
-              />
-            </section>
+            <RecentActivitySection jobs={safeAllJobs} maxItems={5} />
           </div>
         </motion.div>
 

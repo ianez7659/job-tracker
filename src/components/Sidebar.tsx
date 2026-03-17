@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import {
   Home,
@@ -24,6 +24,7 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { data: session } = useSession();
 
   const isActive = (href: string) => {
@@ -45,13 +46,14 @@ export default function Sidebar() {
 
       {/* Add job */}
       <div className="p-3 border-b border-slate-200 dark:border-slate-700">
-        <Link
-          href="/dashboard/jobs/new"
-          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-colors"
+        <button
+          type="button"
+          onClick={() => router.push("/dashboard?newJob=1")}
+          className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-colors"
         >
           <Plus size={18} />
           Add job
-        </Link>
+        </button>
       </div>
 
       {/* Nav links */}
