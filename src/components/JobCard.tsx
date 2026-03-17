@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Calendar, Building2, Link2, Sparkles, X } from "lucide-react";
 
 type JobCardProps = {
@@ -27,11 +27,13 @@ export default function JobCard({
   url,
   jd,
 }: JobCardProps) {
+  const router = useRouter();
   const [aiOpen, setAiOpen] = useState(false);
   const [aiLoading, setAiLoading] = useState<"skills" | "interview" | null>(null);
   const [aiResult, setAiResult] = useState<{ skills?: string; interview?: string }>({});
   const [aiError, setAiError] = useState<string | null>(null);
   const statusColors: Record<string, string> = {
+    applying: "bg-blue-100 text-blue-800 dark:bg-blue-500 dark:text-blue-100",
     resume: "bg-gray-200 text-gray-800 dark:bg-slate-500 dark:text-slate-100",
     interview1: "bg-yellow-100 text-yellow-800 dark:bg-yellow-500 dark:text-yellow-100",
     interview2: "bg-orange-200 text-orange-900 dark:bg-orange-500 dark:text-orange-100",
@@ -63,8 +65,24 @@ export default function JobCard({
     }
   };
 
+  const detailHref =
+    status === "applying"
+      ? `/dashboard/jobs/apply/${id}`
+      : `/dashboard/jobs/edit/${id}`;
+
   return (
-    <div className="relative  rounded-xl border border-gray-400 dark:border-slate-700 shadow hover:shadow-lg transition bg-white dark:bg-slate-600 overflow-hidden flex">
+    <div
+      className="relative rounded-xl border border-gray-400 dark:border-slate-700 shadow hover:shadow-lg transition bg-white dark:bg-slate-600 overflow-hidden flex cursor-pointer"
+      onClick={() => router.push(detailHref)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          router.push(detailHref);
+        }
+      }}
+    >
       {/* Status Indicator */}
       <div
         className={`w-2 sm:w-3 h-full ${statusColors[status]} absolute left-0 top-0`}
@@ -101,7 +119,9 @@ export default function JobCard({
           <span
             className={`text-xs font-semibold px-2 py-1 rounded-full ${statusColors[status]}`}
           >
-            {status.toUpperCase()}
+            {status === "resume"
+              ? "APPLIED"
+              : status.toUpperCase()}
           </span>
           <div className="flex items-center gap-2 dark:text-gray-200">
             <p className="text-sm">Status to:</p>
@@ -110,6 +130,7 @@ export default function JobCard({
               onChange={(e) => onStatusChange?.(id, e.target.value)}
               className="text-xs border border-gray-400 dark:border-slate-300 px-2 py-1 rounded bg-white dark:bg-slate-700 dark:text-gray-200"
             >
+              <option value="applying">Applying</option>
               <option value="resume">Resume</option>
               <option value="interview1">Interview1</option>
               <option value="interview2">Interview2</option>
@@ -124,7 +145,8 @@ export default function JobCard({
         <div className="flex justify-end gap-4 border-t pt-1 mt-4">
           <button
             type="button"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setAiError(null);
               setAiOpen(true);
             }}
@@ -133,15 +155,24 @@ export default function JobCard({
             <Sparkles size={14} />
             AI
           </button>
-          <Link
-            href={`/dashboard/jobs/edit/${id}`}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(
+                status === "applying"
+                  ? `/dashboard/jobs/apply/${id}`
+                  : `/dashboard/jobs/edit/${id}`,
+              );
+            }}
             className="flex items-center gap-1 text-xs text-gray-600 hover:text-indigo-600 px-2 py-1 rounded hover:bg-gray-100 dark:text-gray-300 dark:hover:text-indigo-300 dark:hover:bg-slate-700"
           >
             <Pencil size={14} />
             Edit
-          </Link>
+          </button>
           <button
-            onClick={async () => {
+            onClick={async (e) => {
+              e.stopPropagation();
               const ok = confirm("Do you really want to delete this job?");
               if (!ok) return;
               const res = await fetch(`/api/jobs/${id}`, {
@@ -194,7 +225,10 @@ export default function JobCard({
               <span className="font-medium">{company}</span> · {title}
             </p>
             <p className="text-xs text-gray-500 mb-4">
-              Stage: <span className="font-medium uppercase">{status}</span>
+              Stage:{" "}
+              <span className="font-medium uppercase">
+                {status === "resume" ? "APPLIED" : status}
+              </span>
             </p>
 
             {jd?.trim() ? (
