@@ -36,6 +36,14 @@ export default function ApplyJobClient({ job }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [resumeUploading, setResumeUploading] = useState(false);
   const [resumeUploadError, setResumeUploadError] = useState<string | null>(null);
+  const [matchLoading, setMatchLoading] = useState(false);
+  const [matchError, setMatchError] = useState<string | null>(null);
+  const [matchResult, setMatchResult] = useState<{
+    score: number;
+    summary: string;
+    matchedSkills: string[];
+    missingSkills: string[];
+  } | null>(null);
 
   const [form, setForm] = useState({
     title: job.title,
@@ -166,6 +174,8 @@ export default function ApplyJobClient({ job }: Props) {
   const handleRemoveResume = async () => {
     if (!form.resumeFile) return;
     setResumeUploadError(null);
+    setMatchResult(null);
+    setMatchError(null);
     try {
       const res = await fetch(`/api/jobs/${job.id}`, {
         method: "PATCH",
@@ -185,6 +195,41 @@ export default function ApplyJobClient({ job }: Props) {
       }
     } catch {
       setResumeUploadError("Failed to remove resume.");
+    }
+  };
+
+  const handleRunMatch = async () => {
+    if (!job.id) return;
+    setMatchError(null);
+    setMatchResult(null);
+    if (!form.jd?.trim()) {
+      setMatchError("Add a job description first for better matching.");
+      return;
+    }
+    if (!form.resumeFile) {
+      setMatchError("Attach a resume file first.");
+      return;
+    }
+    setMatchLoading(true);
+    try {
+      const res = await fetch(`/api/jobs/${job.id}/match`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setMatchError(data.message || "Failed to run skills match.");
+        return;
+      }
+      setMatchResult({
+        score: data.score ?? 0,
+        summary: data.summary ?? "",
+        matchedSkills: Array.isArray(data.matchedSkills) ? data.matchedSkills : [],
+        missingSkills: Array.isArray(data.missingSkills) ? data.missingSkills : [],
+      });
+    } catch {
+      setMatchError("Failed to run skills match.");
+    } finally {
+      setMatchLoading(false);
     }
   };
 
@@ -415,7 +460,7 @@ export default function ApplyJobClient({ job }: Props) {
 
           {/* Right: resume attachment */}
           <div className="flex-1 min-h-[16rem] lg:min-h-0 p-4 sm:p-6 bg-slate-50/50 dark:bg-slate-900/30 flex items-start">
-            <div className="w-full max-w-md space-y-3">
+            <div className="w-full max-w-md space-y-4">
               <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                 Attach Resume
               </h2>
@@ -440,23 +485,74 @@ export default function ApplyJobClient({ job }: Props) {
                 </p>
               )}
               {form.resumeFile && (
-                <div className="flex items-center gap-2 flex-wrap">
-                  <a
-                    href={form.resumeFile}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-xs text-indigo-600 dark:text-yellow-400 hover:underline"
-                  >
-                    Open attached resume
-                  </a>
-                  <button
-                    type="button"
-                    onClick={handleRemoveResume}
-                    className="text-xs text-gray-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
-                  >
-                    Remove
-                  </button>
-                </div>
+                <>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <a
+                      href={form.resumeFile}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center text-xs text-indigo-600 dark:text-yellow-400 hover:underline"
+                    >
+                      Open attached resume
+                    </a>
+                    <button
+                      type="button"
+                      onClick={handleRemoveResume}
+                      className="text-xs text-gray-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
+                    >
+                      Remove
+                    </button>
+                  </div>
+
+                  {/* AI skills match */}
+                  <div className="mt-3 border-t border-gray-200 dark:border-slate-700 pt-3">
+                    <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1 uppercase tracking-wide">
+                      AI skills match
+                    </h3>
+                    <p className="text-xs text-gray-500 dark:text-slate-400 mb-2">
+                      Compare this resume against the saved job description and get a skills match score.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleRunMatch}
+                      disabled={matchLoading}
+                      className="inline-flex items-center gap-1.5 rounded-md border border-indigo-500 text-indigo-600 dark:text-yellow-300 dark:border-yellow-400 px-3 py-1.5 text-xs font-medium hover:bg-indigo-50 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {matchLoading ? "Analyzing…" : "Run skills match"}
+                    </button>
+                    {matchError && (
+                      <p className="mt-2 text-xs text-red-600 dark:text-red-400">
+                        {matchError}
+                      </p>
+                    )}
+                    {matchResult && (
+                      <div className="mt-2 rounded-md border border-gray-200 dark:border-slate-600 bg-white/80 dark:bg-slate-800/80 p-2 space-y-1.5">
+                        <p className="text-xs font-semibold text-gray-800 dark:text-gray-100">
+                          Match score:{" "}
+                          <span className="text-indigo-600 dark:text-yellow-300">
+                            {matchResult.score}
+                          </span>
+                          /100
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-300">
+                          {matchResult.summary}
+                        </p>
+                        {matchResult.matchedSkills.length > 0 && (
+                          <p className="text-[11px] text-gray-600 dark:text-gray-300">
+                            <span className="font-semibold">Strong skills:</span>{" "}
+                            {matchResult.matchedSkills.join(", ")}
+                          </p>
+                        )}
+                        {matchResult.missingSkills.length > 0 && (
+                          <p className="text-[11px] text-gray-600 dark:text-gray-300">
+                            <span className="font-semibold">Gaps to improve:</span>{" "}
+                            {matchResult.missingSkills.join(", ")}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </div>

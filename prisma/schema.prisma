@@ -16,7 +16,7 @@ model User {
   password      String?
   image         String?
   emailVerified DateTime?
-  category      String?   // e.g. web_developer, software_developer (for future search/community)
+  category      String?
   accounts      Account[]
   jobs          Job[]
   sessions      Session[]
@@ -25,19 +25,19 @@ model User {
 }
 
 model Job {
-  id        String    @id @default(cuid())
-  title     String
-  company   String
-  status    String
+  id         String    @id @default(cuid())
+  title      String
+  company    String
+  status     String
+  appliedAt  DateTime
+  tags       String?
+  userId     String
+  createdAt  DateTime  @default(now())
+  deletedAt  DateTime?
+  url        String?
+  jd         String?
   resumeFile String?
-  appliedAt DateTime
-  tags      String?
-  userId    String
-  createdAt DateTime  @default(now())
-  deletedAt DateTime?
-  url       String?
-  jd        String?   // Job description (from posting or pasted)
-  user      User      @relation(fields: [userId], references: [id])
+  user       User      @relation(fields: [userId], references: [id])
 }
 
 model Account {

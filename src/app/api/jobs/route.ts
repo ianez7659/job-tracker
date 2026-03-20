@@ -49,7 +49,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Job created", job }, { status: 201 });
   } catch (error) {
     console.error("Error creating job:", error);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    const detail = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json(
+      {
+        message: "Server error",
+        error: detail,
+      },
+      { status: 500 },
+    );
   }
 }
 

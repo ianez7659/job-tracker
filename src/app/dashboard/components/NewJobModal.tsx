@@ -90,14 +90,39 @@ export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
         body: JSON.stringify(jobData),
       });
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message || "Failed to create job");
+      const raw = await res.text();
+      type CreateJobJson = {
+        message?: string;
+        error?: string;
+        job?: unknown;
+      };
+      let result: CreateJobJson = {};
+      try {
+        result = raw ? (JSON.parse(raw) as CreateJobJson) : {};
+      } catch {
+        throw new Error(
+          raw?.trim() || `Invalid response (HTTP ${res.status})`,
+        );
+      }
 
-      onCreated(result);
+      if (!res.ok) {
+        throw new Error(
+          result.message || result.error || "Failed to create job",
+        );
+      }
+
+      const created = result.job;
+      if (!created || typeof created !== "object" || !("id" in created)) {
+        throw new Error("Server did not return the new job. Try refreshing.");
+      }
+
+      onCreated(created);
       onClose();
     } catch (error) {
       console.error(error);
-      alert("Failed to create job");
+      alert(
+        error instanceof Error ? error.message : "Failed to create job",
+      );
     } finally {
       setSubmitting(false);
     }

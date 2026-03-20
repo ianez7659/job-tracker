@@ -26,7 +26,17 @@ export default function LoginClient() {
         body: JSON.stringify({ name, email, password }),
       });
 
-      const data = await res.json();
+      const raw = await res.text();
+      let data: { message?: string } = {};
+      try {
+        data = raw ? (JSON.parse(raw) as { message?: string }) : {};
+      } catch {
+        data = {
+          message:
+            raw?.trim() ||
+            `Registration failed (HTTP ${res.status}). Check the server terminal for errors.`,
+        };
+      }
 
       if (!res.ok) {
         alert(data.message || "Failed to register");
