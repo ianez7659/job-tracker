@@ -38,6 +38,20 @@ model Job {
   jd         String?
   resumeFile String?
   user       User      @relation(fields: [userId], references: [id])
+  atsMatchSnapshots AtsMatchSnapshot[]
+}
+
+/// ATS-style match runs for Applying (history, deltas, future subscores/actions).
+model AtsMatchSnapshot {
+  id        String   @id @default(cuid())
+  jobId     String
+  createdAt DateTime @default(now())
+  payload   Json
+
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId, createdAt])
+  @@map("AtsMatchSnapshot")
 }
 
 model Account {
