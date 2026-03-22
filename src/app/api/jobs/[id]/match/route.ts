@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 // Ensure Node runtime for any Node-only dependencies in future.
 export const runtime = "nodejs";
+const ATS_SNAPSHOT_KEEP_PER_JOB = 5;
 
 type MatchResult = {
   score: number;
@@ -217,6 +218,21 @@ export async function POST(
       },
       select: { id: true, createdAt: true },
     });
+
+    // Keep only the most recent N snapshots per job to cap table growth.
+    const staleSnapshots = await prisma.atsMatchSnapshot.findMany({
+      where: { jobId },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      skip: ATS_SNAPSHOT_KEEP_PER_JOB,
+      select: { id: true },
+    });
+    if (staleSnapshots.length > 0) {
+      await prisma.atsMatchSnapshot.deleteMany({
+        where: {
+          id: { in: staleSnapshots.map((s) => s.id) },
+        },
+      });
+    }
 
     const prevScore = previous ? scoreFromSnapshotPayload(previous.payload) : null;
     const scoreDelta =

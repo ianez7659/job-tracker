@@ -43,6 +43,7 @@ export default function ApplyJobClient({ job }: Props) {
     summary: string;
     matchedSkills: string[];
     missingSkills: string[];
+    scoreDelta: number | null;
   } | null>(null);
 
   const [form, setForm] = useState({
@@ -225,6 +226,7 @@ export default function ApplyJobClient({ job }: Props) {
         summary: data.summary ?? "",
         matchedSkills: Array.isArray(data.matchedSkills) ? data.matchedSkills : [],
         missingSkills: Array.isArray(data.missingSkills) ? data.missingSkills : [],
+        scoreDelta: typeof data.scoreDelta === "number" ? data.scoreDelta : null,
       });
     } catch {
       setMatchError("Failed to run skills match.");
@@ -534,6 +536,30 @@ export default function ApplyJobClient({ job }: Props) {
                           </span>
                           /100
                         </p>
+                        {matchResult.scoreDelta !== null ? (
+                          <p
+                            className="text-[11px] text-gray-600 dark:text-gray-300"
+                          >
+                            Score delta vs previous run:{" "}
+                            <span
+                              className={
+                                matchResult.scoreDelta > 0
+                                  ? "text-emerald-600 dark:text-emerald-400"
+                                  : matchResult.scoreDelta < 0
+                                    ? "text-rose-600 dark:text-rose-400"
+                                    : "text-gray-600 dark:text-gray-300"
+                              }
+                            >
+                              {matchResult.scoreDelta > 0
+                                ? `+${matchResult.scoreDelta}`
+                                : String(matchResult.scoreDelta)}
+                            </span>
+                          </p>
+                        ) : (
+                          <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                            First match run (no previous snapshot).
+                          </p>
+                        )}
                         <p className="text-xs text-gray-600 dark:text-gray-300">
                           {matchResult.summary}
                         </p>
