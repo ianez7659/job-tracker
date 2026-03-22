@@ -4,10 +4,32 @@ import OpenAI from "openai";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export type AiAssistAction = "skills" | "interview";
+export type AiAssistAction = "skills" | "interview" | "advice";
+
+function getAdviceSystemPrompt(status: string): string {
+  const lang =
+    "Write in the same language as the job description. Be concise, practical, and actionable. Format using Markdown: use ## or ### headings, bullet or numbered lists, **bold** for emphasis, and short paragraphs (not raw MDX/JSX).";
+  switch (status) {
+    case "resume":
+      return `You are a career coach. The candidate has already submitted their application (applied). ${lang}
+Focus on: what to expect next, how to prepare while waiting, how to align follow-ups and LinkedIn outreach with this role, and 3–5 concrete preparation priorities based on the JD. Do NOT repeat raw ATS keyword lists.`;
+    case "interview1":
+      return `You are a career coach preparing the candidate for an early / first interview round (screening or hiring manager intro). ${lang}
+Focus on: company/role story, motivation, behavioral examples, clarifying questions to ask them, and how to connect their experience to the JD.`;
+    case "interview2":
+      return `You are a technical interview coach for a mid-round interview. ${lang}
+Focus on: likely technical topics from the JD, system design or coding themes if relevant, how to structure answers, and what to review in the next few days.`;
+    case "interview3":
+      return `You are a career coach for a late / final round (culture, leadership, or bar-raiser style). ${lang}
+Focus on: leadership & collaboration stories, trade-offs, conflict resolution, and professional questions about team/org. Avoid generic filler.`;
+    default:
+      return `You are a career coach helping the candidate prepare for this role. ${lang}
+Give practical next-step advice based on the job description.`;
+  }
+}
 
 const PROMPTS: Record<
-  AiAssistAction,
+  Exclude<AiAssistAction, "advice">,
   { system: string; userPrefix: string }
 > = {
   skills: {
@@ -41,7 +63,11 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { jobId, action } = body as { jobId?: string; action?: AiAssistAction };
 
-    if (!jobId || !action || !["skills", "interview"].includes(action)) {
+    if (
+      !jobId ||
+      !action ||
+      !["skills", "interview", "advice"].includes(action)
+    ) {
       return NextResponse.json(
         { message: "Missing or invalid jobId or action" },
         { status: 400 }
@@ -68,12 +94,24 @@ export async function POST(req: Request) {
       );
     }
 
-    const { system, userPrefix } = PROMPTS[action];
-    let systemPrompt = system;
-    if (action === "interview" && (job.status === "interview2" || job.status === "interview3")) {
-      systemPrompt = INTERVIEW_TECH_SYSTEM;
+    const roleContext = `Position level / title: ${job.title ?? "—"}\nCompany: ${job.company ?? "—"}\nCurrent pipeline stage: ${job.status}\n\n`;
+
+    let systemPrompt: string;
+    let userContent: string;
+    let maxTokens = 1500;
+
+    if (action === "advice") {
+      systemPrompt = getAdviceSystemPrompt(job.status);
+      userContent = `${roleContext}Job description:\n\n${jdText}`;
+      maxTokens = 900;
+    } else {
+      const { system, userPrefix } = PROMPTS[action];
+      systemPrompt = system;
+      if (action === "interview" && (job.status === "interview2" || job.status === "interview3")) {
+        systemPrompt = INTERVIEW_TECH_SYSTEM;
+      }
+      userContent = `${roleContext}${userPrefix}${jdText}`;
     }
-    const userContent = `${userPrefix}${jdText}`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -81,7 +119,7 @@ export async function POST(req: Request) {
         { role: "system", content: systemPrompt },
         { role: "user", content: userContent },
       ],
-      max_tokens: 1500,
+      max_tokens: maxTokens,
     });
 
     const text =
