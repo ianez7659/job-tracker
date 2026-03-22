@@ -17,14 +17,10 @@ const staggerDelay = 0.04;
 type Props = {
   jobs: Job[];
   onDelete: (id: string) => Promise<void>;
-  onStatusChange: (
-    id: string,
-    newStatus: Job["status"] | string
-  ) => Promise<void>;
   singleColumn?: boolean;
 };
 
-export default function JobList({ jobs, onDelete, onStatusChange, singleColumn }: Props) {
+export default function JobList({ jobs, onDelete, singleColumn }: Props) {
   const [visibleCount, setVisibleCount] = useState(INITIAL_SIZE);
 
   // When jobs load (or filter changes): show at least INITIAL_SIZE if there are jobs, or reduce if list shrank
@@ -55,7 +51,6 @@ export default function JobList({ jobs, onDelete, onStatusChange, singleColumn }
             <JobCard
               {...job}
               onDelete={onDelete}
-              onStatusChange={onStatusChange}
             />
           </motion.li>
         ))}

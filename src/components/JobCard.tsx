@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, Trash2, Calendar, Building2, Link2, Sparkles, X } from "lucide-react";
+import { X, Calendar, Building2, Link2 } from "lucide-react";
+import { getAdvanceButtonLabel } from "@/lib/jobPipeline";
 
 type JobCardProps = {
   id: string;
@@ -11,9 +11,7 @@ type JobCardProps = {
   status: string;
   appliedAt?: string | Date | null;
   onDelete: (id: string) => void;
-  onStatusChange?: (id: string, newStatus: string) => void;
   url?: string | null;
-  jd?: string | null;
 };
 
 export default function JobCard({
@@ -23,46 +21,19 @@ export default function JobCard({
   status,
   appliedAt,
   onDelete,
-  onStatusChange,
   url,
-  jd,
 }: JobCardProps) {
   const router = useRouter();
-  const [aiOpen, setAiOpen] = useState(false);
-  const [aiLoading, setAiLoading] = useState<"skills" | "interview" | null>(null);
-  const [aiResult, setAiResult] = useState<{ skills?: string; interview?: string }>({});
-  const [aiError, setAiError] = useState<string | null>(null);
   const statusColors: Record<string, string> = {
-    applying: "bg-blue-100 text-blue-800 dark:bg-blue-500 dark:text-blue-100",
-    resume: "bg-gray-200 text-gray-800 dark:bg-slate-500 dark:text-slate-100",
+    applying:
+      "bg-indigo-100 text-indigo-900 dark:bg-indigo-600 dark:text-indigo-50",
+    resume:
+      "bg-emerald-100 text-emerald-900 dark:bg-emerald-600 dark:text-emerald-50",
     interview1: "bg-yellow-100 text-yellow-800 dark:bg-yellow-500 dark:text-yellow-100",
     interview2: "bg-orange-200 text-orange-900 dark:bg-orange-500 dark:text-orange-100",
     interview3: "bg-orange-400 text-orange-900 dark:bg-orange-500 dark:text-orange-100",
     offer: "bg-green-200 text-green-800",
     rejected: "bg-red-200 text-red-800",
-  };
-  const handleAiGenerate = async (action: "skills" | "interview") => {
-    setAiError(null);
-    setAiLoading(action);
-    try {
-      const res = await fetch("/api/ai/assist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobId: id, action }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setAiError(data.message || "Request failed");
-        return;
-      }
-      if (data.text) {
-        setAiResult((prev) => ({ ...prev, [action]: data.text }));
-      }
-    } catch {
-      setAiError("Request failed");
-    } finally {
-      setAiLoading(null);
-    }
   };
 
   const detailHref =
@@ -70,9 +41,28 @@ export default function JobCard({
       ? `/dashboard/jobs/apply/${id}`
       : `/dashboard/jobs/edit/${id}`;
 
+  const handleDeleteClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const ok = window.confirm(
+      "Move this job to Trash? You can restore it from the Trash Bin later.",
+    );
+    if (!ok) return;
+    const res = await fetch(`/api/jobs/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ softDelete: true }),
+    });
+    if (res.ok) {
+      onDelete(id);
+    } else {
+      alert("Failed to delete job");
+    }
+  };
+
   return (
     <div
-      className="relative rounded-xl border border-gray-400 dark:border-slate-700 shadow hover:shadow-lg transition bg-white dark:bg-slate-600 overflow-hidden flex cursor-pointer"
+      className="relative rounded-xl border border-gray-400 dark:border-slate-700 bg-white dark:bg-slate-600 overflow-hidden flex cursor-pointer shadow-md transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-indigo-50/60 hover:shadow-xl hover:border-indigo-500 hover:ring-2 hover:ring-indigo-200/90 dark:hover:bg-slate-500 dark:hover:border-yellow-500/70 dark:hover:ring-yellow-400/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-yellow-400 dark:focus-visible:ring-offset-slate-900"
       onClick={() => router.push(detailHref)}
       role="button"
       tabIndex={0}
@@ -85,13 +75,26 @@ export default function JobCard({
     >
       {/* Status Indicator */}
       <div
-        className={`w-2 sm:w-3 h-full ${statusColors[status]} absolute left-0 top-0`}
+        className={`w-2 sm:w-3 h-full ${statusColors[status]} absolute left-0 top-0 z-[1]`}
       />
 
       <div className="py-2 px-6 pl-6 flex-1 flex flex-col gap-3">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{title}</h3>
-          <div className="text-sm text-gray-600 dark:text-gray-200 flex items-center gap-1 mt-1">
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 min-w-0 flex-1 leading-snug">
+              {title}
+            </h3>
+            <button
+              type="button"
+              onClick={handleDeleteClick}
+              className="shrink-0 inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white/95 text-gray-500  transition hover:border-red-300 hover:bg-red-50 hover:text-red-600 dark:border-slate-600 dark:bg-slate-800/95 dark:text-slate-400 dark:hover:border-red-500 dark:hover:bg-red-950/40 dark:hover:text-red-300"
+              aria-label="Move job to trash"
+              title="Move to trash"
+            >
+              <X size={18} strokeWidth={2} />
+            </button>
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-200 flex items-center gap-1 ">
             <Building2 size={14} />
             {company}
           </div>
@@ -107,6 +110,7 @@ export default function JobCard({
               href={url}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className="text-blue-600 flex items-center gap-1 hover:underline dark:text-yellow-400"
             >
               <Link2 size={14} />
@@ -115,184 +119,34 @@ export default function JobCard({
           )}
         </div>
 
-        <div className="flex justify-between items-center mt-2">
+        <div className="flex flex-col gap-1.5 mt-2">
           <span
-            className={`text-xs font-semibold px-2 py-1 rounded-full ${statusColors[status]}`}
+            className={`text-xs font-semibold px-2 py-1 rounded-full w-fit ${statusColors[status]}`}
           >
             {status === "resume"
               ? "APPLIED"
               : status.toUpperCase()}
           </span>
-          <div className="flex items-center gap-2 dark:text-gray-200">
-            <p className="text-sm">Status to:</p>
-            <select
-              value={status}
-              onChange={(e) => onStatusChange?.(id, e.target.value)}
-              className="text-xs border border-gray-400 dark:border-slate-300 px-2 py-1 rounded bg-white dark:bg-slate-700 dark:text-gray-200"
-            >
-              <option value="applying">Applying</option>
-              <option value="resume">Resume</option>
-              <option value="interview1">Interview1</option>
-              <option value="interview2">Interview2</option>
-              <option value="interview3">Interview3</option>
-              <option value="offer">Offer</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex justify-end gap-4 border-t pt-1 mt-4">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setAiError(null);
-              setAiOpen(true);
-            }}
-            className="flex items-center gap-1 text-xs text-violet-600 hover:text-violet-700 px-2 py-1 rounded hover:bg-violet-50 dark:text-orange-300 dark:hover:text-violet-200 dark:hover:bg-orange-600"
-          >
-            <Sparkles size={14} />
-            AI
-          </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push(
-                status === "applying"
-                  ? `/dashboard/jobs/apply/${id}`
-                  : `/dashboard/jobs/edit/${id}`,
-              );
-            }}
-            className="flex items-center gap-1 text-xs text-gray-600 hover:text-indigo-600 px-2 py-1 rounded hover:bg-gray-100 dark:text-gray-300 dark:hover:text-indigo-300 dark:hover:bg-slate-700"
-          >
-            <Pencil size={14} />
-            Edit
-          </button>
-          <button
-            onClick={async (e) => {
-              e.stopPropagation();
-              const ok = confirm("Do you really want to delete this job?");
-              if (!ok) return;
-              const res = await fetch(`/api/jobs/${id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ softDelete: true }),
-              });
-              if (res.ok) {
-                onDelete(id);
-              } else {
-                alert("Failed to delete job");
-              }
-            }}
-            className="flex items-center gap-1 text-xs text-gray-600 hover:text-red-600 px-2 py-1 rounded hover:bg-gray-100 dark:text-gray-300 dark:hover:text-red-300 dark:hover:bg-slate-700"
-          >
-            <Trash2 size={14} />
-            Delete
-          </button>
+          <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-snug">
+            {status === "offer" || status === "rejected" ? (
+              <>Archived outcome — open for details.</>
+            ) : (
+              <>
+                Advance stages from the job detail page
+                {getAdvanceButtonLabel(status) ? (
+                  <span className="block mt-0.5 text-gray-600 dark:text-gray-300">
+                    Next: {getAdvanceButtonLabel(status)}
+                  </span>
+                ) : status === "interview3" ? (
+                  <span className="block mt-0.5 text-gray-600 dark:text-gray-300">
+                    Next: mark Offer or Rejected on the detail page.
+                  </span>
+                ) : null}
+              </>
+            )}
+          </p>
         </div>
       </div>
-
-      {/* AI Assist Modal */}
-      {aiOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-          onClick={() => setAiOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-label="AI assist"
-        >
-          <div
-            className="bg-white rounded-xl shadow-xl max-w-md md:max-w-2xl w-full p-5 max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <Sparkles size={20} className="text-violet-500" />
-                AI Assist
-              </h3>
-              <button
-                type="button"
-                onClick={() => setAiOpen(false)}
-                className="p-1 rounded hover:bg-gray-100 text-gray-500"
-                aria-label="Close"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <p className="text-sm text-gray-600 mb-2">
-              <span className="font-medium">{company}</span> · {title}
-            </p>
-            <p className="text-xs text-gray-500 mb-4">
-              Stage:{" "}
-              <span className="font-medium uppercase">
-                {status === "resume" ? "APPLIED" : status}
-              </span>
-            </p>
-
-            {jd?.trim() ? (
-              <section className="mb-4">
-                <h4 className="font-medium text-gray-800 mb-1">Saved job description</h4>
-                <div className="text-xs text-gray-600 bg-gray-50 rounded-lg p-3 max-h-40 overflow-y-auto whitespace-pre-wrap border border-gray-200">
-                  {jd.trim()}
-                </div>
-              </section>
-            ) : (
-              <p className="text-xs text-gray-500 mb-4">
-                No job description saved. Add one in Edit.
-              </p>
-            )}
-
-            {aiError && (
-              <p className="text-sm text-red-600 mb-2">{aiError}</p>
-            )}
-
-            <div className="space-y-4 text-sm">
-              <section>
-                <h4 className="font-medium text-gray-800 mb-1">Key skills extracted</h4>
-                <p className="text-gray-500 text-xs mb-2">
-                  AI will extract key skills from the job description to match your resume.
-                </p>
-                <button
-                  type="button"
-                  disabled={!jd?.trim() || aiLoading !== null}
-                  onClick={() => handleAiGenerate("skills")}
-                  className="text-xs px-3 py-1.5 rounded bg-violet-100 text-violet-700 hover:bg-violet-200 disabled:opacity-50"
-                >
-                  {aiLoading === "skills" ? "Generating…" : "Generate"}
-                </button>
-                {aiResult.skills && (
-                  <div className="mt-2 text-xs text-gray-700 bg-gray-50 rounded p-2 max-h-32 overflow-y-auto whitespace-pre-wrap border border-gray-200">
-                    {aiResult.skills}
-                  </div>
-                )}
-              </section>
-              <section>
-                <h4 className="font-medium text-gray-800 mb-1">Interview prep questions</h4>
-                <p className="text-gray-500 text-xs mb-2">
-                  {status === "interview2" || status === "interview3"
-                    ? "Technical focus: coding, live coding, and LeetCode-style questions based on the JD."
-                    : "Get suggested questions and talking points for this role and company."}
-                </p>
-                <button
-                  type="button"
-                  disabled={!jd?.trim() || aiLoading !== null}
-                  onClick={() => handleAiGenerate("interview")}
-                  className="text-xs px-3 py-1.5 rounded bg-violet-100 text-violet-700 hover:bg-violet-200 disabled:opacity-50"
-                >
-                  {aiLoading === "interview" ? "Generating…" : "Generate"}
-                </button>
-                {aiResult.interview && (
-                  <div className="mt-2 text-xs text-gray-700 bg-gray-50 rounded p-2 max-h-32 overflow-y-auto whitespace-pre-wrap border border-gray-200">
-                    {aiResult.interview}
-                  </div>
-                )}
-              </section>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

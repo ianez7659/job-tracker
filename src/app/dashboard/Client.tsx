@@ -127,46 +127,6 @@ export default function DashboardClient({ user }: Props) {
     }
   };
 
-  const onStatusChange = async (id: string, newStatus: Job["status"]) => {
-    // Optimistic update with Date-safe fields, keep allJobs in sync
-    const isFinal = newStatus === "offer" || newStatus === "rejected";
-    const prevJobs = safeJobs;
-    const prevAll = safeAllJobs;
-
-    if (isFinal) {
-      setJobs((p) => (Array.isArray(p) ? p : []).filter((j) => j.id !== id));
-      setAllJobs((p) =>
-        (Array.isArray(p) ? p : []).map((j) =>
-          j.id === id ? { ...j, status: newStatus, deletedAt: new Date() } : j,
-        ),
-      );
-    } else {
-      setJobs((p) =>
-        (Array.isArray(p) ? p : []).map((j) =>
-          j.id === id ? { ...j, status: newStatus } : j,
-        ),
-      );
-      setAllJobs((p) =>
-        (Array.isArray(p) ? p : []).map((j) =>
-          j.id === id ? { ...j, status: newStatus, deletedAt: null } : j,
-        ),
-      );
-    }
-
-    const res = await fetch(`/api/jobs/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: newStatus }),
-    });
-
-    if (!res.ok) {
-      // Roll back both states on failure
-      setJobs(prevJobs);
-      setAllJobs(prevAll);
-      alert("Failed to update status");
-    }
-  };
-
   return (
     <section className="p-4 sm:px-6 sm:py-2 min-h-screen flex flex-col lg:h-[calc(100vh-8rem)]">
       {/* Header */}
@@ -269,7 +229,6 @@ export default function DashboardClient({ user }: Props) {
             <JobList
               jobs={filteredJobs}
               onDelete={onDelete}
-              onStatusChange={onStatusChange}
               singleColumn
             />
           </div>
