@@ -298,9 +298,9 @@ export default function ApplyJobClient({ job }: Props) {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row min-h-[32rem]">
+        <div className="flex flex-col lg:flex-row lg:items-stretch min-h-[32rem]">
           {/* Left: view or form */}
-          <div className="flex-1 p-4 sm:p-6 border-r-0 lg:border-r border-gray-200 dark:border-slate-600">
+          <div className="flex-1 min-w-0 p-4 sm:p-6 border-r-0 lg:border-r border-gray-200 dark:border-slate-600">
             {!isEditing ? (
               <div className="space-y-4">
                 <div>
@@ -328,7 +328,7 @@ export default function ApplyJobClient({ job }: Props) {
                       href={form.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-indigo-600 dark:text-yellow-400 underline"
+                      className="text-sm text-indigo-600 dark:text-yellow-400 underline break-all inline-block max-w-full"
                     >
                       {form.url}
                     </a>
@@ -462,7 +462,7 @@ export default function ApplyJobClient({ job }: Props) {
           </div>
 
           {/* Right: resume attachment */}
-          <div className="flex-1 min-h-[16rem] lg:min-h-0 p-4 sm:p-6 bg-slate-50/50 dark:bg-slate-900/30 flex items-start">
+          <div className="flex-1 min-w-0 min-h-[16rem] p-4 sm:p-6 bg-slate-50/50 dark:bg-slate-900/30 flex items-start">
             <div className="w-full max-w-md space-y-4">
               <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                 Attach Resume

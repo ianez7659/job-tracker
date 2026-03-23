@@ -373,7 +373,7 @@ export default function EditJobClient({ job }: Props) {
                       href={form.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-indigo-600 dark:text-yellow-400 underline"
+                      className="text-sm text-indigo-600 dark:text-yellow-400 underline break-all inline-block max-w-full"
                     >
                       {form.url}
                     </a>
