@@ -33,9 +33,9 @@ export default function TrashClient({ jobs: initialJobs }: Props) {
   };
 
   return (
-    <section className="p-12">
+    <section className="p-12 text-gray-900 dark:text-gray-100">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 ">
-        <h1 className="text-2xl font-bold mb-4 flex flex-row items-center gap-2">
+        <h1 className="text-2xl font-bold mb-4 flex flex-row items-center gap-2 text-gray-900 dark:text-gray-100">
           <Trash2 size={20} /> Deleted Application List
         </h1>
         <Link
@@ -47,15 +47,18 @@ export default function TrashClient({ jobs: initialJobs }: Props) {
       </div>
 
       {jobs.length === 0 ? (
-        <p className="text-gray-500">Trash bin is empty.</p>
+        <p className="text-gray-500 dark:text-gray-400">Trash bin is empty.</p>
       ) : (
         <ul className="space-y-4 w-full sm:w-[80%]">
           {jobs.map((job) => (
-            <li key={job.id} className="bg-white shadow border rounded p-4">
-              <div className="font-semibold">
+            <li
+              key={job.id}
+              className="bg-white dark:bg-slate-800 shadow border border-gray-200 dark:border-slate-600 rounded p-4"
+            >
+              <div className="font-semibold text-gray-900 dark:text-gray-100">
                 {job.title} @ {job.company}
               </div>
-              <div className="text-sm text-gray-500 mb-2">
+              <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
                 Deleted Date:{" "}
                 {job.deletedAt ? new Date(job.deletedAt).toLocaleString() : "-"}
               </div>
