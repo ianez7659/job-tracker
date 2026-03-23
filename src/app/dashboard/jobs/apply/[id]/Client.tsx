@@ -117,7 +117,8 @@ export default function ApplyJobClient({ job }: Props) {
         tags: tagsArray,
         jd: form.jd?.trim() || null,
         resumeFile: form.resumeFile?.trim() || null,
-        status: "resume", // move from applying -> applied
+        // Keep current pipeline stage; only "Confirm & Mark as Applied" moves applying → resume
+        status: job.status,
       }),
     });
 
