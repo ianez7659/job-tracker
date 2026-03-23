@@ -6,7 +6,8 @@ export const selectBase =
 
 export const labelBase = "block text-sm font-medium text-black mb-1";
 
-export const headingBase = "text-2xl font-bold text-black my-6";
+export const headingBase =
+  "text-2xl font-bold text-black dark:text-white my-6";
 
 export const buttonBase =
   "bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 text-sm";
