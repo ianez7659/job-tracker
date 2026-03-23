@@ -78,7 +78,7 @@ export default function NewJobClient() {
       });
       setFetchJdError(null);
 
-      router.push("/dashboard");
+      router.push("/dashboard?jobCreated=1");
     } catch (error) {
       console.error(error);
       alert("Submission failed");

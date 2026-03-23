@@ -6,7 +6,8 @@ type Status = Job["status"];
 
 export const isFinal = (j: Job) =>
   j.status === "offer" || j.status === "rejected";
-export const isActive = (j: Job) => j.deletedAt === null;
+/** Treat missing `deletedAt` (e.g. from JSON) as active, same as null */
+export const isActive = (j: Job) => j.deletedAt == null;
 
 export function activeOnly(all: Job[]) {
   if (!Array.isArray(all)) {

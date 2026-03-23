@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import type { Job } from "@/generated/prisma";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -22,6 +21,21 @@ import {
   countWaitingActive,
   statusCountsActive,
 } from "@/app/dashboard/lib/jobs/metrics";
+import type { Job } from "@/generated/prisma";
+
+/** Put newly created job at top (matches GET /api/jobs order) and keep deletedAt explicit. */
+function upsertJobList(prev: Job[] | undefined, job: Job): Job[] {
+  const normalized = {
+    ...job,
+    deletedAt: job.deletedAt ?? null,
+  } as Job;
+  const list = Array.isArray(prev) ? prev : [];
+  const rest = list.filter((j) => j.id !== normalized.id);
+  return [normalized, ...rest].sort(
+    (a, b) =>
+      new Date(b.appliedAt).getTime() - new Date(a.appliedAt).getTime(),
+  );
+}
 
 type Props = {
   user: {
@@ -43,8 +57,8 @@ export default function DashboardClient({ user }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   // Data fetching hooks
-  const { jobs, setJobs } = useJobs();
-  const { allJobs, setAllJobs } = useAllJobs();
+  const { jobs, setJobs, refetchJobs } = useJobs();
+  const { allJobs, setAllJobs, refetchAllJobs } = useAllJobs();
 
   // Ensure arrays are always arrays (defensive programming)
   const safeJobs = Array.isArray(jobs) ? jobs : [];
@@ -239,15 +253,8 @@ export default function DashboardClient({ user }: Props) {
         <NewJobModal
           onClose={() => setShowNewModal(false)}
           onCreated={(job: Job) => {
-            // 새로 만든 카드를 활성 목록에 바로 반영
-            setJobs((prev) => {
-              const list = Array.isArray(prev) ? prev : [];
-              return [...list, job];
-            });
-            setAllJobs((prev) => {
-              const list = Array.isArray(prev) ? prev : [];
-              return [...list, job];
-            });
+            setJobs((prev) => upsertJobList(prev, job));
+            setAllJobs((prev) => upsertJobList(prev, job));
             setShowNewModal(false);
           }}
         />
