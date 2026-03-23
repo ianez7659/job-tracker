@@ -40,6 +40,7 @@ You can also sign in with **GitHub** or **Google** if you prefer.
 - Tailwind CSS
 - Framer Motion
 - Recharts
+- react-markdown, remark-gfm
 
 **Backend**
 
@@ -47,6 +48,8 @@ You can also sign in with **GitHub** or **Google** if you prefer.
 - Prisma ORM
 - PostgreSQL (Render)
 - NextAuth.js (GitHub + Google OAuth + Credentials)
+- OpenAI API (assist, match)
+- Vercel Blob
 
 **Deployment**
 
@@ -60,8 +63,10 @@ You can also sign in with **GitHub** or **Google** if you prefer.
 **Job Management**
 
 - Add / Edit / Delete job applications
-- Status workflow: Resume → Interview 1/2/3 → Offer / Rejected
+- Pipeline / Status workflow: Applying → Applied → Interview 1/2/3 → Offer / Rejected
 - Company, position level (Intern / Co-op / Entry / Junior / Intermediate / Senior / Lead), applied date, tags, job URL
+- Apply flow (resume PDF, optional ATS-style match vs JD).
+- Job detail (Edit) — AI stage advice (auto) and expected interview questions (on demand), JD-based.
 - Soft delete with restore & archive system
 
 **Dashboard & Analytics**
@@ -124,10 +129,8 @@ Single codebase with separation between UI components and API route handlers.
 
 - Role-based access
 - Advanced filters and saved views
-- Export (CSV/PDF)
 - Analytics by period and position type
 - Email reminders for follow-ups
-- File attachments (resume, notes)
 
 ---
 
@@ -194,6 +197,8 @@ GITHUB_ID="your-github-client-id"
 GITHUB_SECRET="your-github-client-secret"
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
+OPENAI_API_KEY="sk-your-key-here"
+
 ```
 
 ### Run:
