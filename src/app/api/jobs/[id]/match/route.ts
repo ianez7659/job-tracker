@@ -69,6 +69,65 @@ function scoreFromSnapshotPayload(payload: unknown): number | null {
   return typeof s === "number" && Number.isFinite(s) ? s : null;
 }
 
+/** Map Node fetch failures (ECONNREFUSED, etc.) to an actionable API response. */
+function pdfWorkerConnectionFailure(
+  err: unknown,
+  baseWorkerLabel: string,
+): { message: string; status: number } | null {
+  const codes = new Set<string>();
+  const walk = (e: unknown, depth: number) => {
+    if (depth > 10 || e == null) return;
+    if (typeof AggregateError !== "undefined" && e instanceof AggregateError) {
+      for (const x of e.errors) walk(x, depth + 1);
+    }
+    if (e instanceof Error) {
+      walk(e.cause, depth + 1);
+    }
+    if (typeof e === "object" && e !== null) {
+      const o = e as Record<string, unknown>;
+      if (typeof o.code === "string") codes.add(o.code);
+      const errs = o.errors;
+      if (Array.isArray(errs)) {
+        for (const x of errs) walk(x, depth + 1);
+      }
+      if (Array.isArray(e)) {
+        for (const x of e) walk(x, depth + 1);
+      }
+    }
+  };
+  walk(err, 0);
+
+  if (codes.has("ECONNREFUSED")) {
+    return {
+      message:
+        `Cannot connect to the PDF worker (${baseWorkerLabel}). It is not running or PDF_WORKER_URL is wrong. ` +
+        `Start your local PDF service and set PDF_WORKER_URL in .env.local to its base URL (no trailing slash), then retry.`,
+      status: 503,
+    };
+  }
+  if (codes.has("ENOTFOUND")) {
+    return {
+      message: `PDF worker host could not be resolved (${baseWorkerLabel}). Check PDF_WORKER_URL.`,
+      status: 503,
+    };
+  }
+  if (codes.has("ETIMEDOUT") || codes.has("ECONNRESET")) {
+    return {
+      message: `PDF worker connection failed (${baseWorkerLabel}). Check that the service is running and reachable.`,
+      status: 503,
+    };
+  }
+
+  const msg = err instanceof Error ? err.message : String(err);
+  if (/fetch failed/i.test(msg) && baseWorkerLabel && baseWorkerLabel !== "(unset)") {
+    return {
+      message: `Request to PDF worker failed (${baseWorkerLabel}). ${msg}`,
+      status: 503,
+    };
+  }
+  return null;
+}
+
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -220,12 +279,18 @@ export async function POST(
       }
     } catch (e) {
       console.error("Failed to extract resume text:", e);
+      const baseLabel =
+        (process.env.PDF_WORKER_URL ?? "").replace(/\/+$/, "") || "(unset)";
+      const conn = pdfWorkerConnectionFailure(e, baseLabel);
+      if (conn) {
+        return NextResponse.json({ message: conn.message }, { status: conn.status });
+      }
       return NextResponse.json(
         {
           message:
-            "Could not extract resume text. If you just uploaded a resume, try re-uploading it or check the PDF worker service logs.",
+            "Could not extract resume text. If you just uploaded a resume, try again or check the PDF worker service logs.",
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 

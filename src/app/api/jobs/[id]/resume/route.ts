@@ -121,12 +121,17 @@ export async function POST(
 
 async function updateJobResumeFile(jobId: string, value: string | null) {
   try {
-    await prisma.$executeRaw`
-      UPDATE "Job" SET "resumeFile" = ${value} WHERE "id" = ${jobId}
-    `;
+    await prisma.job.update({
+      where: { id: jobId },
+      data: { resumeFile: value },
+    });
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e);
-    if (msg.includes("42703") || (msg.includes("resumeFile") && msg.includes("does not exist"))) {
+    if (
+      msg.includes("42703") ||
+      msg.includes("P2022") ||
+      (msg.includes("resumeFile") && msg.includes("does not exist"))
+    ) {
       throw new Error(
         "Resume feature unavailable: the database is missing the resumeFile column. Run: npx prisma migrate deploy"
       );

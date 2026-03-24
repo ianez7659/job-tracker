@@ -66,17 +66,20 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             deletedAt: null,
           },
         });
+        // Only write resumeFile when the client sends a non-empty URL. null/"" means "no change":
+        // avoids wiping a URL that was set by POST /resume while React state was still empty.
         const rf = body.resumeFile;
-        if (rf === null || rf === "" || typeof rf === "string") {
-          const value = rf === null || rf === "" ? null : rf;
+        if (typeof rf === "string" && rf.trim() !== "") {
           try {
-            await prisma.$executeRaw`
-              UPDATE "Job" SET "resumeFile" = ${value} WHERE "id" = ${id}
-            `;
+            await prisma.job.update({
+              where: { id },
+              data: { resumeFile: rf.trim() },
+            });
           } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e);
             if (
               !msg.includes("42703") &&
+              !msg.includes("P2022") &&
               !(msg.includes("resumeFile") && msg.includes("does not exist"))
             ) {
               throw e;
@@ -145,21 +148,41 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         },
       });
 
-      if (
-        resumeFile !== undefined &&
-        (resumeFile === null || resumeFile === "" || typeof resumeFile === "string")
-      ) {
-        const value = resumeFile === null || resumeFile === "" ? null : resumeFile;
-        try {
-          await prisma.$executeRaw`
-            UPDATE "Job" SET "resumeFile" = ${value} WHERE "id" = ${id}
-          `;
-        } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : String(e);
-          if (!msg.includes("42703") && !(msg.includes("resumeFile") && msg.includes("does not exist"))) {
-            throw e;
+      if (resumeFile !== undefined) {
+        const isClear = resumeFile === null || resumeFile === "";
+        const isSet = typeof resumeFile === "string" && resumeFile.trim() !== "";
+        if (isClear) {
+          try {
+            await prisma.job.update({
+              where: { id },
+              data: { resumeFile: null },
+            });
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            if (
+              !msg.includes("42703") &&
+              !msg.includes("P2022") &&
+              !(msg.includes("resumeFile") && msg.includes("does not exist"))
+            ) {
+              throw e;
+            }
           }
-          // Column missing: migration not applied; skip resumeFile update
+        } else if (isSet) {
+          try {
+            await prisma.job.update({
+              where: { id },
+              data: { resumeFile: resumeFile.trim() },
+            });
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            if (
+              !msg.includes("42703") &&
+              !msg.includes("P2022") &&
+              !(msg.includes("resumeFile") && msg.includes("does not exist"))
+            ) {
+              throw e;
+            }
+          }
         }
       }
 

@@ -107,18 +107,22 @@ export default function ApplyJobClient({ job }: Props) {
       .map((tag) => tag.trim())
       .filter(Boolean);
 
+    const trimmedResume = form.resumeFile?.trim();
     const res = await fetch(`/api/jobs/${job.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        ...form,
-        tags: tagsArray,
+        title: form.title,
+        company: form.company,
+        url: form.url,
         jd: form.jd?.trim() || null,
-        resumeFile: form.resumeFile?.trim() || null,
+        tags: tagsArray,
         // Keep current pipeline stage; only "Confirm & Mark as Applied" moves applying → resume
         status: job.status,
+        // Omit when empty so PATCH does not null out resumeFile set by POST /resume (stale form race).
+        ...(trimmedResume ? { resumeFile: trimmedResume } : {}),
       }),
     });
 
@@ -164,6 +168,7 @@ export default function ApplyJobClient({ job }: Props) {
       }
       if (data.url) {
         setForm((prev) => ({ ...prev, resumeFile: data.url }));
+        router.refresh();
       }
     } catch {
       setResumeUploadError("An error occurred while uploading.");
