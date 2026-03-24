@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Plus, Trash2, LayoutList, LayoutDashboard, Search } from "lucide-react";
 
@@ -42,6 +42,8 @@ type Props = {
     name?: string | null;
     email?: string | null;
   };
+  /** Set by server from ?newJob=1 — avoids useSearchParams (CSR bailout / fragile hydration). */
+  openNewJobFromQuery?: boolean;
 };
 
 // Narrowed union for safer filtering (matches your UI statuses)
@@ -53,9 +55,11 @@ type FilterStatus =
   | "interview2"
   | "interview3";
 
-export default function DashboardClient({ user }: Props) {
+export default function DashboardClient({
+  user,
+  openNewJobFromQuery = false,
+}: Props) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   // Data fetching hooks
   const { jobs, setJobs, refetchJobs } = useJobs();
   const { allJobs, setAllJobs, refetchAllJobs } = useAllJobs();
@@ -86,13 +90,12 @@ export default function DashboardClient({ user }: Props) {
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
   const [showNewModal, setShowNewModal] = useState(false);
 
-  // Open new job modal when sidebar "Add job" navigates with ?newJob=1
+  // Open new job modal when sidebar navigates with ?newJob=1 (search read on server, not useSearchParams)
   useEffect(() => {
-    if (searchParams.get("newJob") === "1") {
-      setShowNewModal(true);
-      router.replace("/dashboard", { scroll: false });
-    }
-  }, [searchParams, router]);
+    if (!openNewJobFromQuery) return;
+    setShowNewModal(true);
+    router.replace("/dashboard", { scroll: false });
+  }, [openNewJobFromQuery, router]);
 
   const setFilterStatusFromFilter = (s: FilterStatus) => {
     setFilterStatus(s);
