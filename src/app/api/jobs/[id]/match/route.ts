@@ -7,6 +7,8 @@ import { prisma } from "@/lib/prisma";
 // Ensure Node runtime for any Node-only dependencies in future.
 export const runtime = "nodejs";
 const ATS_SNAPSHOT_KEEP_PER_JOB = 5;
+const PDF_WORKER_TIMEOUT_MS = 20_000;
+const OPENAI_TIMEOUT_MS = 25_000;
 
 type MatchResult = {
   score: number;
@@ -104,13 +106,20 @@ export async function POST(
         headers["x-api-key"] = process.env.PDF_WORKER_API_KEY;
       }
 
+      const parseController = new AbortController();
+      const parseTimeout = setTimeout(
+        () => parseController.abort("PDF worker timeout"),
+        PDF_WORKER_TIMEOUT_MS,
+      );
       const parseRes = await fetch(`${pdfWorkerUrl.replace(/\/+$/, "")}/parse-pdf`, {
         method: "POST",
         headers,
         body: JSON.stringify({ url: job.resumeFile }),
-      });
+        signal: parseController.signal,
+      }).finally(() => clearTimeout(parseTimeout));
 
-      const parseData = (await parseRes.json()) as {
+      const parseRaw = await parseRes.text();
+      const parseData = (parseRaw ? JSON.parse(parseRaw) : {}) as {
         text?: unknown;
         extractedChars?: unknown;
         pageCount?: unknown;
@@ -164,15 +173,20 @@ export async function POST(
       resumeText.slice(0, 20000), // safety limit
     ].join("\n");
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      max_tokens: 800,
-      temperature: 0.2,
-    });
+    const completion = await Promise.race([
+      openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        max_tokens: 800,
+        temperature: 0.2,
+      }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("OpenAI request timed out")), OPENAI_TIMEOUT_MS),
+      ),
+    ]);
 
     const raw =
       completion.choices[0]?.message?.content?.trim() ||

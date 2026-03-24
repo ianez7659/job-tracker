@@ -214,9 +214,12 @@ export default function ApplyJobClient({ job }: Props) {
     }
     setMatchLoading(true);
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000);
       const res = await fetch(`/api/jobs/${job.id}/match`, {
         method: "POST",
-      });
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeout));
       const data = await res.json();
       if (!res.ok) {
         setMatchError(data.message || "Failed to run skills match.");
@@ -229,8 +232,12 @@ export default function ApplyJobClient({ job }: Props) {
         missingSkills: Array.isArray(data.missingSkills) ? data.missingSkills : [],
         scoreDelta: typeof data.scoreDelta === "number" ? data.scoreDelta : null,
       });
-    } catch {
-      setMatchError("Failed to run skills match.");
+    } catch (e) {
+      if (e instanceof Error && e.name === "AbortError") {
+        setMatchError("Matching timed out. Please try again.");
+      } else {
+        setMatchError("Failed to run skills match.");
+      }
     } finally {
       setMatchLoading(false);
     }
