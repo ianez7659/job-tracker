@@ -25,8 +25,10 @@ export const metadata: Metadata = {
 
 const themeScript = `
 (function() {
-  var t = localStorage.getItem('theme');
-  var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var t = null;
+  try { t = localStorage.getItem('theme'); } catch (e) {}
+  var d = false;
+  try { d = window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) {}
   if (t === 'dark' || (t !== 'light' && d)) document.documentElement.classList.add('dark');
   else document.documentElement.classList.remove('dark');
 })();

@@ -62,17 +62,56 @@ function buildYearMonthTable(jobs: Job[]): YearMonthRow[] {
 export default function StatsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [allJobs, setAllJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const safeJobs = Array.isArray(jobs) ? jobs : [];
   const safeAllJobs = Array.isArray(allJobs) ? allJobs : [];
 
   useEffect(() => {
-    fetch("/api/jobs")
-      .then((res) => res.json())
-      .then((data) => setJobs(Array.isArray(data) ? data : []));
-    fetch("/api/jobs/all")
-      .then((res) => res.json())
-      .then((data) => setAllJobs(Array.isArray(data) ? data : []));
+    let cancelled = false;
+    const fetchJsonWithTimeout = async (url: string, timeoutMs = 12000) => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, { signal: controller.signal });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } finally {
+        clearTimeout(timeout);
+      }
+    };
+
+    void (async () => {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        const [jobsData, allJobsData] = await Promise.all([
+          fetchJsonWithTimeout("/api/jobs"),
+          fetchJsonWithTimeout("/api/jobs/all"),
+        ]);
+        if (!cancelled) {
+          setJobs(Array.isArray(jobsData) ? jobsData : []);
+          setAllJobs(Array.isArray(allJobsData) ? allJobsData : []);
+        }
+      } catch (e) {
+        if (!cancelled) {
+          setJobs([]);
+          setAllJobs([]);
+          setLoadError(
+            e instanceof Error
+              ? `Failed to load stats: ${e.message}`
+              : "Failed to load stats.",
+          );
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const chartData = ["resume", "interview1", "interview2", "interview3"].map(
@@ -134,6 +173,12 @@ export default function StatsPage() {
   return (
     <section className="p-6 bg-slate-50 dark:bg-slate-900 min-h-screen">
       <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">Application Statistics</h1>
+      {loading && (
+        <p className="mb-4 text-sm text-gray-600 dark:text-gray-300">Loading stats…</p>
+      )}
+      {loadError && (
+        <p className="mb-4 text-sm text-red-600 dark:text-red-400">{loadError}</p>
+      )}
 
       {/* Current Application Status */}
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md dark:shadow-slate-900/50 p-4 mb-8 border border-transparent dark:border-slate-600">

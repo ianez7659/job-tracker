@@ -13,8 +13,15 @@ export default function SettingsClient({ session }: Props) {
   const [notifications, setNotifications] = useState(true);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as "light" | "dark";
-    const savedNotifications = localStorage.getItem("notifications");
+    let savedTheme: "light" | "dark" | null = null;
+    let savedNotifications: string | null = null;
+    try {
+      savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
+      savedNotifications = localStorage.getItem("notifications");
+    } catch {
+      savedTheme = null;
+      savedNotifications = null;
+    }
     if (savedTheme) setTheme(savedTheme);
     if (savedNotifications !== null) {
       setNotifications(savedNotifications === "true");
@@ -23,7 +30,9 @@ export default function SettingsClient({ session }: Props) {
 
   const handleThemeChange = (newTheme: "light" | "dark") => {
     setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
+    try {
+      localStorage.setItem("theme", newTheme);
+    } catch {}
     
     // Apply theme to document
     if (newTheme === "dark") {
@@ -35,7 +44,9 @@ export default function SettingsClient({ session }: Props) {
 
   const handleNotificationChange = (enabled: boolean) => {
     setNotifications(enabled);
-    localStorage.setItem("notifications", enabled.toString());
+    try {
+      localStorage.setItem("notifications", enabled.toString());
+    } catch {}
   };
 
   if (!session) return <p>Not logged in.</p>;
