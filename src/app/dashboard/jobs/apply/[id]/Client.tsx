@@ -218,6 +218,10 @@ export default function ApplyJobClient({ job }: Props) {
       const timeout = setTimeout(() => controller.abort(), 30000);
       const res = await fetch(`/api/jobs/${job.id}/match`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          resumeFile: form.resumeFile?.trim() || undefined,
+        }),
         signal: controller.signal,
       }).finally(() => clearTimeout(timeout));
       const data = await res.json();
@@ -525,7 +529,7 @@ export default function ApplyJobClient({ job }: Props) {
                     <button
                       type="button"
                       onClick={handleRunMatch}
-                      disabled={matchLoading}
+                      disabled={matchLoading || resumeUploading}
                       className="inline-flex items-center gap-1.5 rounded-md border border-indigo-500 text-indigo-600 dark:text-yellow-300 dark:border-yellow-400 px-3 py-1.5 text-xs font-medium hover:bg-indigo-50 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {matchLoading ? "Analyzing…" : "Run skills match"}

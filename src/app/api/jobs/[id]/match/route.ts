@@ -9,6 +9,40 @@ export const runtime = "nodejs";
 const ATS_SNAPSHOT_KEEP_PER_JOB = 5;
 const PDF_WORKER_TIMEOUT_MS = 20_000;
 const OPENAI_TIMEOUT_MS = 25_000;
+const PDF_PARSE_RETRIES = 3;
+const PDF_PARSE_RETRY_DELAY_MS = 600;
+
+const LOCAL_RESUME_PREFIX = "/uploads/resumes/";
+const BLOB_HOST_PATTERN = /blob\.vercel-storage\.com$/i;
+
+function isTrustedClientResumeUrl(url: string, jobId: string): boolean {
+  const t = url.trim();
+  if (!t) return false;
+  if (t.startsWith(LOCAL_RESUME_PREFIX)) {
+    return t.includes(jobId) && !t.includes("..");
+  }
+  try {
+    const u = new URL(t);
+    if (u.protocol !== "https:") return false;
+    if (!BLOB_HOST_PATTERN.test(u.hostname)) return false;
+    return u.pathname.includes(jobId);
+  } catch {
+    return false;
+  }
+}
+
+/** DB value wins; optional body helps right after upload when reads can lag (e.g. pooled replica). */
+function resolveResumeUrlForMatch(
+  dbResume: string | null | undefined,
+  bodyResume: unknown,
+  jobId: string,
+): string | null {
+  const fromDb = typeof dbResume === "string" ? dbResume.trim() : "";
+  if (fromDb) return fromDb;
+  const fromBody = typeof bodyResume === "string" ? bodyResume.trim() : "";
+  if (fromBody && isTrustedClientResumeUrl(fromBody, jobId)) return fromBody;
+  return null;
+}
 
 type MatchResult = {
   score: number;
@@ -74,6 +108,21 @@ export async function POST(
       return NextResponse.json({ message: "Job not found" }, { status: 404 });
     }
 
+    let bodyJson: unknown;
+    try {
+      bodyJson = await req.json();
+    } catch {
+      bodyJson = {};
+    }
+    const bodyResume =
+      bodyJson &&
+      typeof bodyJson === "object" &&
+      "resumeFile" in bodyJson
+        ? (bodyJson as { resumeFile?: unknown }).resumeFile
+        : undefined;
+
+    const resumeUrl = resolveResumeUrlForMatch(job.resumeFile, bodyResume, jobId);
+
     const jdText = job.jd?.trim();
     if (!jdText) {
       return NextResponse.json(
@@ -82,9 +131,12 @@ export async function POST(
       );
     }
 
-    if (!job.resumeFile) {
+    if (!resumeUrl) {
       return NextResponse.json(
-        { message: "No resume attached for this job." },
+        {
+          message:
+            "No resume attached for this job. Upload a resume, wait for the upload to finish, then try again.",
+        },
         { status: 400 }
       );
     }
@@ -106,39 +158,65 @@ export async function POST(
         headers["x-api-key"] = process.env.PDF_WORKER_API_KEY;
       }
 
-      const parseController = new AbortController();
-      const parseTimeout = setTimeout(
-        () => parseController.abort("PDF worker timeout"),
-        PDF_WORKER_TIMEOUT_MS,
-      );
-      const parseRes = await fetch(`${pdfWorkerUrl.replace(/\/+$/, "")}/parse-pdf`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ url: job.resumeFile }),
-        signal: parseController.signal,
-      }).finally(() => clearTimeout(parseTimeout));
+      const baseWorker = pdfWorkerUrl.replace(/\/+$/, "");
+      let lastError: Error | null = null;
 
-      const parseRaw = await parseRes.text();
-      const parseData = (parseRaw ? JSON.parse(parseRaw) : {}) as {
-        text?: unknown;
-        extractedChars?: unknown;
-        pageCount?: unknown;
-        code?: unknown;
-        message?: unknown;
-      };
-      if (!parseRes.ok) {
-        throw new Error(
-          typeof parseData.message === "string"
-            ? parseData.message
-            : `PDF parse failed with status ${parseRes.status}`
+      for (let attempt = 0; attempt < PDF_PARSE_RETRIES; attempt++) {
+        if (attempt > 0) {
+          await new Promise((r) => setTimeout(r, PDF_PARSE_RETRY_DELAY_MS));
+        }
+        const parseController = new AbortController();
+        const parseTimeout = setTimeout(
+          () => parseController.abort("PDF worker timeout"),
+          PDF_WORKER_TIMEOUT_MS,
         );
+        let parseRes: Response;
+        try {
+          parseRes = await fetch(`${baseWorker}/parse-pdf`, {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ url: resumeUrl }),
+            signal: parseController.signal,
+          });
+        } finally {
+          clearTimeout(parseTimeout);
+        }
+
+        const parseRaw = await parseRes.text();
+        let parseData: {
+          text?: unknown;
+          extractedChars?: unknown;
+          pageCount?: unknown;
+          code?: unknown;
+          message?: unknown;
+        };
+        try {
+          parseData = parseRaw ? JSON.parse(parseRaw) : {};
+        } catch {
+          parseData = {};
+        }
+        if (!parseRes.ok) {
+          lastError = new Error(
+            typeof parseData.message === "string"
+              ? parseData.message
+              : `PDF parse failed with status ${parseRes.status}`,
+          );
+          if (parseRes.status >= 500) continue;
+          throw lastError;
+        }
+
+        resumeText =
+          typeof parseData.text === "string" ? parseData.text : "";
+
+        if (resumeText.trim()) {
+          lastError = null;
+          break;
+        }
+        lastError = new Error("Empty text extracted from PDF.");
       }
 
-      resumeText =
-        typeof parseData.text === "string" ? parseData.text : "";
-
-      if (!resumeText.trim()) {
-        throw new Error("Empty text extracted from PDF.");
+      if (!resumeText.trim() && lastError) {
+        throw lastError;
       }
     } catch (e) {
       console.error("Failed to extract resume text:", e);
@@ -219,7 +297,7 @@ export async function POST(
       schemaVersion: 1,
       result: parsed,
       meta: {
-        resumeFile: job.resumeFile ?? null,
+        resumeFile: resumeUrl,
         jdLength: jdText.length,
         model: "gpt-4o-mini",
       },
