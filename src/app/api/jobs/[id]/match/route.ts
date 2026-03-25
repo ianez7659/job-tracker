@@ -9,8 +9,8 @@ export const runtime = "nodejs";
 const ATS_SNAPSHOT_KEEP_PER_JOB = 5;
 const PDF_WORKER_TIMEOUT_MS = 20_000;
 const OPENAI_TIMEOUT_MS = 25_000;
-const PDF_PARSE_RETRIES = 3;
-const PDF_PARSE_RETRY_DELAY_MS = 600;
+const PDF_PARSE_RETRIES = 6;
+const PDF_PARSE_RETRY_DELAY_MS = 900;
 
 const LOCAL_RESUME_PREFIX = "/uploads/resumes/";
 const BLOB_HOST_PATTERN = /blob\.vercel-storage\.com$/i;
@@ -126,6 +126,48 @@ function pdfWorkerConnectionFailure(
     };
   }
   return null;
+}
+
+/** Non-connection failures from the PDF step (worker HTTP body, empty extract, timeout). */
+function pdfExtractFailureResponse(err: unknown): { message: string; status: number } | null {
+  if (!(err instanceof Error) || !err.message.trim()) return null;
+
+  if (err.name === "AbortError" || /aborted|PDF worker timeout/i.test(err.message)) {
+    return {
+      message:
+        "PDF extraction timed out. Try a smaller file or try again; check that your PDF worker is healthy.",
+      status: 504,
+    };
+  }
+
+  if (err.message === "Empty text extracted from PDF.") {
+    return {
+      message:
+        "No text could be extracted from this PDF (common for image-only scans). Try a text-based PDF or re-export from Word / Google Docs.",
+      status: 422,
+    };
+  }
+
+  const m = err.message.trim();
+  const looksLikeStack = /\n\s+at\s/i.test(m) || /\s+at\s+[\w.$/]+\s+\(/.test(m);
+  const looksLikeCodeBug =
+    /TypeError|ReferenceError|SyntaxError|Cannot read properties|is not defined/i.test(m);
+  if (m.length <= 500 && !looksLikeStack && !looksLikeCodeBug) {
+    return { message: m, status: 502 };
+  }
+
+  return null;
+}
+
+/**
+ * When the PDF worker returns an error status, retry if the URL may not be readable yet
+ * (e.g. Vercel Blob right after upload) or the worker is transiently failing.
+ * Do not retry 401 (bad worker API key).
+ */
+function pdfWorkerHttpStatusShouldRetry(status: number): boolean {
+  if (status === 401) return false;
+  if (status >= 500) return true;
+  return status === 403 || status === 404 || status === 408 || status === 425 || status === 429;
 }
 
 export async function POST(
@@ -260,7 +302,7 @@ export async function POST(
               ? parseData.message
               : `PDF parse failed with status ${parseRes.status}`,
           );
-          if (parseRes.status >= 500) continue;
+          if (pdfWorkerHttpStatusShouldRetry(parseRes.status)) continue;
           throw lastError;
         }
 
@@ -285,10 +327,14 @@ export async function POST(
       if (conn) {
         return NextResponse.json({ message: conn.message }, { status: conn.status });
       }
+      const extract = pdfExtractFailureResponse(e);
+      if (extract) {
+        return NextResponse.json({ message: extract.message }, { status: extract.status });
+      }
       return NextResponse.json(
         {
           message:
-            "Could not extract resume text. If you just uploaded a resume, try again or check the PDF worker service logs.",
+            "Could not extract resume text. Check Vercel function logs and your PDF worker logs; verify the worker can download public resume URLs (e.g. Vercel Blob).",
         },
         { status: 500 },
       );

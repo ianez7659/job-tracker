@@ -12,6 +12,28 @@ const PDF_EXT = ".pdf";
 const VERCEL_BLOB_URL_PATTERN = /blob\.vercel-storage\.com/i;
 const LOCAL_UPLOAD_DIR = "public/uploads/resumes";
 
+/** Reduce "first match fails, second works" when the worker hits the Blob URL before CDN is ready. */
+async function waitUntilVercelBlobLikelyReadable(url: string): Promise<void> {
+  if (!VERCEL_BLOB_URL_PATTERN.test(url)) return;
+  for (let i = 0; i < 6; i++) {
+    if (i > 0) {
+      await new Promise((r) => setTimeout(r, 300 * i));
+    }
+    try {
+      const ac = new AbortController();
+      const to = setTimeout(() => ac.abort(), 10_000);
+      const res = await fetch(url, {
+        method: "GET",
+        headers: { Range: "bytes=0-0" },
+        signal: ac.signal,
+      }).finally(() => clearTimeout(to));
+      if (res.ok || res.status === 206) return;
+    } catch {
+      /* try again */
+    }
+  }
+}
+
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -84,6 +106,7 @@ export async function POST(
       }
 
       await updateJobResumeFile(jobId, blob.url);
+      await waitUntilVercelBlobLikelyReadable(blob.url);
       return NextResponse.json({ success: true, url: blob.url });
     }
 
