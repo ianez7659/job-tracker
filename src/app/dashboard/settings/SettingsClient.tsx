@@ -31,21 +31,29 @@ export default function SettingsClient({ session }: Props) {
   const handleThemeChange = (newTheme: "light" | "dark") => {
     setTheme(newTheme);
     try {
-      localStorage.setItem("theme", newTheme);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("theme", newTheme);
+      }
     } catch {}
     
     // Apply theme to document
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    try {
+      if (typeof document !== "undefined") {
+        if (newTheme === "dark") {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      }
+    } catch {}
   };
 
   const handleNotificationChange = (enabled: boolean) => {
     setNotifications(enabled);
     try {
-      localStorage.setItem("notifications", enabled.toString());
+      if (typeof window !== "undefined") {
+        localStorage.setItem("notifications", enabled.toString());
+      }
     } catch {}
   };
 

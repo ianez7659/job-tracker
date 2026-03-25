@@ -3,14 +3,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Job } from "@/generated/prisma";
 import { ChartNoAxesCombined, ThumbsUp, Calendar } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
 
 const STATUS_COLORS: Record<string, string> = {
   resume: "#9fa8b7",
@@ -24,6 +16,47 @@ const STATUS_COLORS: Record<string, string> = {
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 type YearMonthRow = { year: number; m1: number; m2: number; m3: number; m4: number; m5: number; m6: number; m7: number; m8: number; m9: number; m10: number; m11: number; m12: number; total: number };
+
+type SimpleBarEntry = {
+  key: string;
+  label: string;
+  count: number;
+  color: string;
+};
+
+function SimpleBars({ entries }: { entries: SimpleBarEntry[] }) {
+  const max = Math.max(1, ...entries.map((e) => e.count));
+
+  return (
+    <div className="space-y-3">
+      {entries.map((entry) => {
+        const pct = Math.round((entry.count / max) * 100);
+        return (
+          <div
+            key={entry.key}
+            className="grid grid-cols-[90px_1fr_38px] gap-2 items-center"
+          >
+            <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 truncate">
+              {entry.label}
+            </span>
+            <div className="h-2.5 rounded-full overflow-hidden bg-gray-200 dark:bg-slate-700">
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: `${pct}%`,
+                  backgroundColor: entry.color,
+                }}
+              />
+            </div>
+            <span className="text-xs sm:text-sm text-right text-gray-800 dark:text-gray-100">
+              {entry.count}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 function buildYearMonthTable(jobs: Job[]): YearMonthRow[] {
   const countByYearMonth = new Map<string, number>();
@@ -128,6 +161,20 @@ export default function StatsPage() {
     count: safeAllJobs.filter((job) => job.status === status).length,
   }));
 
+  const chartEntries: SimpleBarEntry[] = chartData.map((e) => ({
+    key: e.statusKey,
+    label: e.status,
+    count: e.count,
+    color: STATUS_COLORS[e.statusKey] ?? "#94a3b8",
+  }));
+
+  const outcomeEntries: SimpleBarEntry[] = outcomeData.map((e) => ({
+    key: e.statusKey,
+    label: e.status,
+    count: e.count,
+    color: STATUS_COLORS[e.statusKey] ?? "#94a3b8",
+  }));
+
   const monthlyData = useMemo(
     () => buildYearMonthTable(safeAllJobs),
     [safeAllJobs]
@@ -186,18 +233,8 @@ export default function StatsPage() {
           <ChartNoAxesCombined className="mr-2" size={25} />
           Current Application Status
         </h2>
-        <div className="w-full h-[250px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <XAxis dataKey="status" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
-              <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                {chartData.map((entry, index) => (
-                  <Cell key={index} fill={STATUS_COLORS[entry.statusKey]} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="w-full">
+          <SimpleBars entries={chartEntries} />
         </div>
       </div>
 
@@ -269,23 +306,8 @@ export default function StatsPage() {
           </p>
         </div>
 
-        <div className="w-full h-[180px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={outcomeData} layout="vertical">
-              <XAxis type="number" tick={{ fontSize: 14 }} />
-              <YAxis
-                type="category"
-                dataKey="status"
-                tick={{ fontSize: 16 }}
-                width={80}
-              />
-              <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                {outcomeData.map((entry, index) => (
-                  <Cell key={index} fill={STATUS_COLORS[entry.statusKey]} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="w-full">
+          <SimpleBars entries={outcomeEntries} />
         </div>
       </div>
     </section>
