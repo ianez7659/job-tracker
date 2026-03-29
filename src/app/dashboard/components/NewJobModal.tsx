@@ -130,14 +130,14 @@ export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-40 flex min-h-0 items-center justify-center bg-black/50 px-3 pt-[max(0.5rem,env(safe-area-inset-top,0px))] pb-[max(0.5rem,env(safe-area-inset-bottom,0px))] sm:p-4"
+      className="fixed inset-0 z-[100] flex min-h-0 items-center justify-center bg-black/50 px-3 max-sm:overscroll-contain max-sm:pt-[max(0.75rem,env(safe-area-inset-top,0px))] max-sm:pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:p-4"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label="Create new job"
     >
       <div
-        className="flex w-full min-h-0 max-w-2xl flex-col rounded-xl border border-gray-300 bg-white shadow-2xl dark:border-slate-600 dark:bg-slate-800 max-h-[calc(100dvh-1.25rem-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px))] [@media(max-height:700px)]:max-h-[calc(100dvh-2rem-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px))] sm:max-h-[90vh]"
+        className="flex w-full min-h-0 max-w-2xl flex-col rounded-xl border border-gray-300 bg-white shadow-2xl dark:border-slate-600 dark:bg-slate-800 max-sm:max-h-[min(calc(100svh-1.75rem-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px))\,calc(100vh-1.75rem-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)))] sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-2.5 sm:py-3 dark:border-slate-600">

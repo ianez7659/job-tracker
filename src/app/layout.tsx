@@ -1,10 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
 import { ReactNode } from "react";
 import SessionProvider from "@/components/provider/SessionWraper";
 // import PageTransition from "@/components/PageTransition";
 import ThemeProvider from "@/components/ThemeProvider";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "Jobflow - Job Tracking Dashboard",
