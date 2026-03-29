@@ -41,6 +41,23 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      // Default provider calls Issuer.discover(wellKnown) on every sign-in; that fetch can
+      // fail on serverless cold starts or flaky egress and surfaces as error=OAuthSignin.
+      wellKnown: undefined,
+      issuer: "https://accounts.google.com",
+      authorization: {
+        url: "https://accounts.google.com/o/oauth2/v2/auth",
+        params: {
+          scope: "openid email profile",
+        },
+      },
+      token: {
+        url: "https://oauth2.googleapis.com/token",
+      },
+      userinfo: {
+        url: "https://openidconnect.googleapis.com/v1/userinfo",
+      },
+      jwks_endpoint: "https://www.googleapis.com/oauth2/v3/certs",
     }),
     CredentialsProvider({
       name: "credentials",
