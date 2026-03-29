@@ -9,6 +9,7 @@ jest.mock("next-auth/react", () => ({
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn() }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 describe("LoginClient (login page)", () => {

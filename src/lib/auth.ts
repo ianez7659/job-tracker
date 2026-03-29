@@ -25,6 +25,9 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   // trustHost: true, // Not available in NextAuth v4, use NEXTAUTH_URL instead
   debug: process.env.NODE_ENV === "development", // Enable debug in development
+  pages: {
+    signIn: "/login",
+  },
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID!,

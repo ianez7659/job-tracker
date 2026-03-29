@@ -2,13 +2,37 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Github } from "lucide-react";
 import { SiGoogle } from "react-icons/si";
 
+function authErrorMessage(code: string | null): string | null {
+  if (!code) return null;
+  const messages: Record<string, string> = {
+    AccessDenied:
+      "Sign-in was cancelled or not allowed (e.g. email missing from the provider).",
+    Configuration:
+      "Server auth configuration error. Check NEXTAUTH_URL and NEXTAUTH_SECRET on the host.",
+    Verification: "The sign-in link expired or is invalid. Try again.",
+    OAuthSignin: "Could not start OAuth with the provider. Check provider credentials and redirect URIs.",
+    OAuthCallback:
+      "OAuth callback failed (redirect URI mismatch, wrong client secret, or provider error).",
+    OAuthCreateAccount: "Could not create your account in the database.",
+    Callback: "Callback error. See server logs.",
+    OAuthAccountNotLinked:
+      "This email is already used with another sign-in method. Log in with that method first.",
+    EmailSignin: "Could not send the sign-in email.",
+    CredentialsSignin: "Invalid email or password.",
+    SessionRequired: "You need to be signed in to access that page.",
+  };
+  return messages[code] ?? `Sign-in error: ${code}`;
+}
+
 export default function LoginClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const authError = authErrorMessage(searchParams.get("error"));
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -79,6 +103,15 @@ export default function LoginClient() {
             <h1 className="text-2xl font-bold mb-4 ">
               {isRegistering ? "Registration" : "Login"}
             </h1>
+
+            {authError && (
+              <p
+                role="alert"
+                className="mb-4 p-3 rounded-lg text-left text-sm bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800"
+              >
+                {authError}
+              </p>
+            )}
 
             {!isRegistering && (
               <div className="mb-4 p-3 rounded-lg bg-slate-100 dark:bg-slate-600/50 border border-slate-200 dark:border-slate-500 text-left">
