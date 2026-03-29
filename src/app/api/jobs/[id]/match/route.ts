@@ -3,14 +3,20 @@ import { getServerSession } from "next-auth";
 import OpenAI from "openai";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { waitUntilVercelBlobLikelyReadable } from "@/lib/waitForBlobUrl";
 
 // Ensure Node runtime for any Node-only dependencies in future.
 export const runtime = "nodejs";
+// Pro ~300s; Hobby is lower — Vercel will clamp. PDF + OpenAI must fit under this.
+export const maxDuration = 150;
 const ATS_SNAPSHOT_KEEP_PER_JOB = 5;
-const PDF_WORKER_TIMEOUT_MS = 20_000;
+// First request often waits on cold Render worker; later attempts can be shorter.
+const PDF_WORKER_TIMEOUT_FIRST_MS = 58_000;
+const PDF_WORKER_TIMEOUT_LATER_MS = 32_000;
 const OPENAI_TIMEOUT_MS = 25_000;
-const PDF_PARSE_RETRIES = 6;
-const PDF_PARSE_RETRY_DELAY_MS = 900;
+const PDF_PARSE_RETRIES = 4;
+const PDF_PARSE_RETRY_DELAY_MS = 1_500;
+const PDF_PARSE_RETRY_AFTER_TIMEOUT_MS = 4_000;
 
 const LOCAL_RESUME_PREFIX = "/uploads/resumes/";
 const BLOB_HOST_PATTERN = /blob\.vercel-storage\.com$/i;
@@ -242,6 +248,8 @@ export async function POST(
       );
     }
 
+    await waitUntilVercelBlobLikelyReadable(resumeUrl);
+
     let resumeText = "";
     try {
       const pdfWorkerUrl = process.env.PDF_WORKER_URL;
@@ -261,15 +269,22 @@ export async function POST(
 
       const baseWorker = pdfWorkerUrl.replace(/\/+$/, "");
       let lastError: Error | null = null;
+      let lastAttemptTimedOut = false;
 
       for (let attempt = 0; attempt < PDF_PARSE_RETRIES; attempt++) {
         if (attempt > 0) {
-          await new Promise((r) => setTimeout(r, PDF_PARSE_RETRY_DELAY_MS));
+          const backoff = lastAttemptTimedOut
+            ? PDF_PARSE_RETRY_AFTER_TIMEOUT_MS
+            : PDF_PARSE_RETRY_DELAY_MS;
+          lastAttemptTimedOut = false;
+          await new Promise((r) => setTimeout(r, backoff));
         }
+        const workerTimeoutMs =
+          attempt === 0 ? PDF_WORKER_TIMEOUT_FIRST_MS : PDF_WORKER_TIMEOUT_LATER_MS;
         const parseController = new AbortController();
         const parseTimeout = setTimeout(
           () => parseController.abort("PDF worker timeout"),
-          PDF_WORKER_TIMEOUT_MS,
+          workerTimeoutMs,
         );
         let parseRes: Response;
         try {
@@ -279,6 +294,20 @@ export async function POST(
             body: JSON.stringify({ url: resumeUrl }),
             signal: parseController.signal,
           });
+        } catch (fetchErr) {
+          const aborted =
+            fetchErr instanceof Error &&
+            (fetchErr.name === "AbortError" ||
+              /aborted|PDF worker timeout/i.test(fetchErr.message));
+          if (aborted) {
+            lastError =
+              fetchErr instanceof Error
+                ? fetchErr
+                : new Error("PDF worker timeout");
+            lastAttemptTimedOut = true;
+            continue;
+          }
+          throw fetchErr;
         } finally {
           clearTimeout(parseTimeout);
         }
@@ -331,13 +360,11 @@ export async function POST(
       if (extract) {
         return NextResponse.json({ message: extract.message }, { status: extract.status });
       }
-      return NextResponse.json(
-        {
-          message:
-            "Could not extract resume text. Check Vercel function logs and your PDF worker logs; verify the worker can download public resume URLs (e.g. Vercel Blob).",
-        },
-        { status: 500 },
-      );
+      const fallback =
+        e instanceof Error && e.message.trim() && e.message.length <= 240
+          ? `${e.message} If this persists, check Vercel logs, PDF worker logs, and that PDF_WORKER_URL is reachable from the worker (public Blob URLs).`
+          : "Could not extract resume text. Check Vercel function logs and your PDF worker logs; verify the worker can download public resume URLs (e.g. Vercel Blob).";
+      return NextResponse.json({ message: fallback }, { status: 500 });
     }
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });

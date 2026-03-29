@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   inputBase,
@@ -37,6 +37,7 @@ export default function ApplyJobClient({ job }: Props) {
   const [resumeUploading, setResumeUploading] = useState(false);
   const [resumeUploadError, setResumeUploadError] = useState<string | null>(null);
   const [matchLoading, setMatchLoading] = useState(false);
+  const [matchHint, setMatchHint] = useState<string | null>(null);
   const [matchError, setMatchError] = useState<string | null>(null);
   const [matchResult, setMatchResult] = useState<{
     score: number;
@@ -54,6 +55,10 @@ export default function ApplyJobClient({ job }: Props) {
     tags: job.tags || "",
     resumeFile: job.resumeFile || "",
   });
+
+  useEffect(() => {
+    void fetch("/api/pdf-worker/warmup", { method: "GET" });
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -183,6 +188,7 @@ export default function ApplyJobClient({ job }: Props) {
     setResumeUploadError(null);
     setMatchResult(null);
     setMatchError(null);
+    setMatchHint(null);
     try {
       const res = await fetch(`/api/jobs/${job.id}`, {
         method: "PATCH",
@@ -205,9 +211,12 @@ export default function ApplyJobClient({ job }: Props) {
     }
   };
 
+  const MATCH_CLIENT_TIMEOUT_MS = 140_000;
+
   const handleRunMatch = async () => {
     if (!job.id) return;
     setMatchError(null);
+    setMatchHint(null);
     setMatchResult(null);
     if (!form.jd?.trim()) {
       setMatchError("Add a job description first for better matching.");
@@ -218,18 +227,41 @@ export default function ApplyJobClient({ job }: Props) {
       return;
     }
     setMatchLoading(true);
-    try {
+
+    const runOnce = async () => {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 30000);
-      const res = await fetch(`/api/jobs/${job.id}/match`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          resumeFile: form.resumeFile?.trim() || undefined,
-        }),
-        signal: controller.signal,
-      }).finally(() => clearTimeout(timeout));
-      const data = await res.json();
+      const timeout = setTimeout(
+        () => controller.abort(),
+        MATCH_CLIENT_TIMEOUT_MS,
+      );
+      try {
+        const res = await fetch(`/api/jobs/${job.id}/match`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            resumeFile: form.resumeFile?.trim() || undefined,
+          }),
+          signal: controller.signal,
+        });
+        const data = await res.json();
+        return { res, data };
+      } finally {
+        clearTimeout(timeout);
+      }
+    };
+
+    try {
+      let { res, data } = await runOnce();
+      const noRetryStatus =
+        res.status === 400 || res.status === 401 || res.status === 404 || res.status === 422;
+      if (!res.ok && !noRetryStatus) {
+        setMatchHint(
+          "PDF service may be waking up (free hosting). Retrying once in a few seconds…",
+        );
+        await new Promise((r) => setTimeout(r, 2_800));
+        setMatchHint(null);
+        ({ res, data } = await runOnce());
+      }
       if (!res.ok) {
         setMatchError(data.message || "Failed to run skills match.");
         return;
@@ -249,6 +281,7 @@ export default function ApplyJobClient({ job }: Props) {
       }
     } finally {
       setMatchLoading(false);
+      setMatchHint(null);
     }
   };
 
@@ -537,8 +570,17 @@ export default function ApplyJobClient({ job }: Props) {
                       disabled={matchLoading || resumeUploading}
                       className="inline-flex items-center gap-1.5 rounded-md border border-indigo-500 text-indigo-600 dark:text-yellow-300 dark:border-yellow-400 px-3 py-1.5 text-xs font-medium hover:bg-indigo-50 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      {matchLoading ? "Analyzing…" : "Run skills match"}
+                      {matchLoading
+                        ? matchHint
+                          ? "Retrying…"
+                          : "Analyzing…"
+                        : "Run skills match"}
                     </button>
+                    {matchHint && (
+                      <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">
+                        {matchHint}
+                      </p>
+                    )}
                     {matchError && (
                       <p className="mt-2 text-xs text-red-600 dark:text-red-400">
                         {matchError}
