@@ -16,7 +16,7 @@ function authErrorMessage(code: string | null): string | null {
       "Server auth configuration error. Check NEXTAUTH_URL and NEXTAUTH_SECRET on the host.",
     Verification: "The sign-in link expired or is invalid. Try again.",
     OAuthSignin:
-      "Could not start OAuth (server failed while building the Google URL). Retry, confirm GOOGLE_CLIENT_ID/SECRET and NEXTAUTH_SECRET on Vercel, then check function logs.",
+      "Could not start OAuth on the server. Check host logs for SIGNIN_OAUTH_ERROR or [next-auth]. Confirm GOOGLE_CLIENT_ID/SECRET and NEXTAUTH_SECRET (no extra spaces).",
     OAuthCallback:
       "OAuth callback failed (redirect URI mismatch, wrong client secret, or provider error).",
     OAuthCreateAccount: "Could not create your account in the database.",

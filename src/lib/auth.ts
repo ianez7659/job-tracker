@@ -8,6 +8,40 @@ import { Session, User } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import GoogleProvider from "next-auth/providers/google";
 
+function envTrim(name: string): string | undefined {
+  const v = process.env[name];
+  return typeof v === "string" ? v.trim() : undefined;
+}
+
+// Logs SIGNIN_OAUTH_ERROR with the real exception (see Vercel function logs).
+const nextAuthLogger: NextAuthOptions["logger"] = {
+  error(
+    code: string,
+    metadata:
+      | Error
+      | {
+          error: Error;
+          [key: string]: unknown;
+        }
+  ) {
+    if (metadata instanceof Error) {
+      console.error("[next-auth]", code, metadata.message, metadata.stack);
+      return;
+    }
+    if (metadata.error instanceof Error) {
+      console.error(
+        "[next-auth]",
+        code,
+        metadata.error.message,
+        metadata.error.stack,
+        metadata
+      );
+      return;
+    }
+    console.error("[next-auth]", code, metadata);
+  },
+};
+
 // Check environment variables on startup
 if (process.env.NODE_ENV === "development") {
   console.log("🔍 Environment check:", {
@@ -24,14 +58,17 @@ if (process.env.NODE_ENV === "development") {
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   // trustHost: true, // Not available in NextAuth v4, use NEXTAUTH_URL instead
-  debug: process.env.NODE_ENV === "development", // Enable debug in development
+  debug:
+    process.env.NODE_ENV === "development" ||
+    process.env.NEXTAUTH_DEBUG === "1",
+  logger: nextAuthLogger,
   pages: {
     signIn: "/login",
   },
   providers: [
     GithubProvider({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
+      clientId: envTrim("GITHUB_ID")!,
+      clientSecret: envTrim("GITHUB_SECRET")!,
       authorization: {
         params: {
           scope: "read:user user:email",
@@ -39,25 +76,8 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      // Default provider calls Issuer.discover(wellKnown) on every sign-in; that fetch can
-      // fail on serverless cold starts or flaky egress and surfaces as error=OAuthSignin.
-      wellKnown: undefined,
-      issuer: "https://accounts.google.com",
-      authorization: {
-        url: "https://accounts.google.com/o/oauth2/v2/auth",
-        params: {
-          scope: "openid email profile",
-        },
-      },
-      token: {
-        url: "https://oauth2.googleapis.com/token",
-      },
-      userinfo: {
-        url: "https://openidconnect.googleapis.com/v1/userinfo",
-      },
-      jwks_endpoint: "https://www.googleapis.com/oauth2/v3/certs",
+      clientId: envTrim("GOOGLE_CLIENT_ID")!,
+      clientSecret: envTrim("GOOGLE_CLIENT_SECRET")!,
     }),
     CredentialsProvider({
       name: "credentials",
@@ -87,7 +107,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: envTrim("NEXTAUTH_SECRET"),
   session: { strategy: "jwt" },
   callbacks: {
     async signIn({ user, account, profile }) {
@@ -97,7 +117,6 @@ export const authOptions: NextAuthOptions = {
         console.log("  - account provider:", account?.provider);
         console.log("  - profile:", profile);
         
-        // GitHub의 경우 이메일이 profile에 있을 수 있음
         const email = user.email || (profile as any)?.email;
         console.log("  - resolved email:", email);
         
