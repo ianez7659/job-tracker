@@ -130,18 +130,18 @@ export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-40 flex min-h-0 items-center justify-center bg-black/50 px-3 pt-[max(0.5rem,env(safe-area-inset-top,0px))] pb-[max(0.5rem,env(safe-area-inset-bottom,0px))] sm:p-4"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label="Create new job"
     >
       <div
-        className="w-full max-w-2xl rounded-xl bg-white dark:bg-slate-800 shadow-2xl border border-gray-300 dark:border-slate-600 max-h-[90vh] overflow-y-auto"
+        className="flex w-full min-h-0 max-w-2xl flex-col rounded-xl border border-gray-300 bg-white shadow-2xl dark:border-slate-600 dark:bg-slate-800 max-h-[calc(100dvh-1.25rem-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px))] [@media(max-height:700px)]:max-h-[calc(100dvh-2rem-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px))] sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-slate-600">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+        <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-2.5 sm:py-3 dark:border-slate-600">
+          <h2 className="text-base font-semibold text-gray-800 sm:text-lg dark:text-gray-100">
             New Application
           </h2>
           <button
@@ -153,8 +153,8 @@ export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
           </button>
         </div>
 
-        <div className="px-4 py-4 sm:px-6 sm:py-5">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 pb-10 sm:px-6 sm:py-5 sm:pb-8">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-sm:gap-3">
             <div>
               <label htmlFor="title" className={labelBase}>
                 Position level
@@ -253,7 +253,7 @@ export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
               />
             </div>
 
-            <div className="flex justify-end gap-3 pt-2">
+            <div className="flex justify-end gap-3 pt-2 pb-2 sm:pb-0">
               <button
                 type="button"
                 onClick={onClose}
