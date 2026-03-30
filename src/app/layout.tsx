@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import SessionProvider from "@/components/provider/SessionWraper";
 // import PageTransition from "@/components/PageTransition";
 import ThemeProvider from "@/components/ThemeProvider";
+import ErudaLoader from "@/components/ErudaLoader";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -48,6 +49,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {themeScript}
         </Script>
         <ThemeProvider>
+          <Suspense fallback={null}>
+            <ErudaLoader />
+          </Suspense>
           <SessionProvider>
             {/* <PageTransition>{children}</PageTransition> */}
             {children}

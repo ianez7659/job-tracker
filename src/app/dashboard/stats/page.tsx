@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { Job } from "@/generated/prisma";
+import type { Job } from "@/generated/prisma";
 import { ChartNoAxesCombined, ThumbsUp, Calendar } from "lucide-react";
 
 const STATUS_COLORS: Record<string, string> = {
