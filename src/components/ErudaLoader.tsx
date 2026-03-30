@@ -1,29 +1,43 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
-// Mobile debug console: add ?debug=1 to the URL, or set NEXT_PUBLIC_ERUDA=true in env.
+function debugEnabled(): boolean {
+  if (process.env.NEXT_PUBLIC_ERUDA === "true") return true;
+  if (typeof window === "undefined") return false;
+  return new URLSearchParams(window.location.search).get("debug") === "1";
+}
+
+function runErudaInit(mod: unknown) {
+  const m = mod as { default?: { init?: () => void } };
+  const api = m.default ?? mod;
+  if (
+    api &&
+    typeof api === "object" &&
+    typeof (api as { init?: () => void }).init === "function"
+  ) {
+    (api as { init: () => void }).init();
+  }
+}
+
+/** `?debug=1` on the full URL bar, or NEXT_PUBLIC_ERUDA=true. Icon: small control bottom-right of the page. */
 export default function ErudaLoader() {
-  const searchParams = useSearchParams();
-  const envOn = process.env.NEXT_PUBLIC_ERUDA === "true";
-  const enabled =
-    envOn || searchParams.get("debug") === "1";
+  const pathname = usePathname();
   const inited = useRef(false);
 
   useEffect(() => {
-    if (!enabled || inited.current) return;
+    if (!debugEnabled() || inited.current) return;
     inited.current = true;
 
     let cancelled = false;
     void import("eruda").then((m) => {
-      if (!cancelled) m.default.init();
+      if (!cancelled) runErudaInit(m);
     });
-
     return () => {
       cancelled = true;
     };
-  }, [enabled]);
+  }, [pathname]);
 
   return null;
 }

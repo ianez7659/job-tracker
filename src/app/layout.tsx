@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   description: "Track and manage your job applications with ease. Monitor interview progress, analyze statistics, and stay organized throughout your job search journey.",
   keywords: ["job tracking", "job application", "career management", "interview tracker", "job search"],
   authors: [{ name: "Jobflow" }],
+  other: {
+    google: "notranslate",
+  },
   openGraph: {
     title: "Jobflow - Job Tracking Dashboard",
     description: "Track and manage your job applications with ease. Monitor interview progress and analyze statistics.",
@@ -43,7 +46,7 @@ const themeScript = `
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning translate="no">
       <body>
         <Script id="theme-init" strategy="beforeInteractive">
           {themeScript}

@@ -132,7 +132,7 @@ export default function Navbar() {
                   <ChevronDown size={16} />
                 </button>
 
-                <AnimatePresence>
+                <AnimatePresence mode="wait" initial={false}>
                   {profileOpen && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
@@ -184,7 +184,7 @@ export default function Navbar() {
       </div>
 
       {/* Menu dropdown for mobile view */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait" initial={false}>
         {mobileOpen && (
           <motion.div
             ref={mobileMenuRef}
