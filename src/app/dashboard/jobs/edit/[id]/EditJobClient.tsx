@@ -18,6 +18,7 @@ import {
   statusDisplayLabel,
 } from "@/lib/jobPipeline";
 import { MarkdownContent } from "@/components/MarkdownContent";
+import { AiAssistCheeringCallout } from "@/components/AiAssistCheeringCallout";
 
 type Job = {
   id: string;
@@ -558,9 +559,12 @@ export default function EditJobClient({ job }: Props) {
                     </p>
                   )}
                   {!adviceLoading && !adviceError && adviceText && (
-                    <div className="max-h-[min(40vh,320px)] overflow-y-auto pr-1">
-                      <MarkdownContent>{adviceText}</MarkdownContent>
-                    </div>
+                    <>
+                      <div className="max-h-[min(40vh,320px)] overflow-y-auto pr-1">
+                        <MarkdownContent>{adviceText}</MarkdownContent>
+                      </div>
+                      <AiAssistCheeringCallout stage={stage} />
+                    </>
                   )}
                 </div>
 
