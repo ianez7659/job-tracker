@@ -212,10 +212,10 @@ export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
             </div>
 
             <div>
+              <label htmlFor="jd" className={labelBase}>
+                Job description (optional)
+              </label>
               <div className="flex items-center gap-2 flex-wrap">
-                <label htmlFor="jd" className={labelBase}>
-                  Job description (optional)
-                </label>
                 <button
                   type="button"
                   onClick={handleTryAutoFetch}

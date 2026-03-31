@@ -322,7 +322,7 @@ export default function ApplyJobClient({ job }: Props) {
       {/* Card: left = apply form, right = placeholder for future content */}
       <div className="rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-md overflow-hidden">
         <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-slate-600">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <h1 className={headingBase}>Apply for Position</h1>
             <div className="flex items-center gap-2">
               {!isEditing && (
