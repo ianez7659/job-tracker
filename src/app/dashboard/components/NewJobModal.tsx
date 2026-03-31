@@ -8,6 +8,7 @@ import {
   buttonBase,
 } from "@/lib/styles";
 import { POSITION_LEVELS } from "@/lib/constants/positions";
+import { ClipboardPasteButton } from "@/components/ClipboardPasteButton";
 
 type NewJobModalProps = {
   onClose: () => void;
@@ -223,15 +224,24 @@ export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
                 >
                   {fetchJdLoading ? "Fetching…" : "Try Auto-Fetch"}
                 </button>
+                <ClipboardPasteButton
+                  onText={(text) => {
+                    setFetchJdError(null);
+                    setForm((prev) => ({ ...prev, jd: text }));
+                  }}
+                />
               </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Tip: Copy the JD on the posting page, then tap Paste.
+              </p>
               <textarea
                 id="jd"
                 name="jd"
                 value={form.jd}
                 onChange={handleChange}
-                placeholder="Paste or auto-fetch the job description for AI features later."
-                rows={4}
-                className={`${inputBase} resize-y`}
+                placeholder="Paste the job description here (for AI features later)."
+                rows={6}
+                className={`${inputBase} resize-y min-h-[10rem] text-base sm:text-sm`}
               />
               {fetchJdError && (
                 <p className="text-sm text-amber-600 mt-1">{fetchJdError}</p>

@@ -19,6 +19,7 @@ import {
 } from "@/lib/jobPipeline";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { AiAssistCheeringCallout } from "@/components/AiAssistCheeringCallout";
+import { ClipboardPasteButton } from "@/components/ClipboardPasteButton";
 
 type Job = {
   id: string;
@@ -374,7 +375,7 @@ export default function EditJobClient({ job }: Props) {
                       href={form.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-indigo-600 dark:text-yellow-400 underline break-all inline-block max-w-full"
+                      className="text-sm text-indigo-600 dark:text-yellow-400 underline break-all inline-block max-w-full max-h-[4.5em] overflow-y-auto leading-6 pr-1"
                     >
                       {form.url}
                     </a>
@@ -466,15 +467,24 @@ export default function EditJobClient({ job }: Props) {
                     >
                       {fetchJdLoading ? "Fetching…" : "Try Auto-Fetch"}
                     </button>
+                    <ClipboardPasteButton
+                      onText={(text) => {
+                        setFetchJdError(null);
+                        setForm((prev) => ({ ...prev, jd: text }));
+                      }}
+                    />
                   </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Tip: Copy the JD on the posting page, then tap Paste.
+                  </p>
                   <textarea
                     id="jd"
                     name="jd"
                     value={form.jd}
                     onChange={handleChange}
-                    placeholder="Paste or auto-fetch the job description for AI features later."
+                    placeholder="Paste the job description here (for AI features later)."
                     rows={6}
-                    className={`${inputBase} resize-y`}
+                    className={`${inputBase} resize-y min-h-[12rem] text-base sm:text-sm`}
                   />
                   {fetchJdError && (
                     <p className="text-sm text-amber-600 mt-1">
