@@ -12,9 +12,9 @@ describe("getCategoryLabel", () => {
   });
 
   it("returns the label for a known category value", () => {
-    expect(getCategoryLabel("frontend_developer")).toBe("Frontend Developer");
-    expect(getCategoryLabel("ux_ui_designer")).toBe("UX/UI Designer");
-    expect(getCategoryLabel("other")).toBe("Other");
+    expect(getCategoryLabel("web_development")).toBe("Web Development");
+    expect(getCategoryLabel("digital_marketing")).toBe("Digital Marketing");
+    expect(getCategoryLabel("esl")).toBe("ESL");
   });
 
   it("returns the raw value for an unknown category", () => {
@@ -29,9 +29,10 @@ describe("getParentIdForCategory", () => {
   });
 
   it("returns parentId for a known category", () => {
-    expect(getParentIdForCategory("frontend_developer")).toBe("engineering_it");
-    expect(getParentIdForCategory("ux_ui_designer")).toBe("design_creative");
-    expect(getParentIdForCategory("other")).toBe("other");
+    expect(getParentIdForCategory("web_development")).toBe("tech");
+    expect(getParentIdForCategory("digital_marketing")).toBe("marketing");
+    expect(getParentIdForCategory("customer_service")).toBe("management");
+    expect(getParentIdForCategory("celpip")).toBe("language_programmes");
   });
 
   it("returns null for an unknown category value", () => {
@@ -44,10 +45,10 @@ describe("getCategoriesGroupedByParent", () => {
     const result = getCategoriesGroupedByParent();
     expect(result).toHaveLength(4);
     expect(result.map((g) => g.parentId)).toEqual([
-      "engineering_it",
-      "design_creative",
-      "media_content",
-      "other",
+      "tech",
+      "management",
+      "marketing",
+      "language_programmes",
     ]);
   });
 
@@ -64,19 +65,25 @@ describe("getCategoriesGroupedByParent", () => {
     });
   });
 
-  it("engineering_it group contains frontend_developer", () => {
+  it("tech group contains web_development", () => {
     const result = getCategoriesGroupedByParent();
-    const engineering = result.find((g) => g.parentId === "engineering_it");
-    expect(engineering).toBeDefined();
-    const frontend = engineering!.options.find((o) => o.value === "frontend_developer");
-    expect(frontend?.label).toBe("Frontend Developer");
+    const tech = result.find((g) => g.parentId === "tech");
+    expect(tech).toBeDefined();
+    const web = tech!.options.find((o) => o.value === "web_development");
+    expect(web?.label).toBe("Web Development");
+  });
+
+  it("language_programmes group contains esl and celpip", () => {
+    const result = getCategoriesGroupedByParent();
+    const lp = result.find((g) => g.parentId === "language_programmes");
+    expect(lp?.options.map((o) => o.value)).toEqual(["esl", "celpip"]);
   });
 });
 
 describe("USER_CATEGORY_VALUES", () => {
   it("includes expected category values", () => {
-    expect(USER_CATEGORY_VALUES).toContain("frontend_developer");
-    expect(USER_CATEGORY_VALUES).toContain("other");
-    expect(USER_CATEGORY_VALUES.length).toBeGreaterThan(0);
+    expect(USER_CATEGORY_VALUES).toContain("web_development");
+    expect(USER_CATEGORY_VALUES).toContain("esl");
+    expect(USER_CATEGORY_VALUES.length).toBe(14);
   });
 });

@@ -163,11 +163,20 @@ export const authOptions: NextAuthOptions = {
             try {
               const dbUser = await prisma.user.findUnique({
                 where: { id: token.id },
-                select: { category: true, image: true },
+                select: {
+                  category: true,
+                  image: true,
+                  name: true,
+                  hubStatus: true,
+                  headline: true,
+                },
               });
               if (dbUser) {
                 session.user.category = dbUser.category;
-                (session.user as { image?: string | null }).image = dbUser.image;
+                session.user.name = dbUser.name;
+                session.user.hubStatus = dbUser.hubStatus;
+                session.user.headline = dbUser.headline;
+                session.user.image = dbUser.image;
               }
             } catch (dbErr: unknown) {
               // P2022 = column missing; don't crash, just leave category undefined

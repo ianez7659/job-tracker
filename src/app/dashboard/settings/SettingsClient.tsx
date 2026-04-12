@@ -35,8 +35,7 @@ export default function SettingsClient({ session }: Props) {
         localStorage.setItem("theme", newTheme);
       }
     } catch {}
-    
-    // Apply theme to document
+
     try {
       if (typeof document !== "undefined") {
         if (newTheme === "dark") {
@@ -64,7 +63,6 @@ export default function SettingsClient({ session }: Props) {
       <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Settings</h1>
 
       <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-600 p-6 shadow-sm space-y-8">
-        {/* Theme Settings */}
         <div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
             {theme === "dark" ? <Moon size={20} /> : <Sun size={20} />}
@@ -101,7 +99,6 @@ export default function SettingsClient({ session }: Props) {
 
         <hr className="border-gray-200 dark:border-slate-600" />
 
-        {/* Notification Settings */}
         <div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
             {notifications ? <Bell size={20} /> : <BellOff size={20} />}

@@ -9,19 +9,27 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
+  id            String            @id @default(cuid())
+  email         String            @unique
   name          String?
-  createdAt     DateTime  @default(now())
+  createdAt     DateTime          @default(now())
   password      String?
   image         String?
   emailVerified DateTime?
   category      String?
+  hubStatus     HubProfileStatus?
+  headline      String?           @db.VarChar(500)
   accounts      Account[]
   jobs          Job[]
   sessions      Session[]
 
   @@map("User")
+}
+
+enum HubProfileStatus {
+  STUDENT
+  ALUMNI
+  STAFF
 }
 
 model Job {

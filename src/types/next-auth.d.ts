@@ -8,6 +8,8 @@ declare module "next-auth" {
       name?: string | null;
       image?: string | null;
       category?: string | null;
+      hubStatus?: "STUDENT" | "ALUMNI" | "STAFF" | null;
+      headline?: string | null;
     };
   }
 
@@ -19,6 +21,8 @@ declare module "next-auth" {
     emailVerified?: Date | null;
     password?: string | null;
     category?: string | null;
+    hubStatus?: "STUDENT" | "ALUMNI" | "STAFF" | null;
+    headline?: string | null;
   }
 }
 

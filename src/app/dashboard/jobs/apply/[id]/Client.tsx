@@ -36,7 +36,9 @@ export default function ApplyJobClient({ job }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [resumeUploading, setResumeUploading] = useState(false);
-  const [resumeUploadError, setResumeUploadError] = useState<string | null>(null);
+  const [resumeUploadError, setResumeUploadError] = useState<string | null>(
+    null,
+  );
   const [matchLoading, setMatchLoading] = useState(false);
   const [matchHint, setMatchHint] = useState<string | null>(null);
   const [matchError, setMatchError] = useState<string | null>(null);
@@ -254,7 +256,10 @@ export default function ApplyJobClient({ job }: Props) {
     try {
       let { res, data } = await runOnce();
       const noRetryStatus =
-        res.status === 400 || res.status === 401 || res.status === 404 || res.status === 422;
+        res.status === 400 ||
+        res.status === 401 ||
+        res.status === 404 ||
+        res.status === 422;
       if (!res.ok && !noRetryStatus) {
         setMatchHint(
           "PDF service may be waking up (free hosting). Retrying once in a few seconds…",
@@ -270,9 +275,14 @@ export default function ApplyJobClient({ job }: Props) {
       setMatchResult({
         score: data.score ?? 0,
         summary: data.summary ?? "",
-        matchedSkills: Array.isArray(data.matchedSkills) ? data.matchedSkills : [],
-        missingSkills: Array.isArray(data.missingSkills) ? data.missingSkills : [],
-        scoreDelta: typeof data.scoreDelta === "number" ? data.scoreDelta : null,
+        matchedSkills: Array.isArray(data.matchedSkills)
+          ? data.matchedSkills
+          : [],
+        missingSkills: Array.isArray(data.missingSkills)
+          ? data.missingSkills
+          : [],
+        scoreDelta:
+          typeof data.scoreDelta === "number" ? data.scoreDelta : null,
       });
     } catch (e) {
       if (e instanceof Error && e.name === "AbortError") {
@@ -477,7 +487,9 @@ export default function ApplyJobClient({ job }: Props) {
                     className={`${inputBase} resize-y min-h-[12rem] text-base sm:text-sm`}
                   />
                   {fetchJdError && (
-                    <p className="text-sm text-amber-600 mt-1">{fetchJdError}</p>
+                    <p className="text-sm text-amber-600 mt-1">
+                      {fetchJdError}
+                    </p>
                   )}
                 </div>
 
@@ -572,7 +584,8 @@ export default function ApplyJobClient({ job }: Props) {
                       AI skills match
                     </h3>
                     <p className="text-xs text-gray-500 dark:text-slate-400 mb-2">
-                      Compare this resume against the saved job description and get a skills match score.
+                      Compare this resume against the saved job description and
+                      get a skills match score.
                     </p>
                     <button
                       type="button"
@@ -606,9 +619,7 @@ export default function ApplyJobClient({ job }: Props) {
                           /100
                         </p>
                         {matchResult.scoreDelta !== null ? (
-                          <p
-                            className="text-[11px] text-gray-600 dark:text-gray-300"
-                          >
+                          <p className="text-[11px] text-gray-600 dark:text-gray-300">
                             Score delta vs previous run:{" "}
                             <span
                               className={
@@ -634,13 +645,17 @@ export default function ApplyJobClient({ job }: Props) {
                         </p>
                         {matchResult.matchedSkills.length > 0 && (
                           <p className="text-[11px] text-gray-600 dark:text-gray-300">
-                            <span className="font-semibold">Strong skills:</span>{" "}
+                            <span className="font-semibold">
+                              Strong skills:
+                            </span>{" "}
                             {matchResult.matchedSkills.join(", ")}
                           </p>
                         )}
                         {matchResult.missingSkills.length > 0 && (
                           <p className="text-[11px] text-gray-600 dark:text-gray-300">
-                            <span className="font-semibold">Gaps to improve:</span>{" "}
+                            <span className="font-semibold">
+                              Gaps to improve:
+                            </span>{" "}
                             {matchResult.missingSkills.join(", ")}
                           </p>
                         )}
@@ -656,4 +671,3 @@ export default function ApplyJobClient({ job }: Props) {
     </section>
   );
 }
-
