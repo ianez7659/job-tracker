@@ -13,6 +13,7 @@ import {
   User,
   LogOut,
 } from "lucide-react";
+import { getSignOutCallbackUrl } from "@/lib/constants/demoAccount";
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "Dashboard" },
@@ -105,7 +106,11 @@ export default function Sidebar() {
               <span className="truncate">{session.user?.name ?? "Profile"}</span>
             </Link>
             <button
-              onClick={() => signOut()}
+              onClick={() =>
+                signOut({
+                  callbackUrl: getSignOutCallbackUrl(session.user?.email),
+                })
+              }
               className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 w-full transition-colors"
             >
               <LogOut size={20} className="flex-shrink-0" />

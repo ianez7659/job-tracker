@@ -18,6 +18,7 @@ import {
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef } from "react";
+import { getSignOutCallbackUrl } from "@/lib/constants/demoAccount";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -157,7 +158,11 @@ export default function Navbar() {
                       <button
                         onClick={() => {
                           setProfileOpen(false);
-                          signOut();
+                          signOut({
+                            callbackUrl: getSignOutCallbackUrl(
+                              session.user?.email,
+                            ),
+                          });
                         }}
                         className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-600"
                       >
@@ -258,7 +263,11 @@ export default function Navbar() {
                 <button
                   onClick={() => {
                     setMobileOpen(false);
-                    signOut();
+                    signOut({
+                      callbackUrl: getSignOutCallbackUrl(
+                        session.user?.email,
+                      ),
+                    });
                   }}
                   className="flex items-center gap-2 px-2 py-2 rounded text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700"
                 >

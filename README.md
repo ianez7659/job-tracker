@@ -21,7 +21,7 @@ Designed to help you manage job applications, track interview stages, and analyz
 - **Email:** `demo@example.com`
 - **Password:** `demo1234`
 
-Visit the landing page and use "Log in to get started", or go to the [login page](https://job-tracker-wheat.vercel.app/login) and sign in with the credentials above.
+Visit the landing page and use "Log in to get started", or go to the [login page](https://job-tracker-wheat.vercel.app/welcome) and sign in with the credentials above.
 
 **Option 2 – Register your own account**
 
