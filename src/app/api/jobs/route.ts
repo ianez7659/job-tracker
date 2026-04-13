@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
+import { JobSource } from "@/generated/prisma";
 
 export async function POST(req: Request) {
   try {
@@ -96,6 +97,7 @@ export async function GET() {
         status: true,
         appliedAt: true,
         tags: true,
+        source: true,
         url: true,
         jd: true,
         userId: true,

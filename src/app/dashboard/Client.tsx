@@ -12,6 +12,8 @@ import ProgressSection from "@/app/dashboard/components/ProgressSection";
 import RecentActivitySection from "@/app/dashboard/components/RecentActivitySection";
 import JobList from "@/app/dashboard/components/JobList";
 import NewJobModal from "@/app/dashboard/components/NewJobModal";
+import NewJobModePicker from "@/app/dashboard/components/NewJobModePicker";
+import SimpleNewJobModal from "@/app/dashboard/components/SimpleNewJobModal";
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
 import { useAllJobs } from "@/app/dashboard/hooks/useAllJobs";
 import {
@@ -55,6 +57,9 @@ type FilterStatus =
   | "interview2"
   | "interview3";
 
+/** Add-job UI: mode picker → standard modal or simple (card) placeholder. */
+type NewJobUi = null | "picker" | "standard" | "simple";
+
 export default function DashboardClient({
   user,
   openNewJobFromQuery = false,
@@ -88,12 +93,12 @@ export default function DashboardClient({
   // Filters
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
-  const [showNewModal, setShowNewModal] = useState(false);
+  const [newJobUi, setNewJobUi] = useState<NewJobUi>(null);
 
-  // Open new job modal when sidebar navigates with ?newJob=1 (search read on server, not useSearchParams)
+  // Open mode picker when sidebar uses ?newJob=1 (search read on server, not useSearchParams)
   useEffect(() => {
     if (!openNewJobFromQuery) return;
-    setShowNewModal(true);
+    setNewJobUi("picker");
     router.replace("/dashboard", { scroll: false });
   }, [openNewJobFromQuery, router]);
 
@@ -162,7 +167,7 @@ export default function DashboardClient({
         <div className="flex gap-2 py-4">
           <button
             type="button"
-            onClick={() => setShowNewModal(true)}
+            onClick={() => setNewJobUi("picker")}
             className="flex gap-2 border border-indigo-800 dark:border-yellow-800 shadow-md items-center bg-indigo-500 dark:bg-yellow-500 text-white px-4 py-2 rounded hover:bg-indigo-600 dark:hover:bg-yellow-600 text-sm"
           >
             <Plus size={20} /> Add New
@@ -252,13 +257,31 @@ export default function DashboardClient({
         </motion.div>
       </motion.div>
 
-      {showNewModal && (
+      {newJobUi === "picker" && (
+        <NewJobModePicker
+          onClose={() => setNewJobUi(null)}
+          onSelectStandard={() => setNewJobUi("standard")}
+          onSelectSimple={() => setNewJobUi("simple")}
+        />
+      )}
+      {newJobUi === "standard" && (
         <NewJobModal
-          onClose={() => setShowNewModal(false)}
+          onClose={() => setNewJobUi(null)}
           onCreated={(job: Job) => {
             setJobs((prev) => upsertJobList(prev, job));
             setAllJobs((prev) => upsertJobList(prev, job));
-            setShowNewModal(false);
+            setNewJobUi(null);
+          }}
+        />
+      )}
+      {newJobUi === "simple" && (
+        <SimpleNewJobModal
+          onClose={() => setNewJobUi(null)}
+          onSwitchToStandard={() => setNewJobUi("standard")}
+          onCreated={(job: Job) => {
+            setJobs((prev) => upsertJobList(prev, job));
+            setAllJobs((prev) => upsertJobList(prev, job));
+            setNewJobUi(null);
           }}
         />
       )}

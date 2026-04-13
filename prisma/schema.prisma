@@ -32,6 +32,12 @@ enum HubProfileStatus {
   STAFF
 }
 
+/// How this job row was created (extend with new Prisma enum values + migration when needed).
+enum JobSource {
+  ONLINE
+  WALK_IN
+}
+
 model Job {
   id         String    @id @default(cuid())
   title      String
@@ -39,6 +45,7 @@ model Job {
   status     String
   appliedAt  DateTime
   tags       String?
+  source     JobSource @default(ONLINE)
   userId     String
   createdAt  DateTime  @default(now())
   deletedAt  DateTime?
