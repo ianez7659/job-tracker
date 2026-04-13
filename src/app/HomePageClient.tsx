@@ -34,10 +34,10 @@ export default function HomePageClient() {
           >
             Log in to get started
           </a>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          {/* <p className="text-sm text-gray-500 dark:text-gray-400">
             Demo account: <span className="font-mono">demo@example.com</span> / <span className="font-mono">demo1234</span> —{" "}
             <a href="/login" className="underline">sign in here</a>
-          </p>
+          </p> */}
         </div>
       )}
     </main>

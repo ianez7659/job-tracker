@@ -114,7 +114,7 @@ export default function LoginClient() {
               </p>
             )}
 
-            {!isRegistering && (
+            {/* {!isRegistering && (
               <div className="mb-4 p-3 rounded-lg bg-slate-100 dark:bg-slate-600/50 border border-slate-200 dark:border-slate-500 text-left">
                 <p className="text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Demo account</p>
                 <p className="text-sm text-slate-700 dark:text-slate-200">
@@ -142,7 +142,7 @@ export default function LoginClient() {
                   Sign in with demo account
                 </button>
               </div>
-            )}
+            )} */}
 
             {isRegistering && (
               <input
