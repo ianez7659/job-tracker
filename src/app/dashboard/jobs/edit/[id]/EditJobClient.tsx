@@ -20,6 +20,8 @@ import {
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { AiAssistCheeringCallout } from "@/components/AiAssistCheeringCallout";
 import { ClipboardPasteButton } from "@/components/ClipboardPasteButton";
+import WalkInCompanyPrepPanel from "@/components/WalkInCompanyPrepPanel";
+import { JobSource } from "@/generated/prisma";
 
 type Job = {
   id: string;
@@ -30,6 +32,7 @@ type Job = {
   tags: string | null;
   url?: string | null;
   jd?: string | null;
+  source?: JobSource | null;
 };
 
 type Props = {
@@ -46,6 +49,10 @@ const INTERVIEW_PREP_STAGES = [
 
 export default function EditJobClient({ job }: Props) {
   const router = useRouter();
+
+  const isWalkIn =
+    job.source === JobSource.WALK_IN ||
+    (job.tags?.toLowerCase().includes("walk-in") ?? false);
 
   const [fetchJdError, setFetchJdError] = useState<string | null>(null);
   const [fetchJdLoading, setFetchJdLoading] = useState(false);
@@ -73,12 +80,21 @@ export default function EditJobClient({ job }: Props) {
   );
 
   useEffect(() => {
+    const hash = typeof window !== "undefined" ? window.location.hash.replace(/^#/, "") : "";
+    if (!hash) return;
+    const el = document.getElementById(hash);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
+
+  useEffect(() => {
     setQuestionsText(null);
     setQuestionsError(null);
   }, [stage]);
 
   useEffect(() => {
-    if (!showInterviewPrep || isEditing) {
+    if (!showInterviewPrep || isEditing || isWalkIn) {
       return;
     }
     const jd = form.jd?.trim();
@@ -120,7 +136,7 @@ export default function EditJobClient({ job }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [showInterviewPrep, isEditing, job.id, stage, form.jd]);
+  }, [showInterviewPrep, isEditing, isWalkIn, job.id, stage, form.jd]);
 
   const handleLoadInterviewQuestions = async () => {
     if (!form.jd?.trim()) {
@@ -298,52 +314,43 @@ export default function EditJobClient({ job }: Props) {
                 >
                   Continue on Apply page → submit application
                 </Link>
-              ) : stage === "interview3" ? (
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    disabled={pipelineLoading}
-                    onClick={() => patchStatusOnly("offer")}
-                    className="text-xs px-3 py-1.5 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50"
-                  >
-                    Mark as Offer
-                  </button>
-                  <button
-                    type="button"
-                    disabled={pipelineLoading}
-                    onClick={() => patchStatusOnly("rejected")}
-                    className="text-xs px-3 py-1.5 rounded-md bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50"
-                  >
-                    Mark as Rejected
-                  </button>
-                </div>
               ) : (
-                <div className="flex flex-wrap gap-2 items-center">
+                <div className="flex flex-col gap-2 max-w-lg">
                   {getNextStage(stage) && (
                     <button
                       type="button"
                       disabled={pipelineLoading}
                       onClick={() => patchStatusOnly(getNextStage(stage)!)}
-                      className="text-xs px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-yellow-600 dark:hover:bg-yellow-500 disabled:opacity-50"
+                      className="w-full sm:w-auto text-center text-sm px-3 py-2.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-yellow-600 dark:hover:bg-yellow-500 dark:text-slate-900 disabled:opacity-50"
                     >
                       {getAdvanceButtonLabel(stage) ?? "Next stage"}
                     </button>
                   )}
-                  <button
-                    type="button"
-                    disabled={pipelineLoading}
-                    onClick={() => {
-                      if (
-                        confirm(
-                          "Mark this application as rejected / withdrawn?",
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      disabled={pipelineLoading}
+                      onClick={() => patchStatusOnly("offer")}
+                      className="text-sm px-3 py-2.5 rounded-md border-2 border-emerald-600 text-emerald-800 hover:bg-emerald-100 disabled:opacity-50 min-h-[44px]"
+                    >
+                      Mark as Offer
+                    </button>
+                    <button
+                      type="button"
+                      disabled={pipelineLoading}
+                      onClick={() => {
+                        if (
+                          confirm(
+                            "Mark this application as rejected / withdrawn?",
+                          )
                         )
-                      )
-                        patchStatusOnly("rejected");
-                    }}
-                    className="text-xs px-3 py-1.5 rounded-md border border-rose-400 text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 disabled:opacity-50"
-                  >
-                    Mark as Rejected
-                  </button>
+                          patchStatusOnly("rejected");
+                      }}
+                      className="text-sm px-3 py-2.5 rounded-md border-2 border-rose-600 bg-white text-rose-800 hover:bg-rose-100 dark:bg-slate-800 dark:border-rose-400 dark:text-rose-200 dark:hover:bg-rose-950/40 disabled:opacity-50 min-h-[44px]"
+                    >
+                      Mark as Rejected
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -368,9 +375,11 @@ export default function EditJobClient({ job }: Props) {
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase">
-                    Job Posting URL
+                    {isWalkIn ? "Job posting link" : "Job Posting URL"}
                   </p>
-                  {form.url ? (
+                  {isWalkIn && !form.url ? (
+                    <p className="text-sm text-gray-400">Not used for walk-in / card entries</p>
+                  ) : form.url ? (
                     <a
                       href={form.url}
                       target="_blank"
@@ -385,7 +394,7 @@ export default function EditJobClient({ job }: Props) {
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase">
-                    Job description
+                    {isWalkIn ? "Notes (card / conversation)" : "Job description"}
                   </p>
                   <p className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap">
                     {form.jd || "No description"}
@@ -438,35 +447,39 @@ export default function EditJobClient({ job }: Props) {
 
                 <div>
                   <label htmlFor="url" className={labelBase}>
-                    Job Posting URL (optional)
+                    {isWalkIn ? "Job posting URL (optional — usually empty)" : "Job Posting URL (optional)"}
                   </label>
                   <input
                     type="url"
                     name="url"
                     value={form.url}
                     onChange={handleChange}
-                    placeholder="https://example.com/job-posting"
+                    placeholder={isWalkIn ? "Leave blank for card-only entries" : "https://example.com/job-posting"}
                     className={inputBase}
                     required={false}
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    You can add a link to the job posting if available.
+                    {isWalkIn
+                      ? "Walk-in entries typically do not have a posting URL."
+                      : "You can add a link to the job posting if available."}
                   </p>
                 </div>
 
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <label htmlFor="jd" className={labelBase}>
-                      Job description (optional)
+                      {isWalkIn ? "Notes from card / conversation (optional)" : "Job description (optional)"}
                     </label>
-                    <button
-                      type="button"
-                      onClick={handleTryAutoFetch}
-                      disabled={fetchJdLoading || !form.url?.trim()}
-                      className="text-sm px-3 py-1.5 rounded border border-violet-500 text-violet-600 hover:bg-violet-50 dark:border-violet-400 dark:text-violet-300 dark:hover:bg-violet-900/30 disabled:opacity-50 disabled:pointer-events-none"
-                    >
-                      {fetchJdLoading ? "Fetching…" : "Try Auto-Fetch"}
-                    </button>
+                    {!isWalkIn && (
+                      <button
+                        type="button"
+                        onClick={handleTryAutoFetch}
+                        disabled={fetchJdLoading || !form.url?.trim()}
+                        className="text-sm px-3 py-1.5 rounded border border-violet-500 text-violet-600 hover:bg-violet-50 dark:border-violet-400 dark:text-violet-300 dark:hover:bg-violet-900/30 disabled:opacity-50 disabled:pointer-events-none"
+                      >
+                        {fetchJdLoading ? "Fetching…" : "Try Auto-Fetch"}
+                      </button>
+                    )}
                     <ClipboardPasteButton
                       onText={(text) => {
                         setFetchJdError(null);
@@ -475,14 +488,20 @@ export default function EditJobClient({ job }: Props) {
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    Tip: Copy the JD on the posting page, then tap Paste.
+                    {isWalkIn
+                      ? "Paste or type what you captured from the card (name, email, etc.)."
+                      : "Tip: Copy the JD on the posting page, then tap Paste."}
                   </p>
                   <textarea
                     id="jd"
                     name="jd"
                     value={form.jd}
                     onChange={handleChange}
-                    placeholder="Paste the job description here (for AI features later)."
+                    placeholder={
+                      isWalkIn
+                        ? "Notes from the business card or your conversation…"
+                        : "Paste the job description here (for AI features later)."
+                    }
                     rows={6}
                     className={`${inputBase} resize-y min-h-[12rem] text-base sm:text-sm`}
                   />
@@ -534,9 +553,17 @@ export default function EditJobClient({ job }: Props) {
           </div>
 
           {/* Right: stage-based AI advice + interview questions (Applied onward) */}
-          <div className="flex-1 min-w-0 min-h-[16rem] self-stretch p-4 sm:p-6 bg-slate-50/50 dark:bg-slate-900/30 flex flex-col gap-3">
+          <div
+            id="interview-prep"
+            className="flex-1 min-w-0 min-h-[16rem] self-stretch p-4 sm:p-6 bg-slate-50/50 dark:bg-slate-900/30 flex flex-col gap-3 scroll-mt-20"
+          >
             <h2 className="text-sm font-semibold text-gray-800 dark:text-gray-100 uppercase tracking-wide">
               Interview prep
+              {isWalkIn && (
+                <span className="block normal-case text-xs font-normal text-amber-800 dark:text-amber-200/90 mt-1">
+                  Walk-in / business card — pick the company below for angle ideas (session only, not saved).
+                </span>
+              )}
             </h2>
 
             {!showInterviewPrep ? (
@@ -547,10 +574,18 @@ export default function EditJobClient({ job }: Props) {
                     ? "This application is closed — interview prep is no longer shown."
                     : "Interview prep is available from the Applied stage onward."}
               </p>
+            ) : isWalkIn ? (
+              <>
+                <WalkInCompanyPrepPanel companyName={form.company} jd={form.jd || null} />
+                {!form.jd?.trim() && (
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Tip: Add notes on the left (email, URL from the card) so company matching is more accurate.
+                  </p>
+                )}
+              </>
             ) : !form.jd?.trim() ? (
               <p className="text-sm text-amber-700 dark:text-amber-300">
-                Add a job description on the left (Edit) to enable AI advice and
-                expected questions.
+                Add a job description on the left (Edit) to enable AI advice and expected questions.
               </p>
             ) : (
               <>
@@ -602,8 +637,8 @@ export default function EditJobClient({ job }: Props) {
                 </div>
 
                 <p className={helperText}>
-                  AI uses your saved job description and current stage. Edit JD on
-                  the left, then save — refresh the page to see updated advice.
+                  AI uses your saved job description and current stage. Edit JD on the left, then save —
+                  refresh the page to see updated advice.
                 </p>
               </>
             )}

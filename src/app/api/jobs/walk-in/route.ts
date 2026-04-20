@@ -6,7 +6,8 @@ import { JobSource } from "@/generated/prisma";
 
 /**
  * Walk-in/mobile card flow creation endpoint.
- * Uses same Job table, but with walk-in defaults and minimal required inputs.
+ * Uses same Job table. Skips the standard "applying" / PDF-apply gate — starts at `resume`
+ * (shown as APPLIED) so the pipeline matches in-person card capture, not online posting.
  */
 export async function POST(req: Request) {
   try {
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
       data: {
         title,
         company,
-        status: "applying",
+        status: "resume",
         appliedAt: new Date(),
         tags: "walk-in,business-card",
         source: JobSource.WALK_IN,

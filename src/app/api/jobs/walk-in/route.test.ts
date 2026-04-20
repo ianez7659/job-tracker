@@ -61,7 +61,7 @@ describe("POST /api/jobs/walk-in", () => {
       id: "j1",
       title: "Entry",
       company: "Store",
-      status: "applying",
+      status: "resume",
     });
     const req = new Request("http://localhost/api/jobs/walk-in", {
       method: "POST",
@@ -78,6 +78,7 @@ describe("POST /api/jobs/walk-in", () => {
       expect.objectContaining({
         data: expect.objectContaining({
           source: JobSource.WALK_IN,
+          status: "resume",
         }),
       }),
     );

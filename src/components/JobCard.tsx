@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { X, Calendar, Building2, Link2 } from "lucide-react";
+import Link from "next/link";
+import { X, Calendar, Building2, Link2, Sparkles } from "lucide-react";
+import { JobSource } from "@/generated/prisma";
 import { getAdvanceButtonLabel } from "@/lib/jobPipeline";
 
 type JobCardProps = {
@@ -12,6 +14,7 @@ type JobCardProps = {
   appliedAt?: string | Date | null;
   onDelete: (id: string) => void;
   url?: string | null;
+  source?: JobSource | null;
 };
 
 export default function JobCard({
@@ -22,14 +25,16 @@ export default function JobCard({
   appliedAt,
   onDelete,
   url,
+  source,
 }: JobCardProps) {
   const router = useRouter();
+  const showWalkInPrepLink = source === JobSource.WALK_IN;
   const statusColors: Record<string, string> = {
     applying:
       "bg-indigo-100 text-indigo-900 dark:bg-indigo-600 dark:text-indigo-50",
     resume:
       "bg-emerald-100 text-emerald-900 dark:bg-emerald-600 dark:text-emerald-50",
-    interview1: "bg-yellow-100 text-yellow-800 dark:bg-yellow-500 dark:text-yellow-100",
+    interview1: "bg-yellow-100 text-yellow-800 dark:text-yellow-500 dark:text-yellow-100",
     interview2: "bg-orange-200 text-orange-900 dark:bg-orange-500 dark:text-orange-100",
     interview3: "bg-orange-400 text-orange-900 dark:bg-orange-500 dark:text-orange-100",
     offer: "bg-green-200 text-green-800",
@@ -73,7 +78,6 @@ export default function JobCard({
         }
       }}
     >
-      {/* Status Indicator */}
       <div
         className={`w-2 sm:w-3 h-full ${statusColors[status]} absolute left-0 top-0 z-[1]`}
       />
@@ -127,6 +131,16 @@ export default function JobCard({
               ? "APPLIED"
               : status.toUpperCase()}
           </span>
+          {showWalkInPrepLink && (
+            <Link
+              href={`/dashboard/jobs/edit/${id}#interview-prep`}
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-1.5 self-start text-xs font-medium px-2.5 py-1.5 rounded-lg border border-amber-400/80 bg-amber-50 text-amber-900 hover:bg-amber-100 dark:border-yellow-600 dark:bg-yellow-950/50 dark:text-yellow-100 dark:hover:bg-yellow-900/40 transition-colors"
+            >
+              <Sparkles size={14} className="shrink-0" />
+              Interview prep →
+            </Link>
+          )}
           <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-snug">
             {status === "offer" || status === "rejected" ? (
               <>Archived outcome — open for details.</>

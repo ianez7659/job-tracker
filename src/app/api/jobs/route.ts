@@ -41,6 +41,7 @@ export async function POST(req: Request) {
         status,
         appliedAt: new Date(),
         tags: tags?.join(",") || null,
+        source: JobSource.ONLINE,
         url: url?.trim() || null,
         jd: (typeof jd === "string" ? jd.trim() : null) || null,
         userId: user.id,

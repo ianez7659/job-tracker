@@ -3,12 +3,33 @@ import { getServerSession } from "next-auth";
 import OpenAI from "openai";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { JobSource } from "@/generated/prisma";
 
 export type AiAssistAction = "skills" | "interview" | "advice";
 
-function getAdviceSystemPrompt(status: string): string {
+function getAdviceSystemPrompt(status: string, walkIn: boolean): string {
   const lang =
     "Write in the same language as the job description. Be concise, practical, and actionable. Format using Markdown: use ## or ### headings, bullet or numbered lists, **bold** for emphasis, and short paragraphs (not raw MDX/JSX).";
+  if (walkIn) {
+    const ctx =
+      "The candidate met this contact through an in-person walk-in or business card. The text below is notes from the card or a brief conversation — not a formal online job posting. Do not invent employer facts; suggest realistic follow-up and preparation from what is known.";
+    switch (status) {
+      case "resume":
+        return `You are a career coach. ${ctx} ${lang}
+Focus on: professional follow-up (email/thank-you timing), what to clarify about the role or team, how to present their experience, and 3–5 next-step ideas.`;
+      case "interview1":
+        return `You are a career coach for an early conversation after a walk-in or referral. ${ctx} ${lang}
+Focus on: story for “why this employer,” questions to ask them, behavioral examples, and how to sound prepared without overstating what they know about the company.`;
+      case "interview2":
+        return `You are a coach for a deeper interview round. ${ctx} ${lang}
+If the notes mention technical skills, address those; otherwise focus on problem-solving, collaboration, and role-fit questions they might face.`;
+      case "interview3":
+        return `You are a coach for a late / culture or leadership-style round. ${ctx} ${lang}
+Focus on: values, collaboration, trade-offs, and senior-style questions — grounded in the notes only.`;
+      default:
+        return `You are a career coach helping after a walk-in or card exchange. ${ctx} ${lang}`;
+    }
+  }
   switch (status) {
     case "resume":
       return `You are a career coach. The candidate has already submitted their application (applied). ${lang}
@@ -79,7 +100,14 @@ export async function POST(req: Request) {
         id: jobId,
         user: { email: session.user.email },
       },
-      select: { id: true, title: true, company: true, status: true, jd: true },
+      select: {
+        id: true,
+        title: true,
+        company: true,
+        status: true,
+        jd: true,
+        source: true,
+      },
     });
 
     if (!job) {
@@ -94,23 +122,30 @@ export async function POST(req: Request) {
       );
     }
 
-    const roleContext = `Position level / title: ${job.title ?? "—"}\nCompany: ${job.company ?? "—"}\nCurrent pipeline stage: ${job.status}\n\n`;
+    const walkIn = job.source === JobSource.WALK_IN;
+    const roleContext = `Position level / title: ${job.title ?? "—"}\nCompany: ${job.company ?? "—"}\nCurrent pipeline stage: ${job.status}${walkIn ? "\nContext: walk-in / business card entry (notes may be sparse).\n" : "\n"}\n`;
 
     let systemPrompt: string;
     let userContent: string;
     let maxTokens = 1500;
 
     if (action === "advice") {
-      systemPrompt = getAdviceSystemPrompt(job.status);
-      userContent = `${roleContext}Job description:\n\n${jdText}`;
+      systemPrompt = getAdviceSystemPrompt(job.status, walkIn);
+      userContent = walkIn
+        ? `${roleContext}Notes from card / conversation:\n\n${jdText}`
+        : `${roleContext}Job description:\n\n${jdText}`;
       maxTokens = 900;
     } else {
       const { system, userPrefix } = PROMPTS[action];
       systemPrompt = system;
-      if (action === "interview" && (job.status === "interview2" || job.status === "interview3")) {
+      if (walkIn && action === "interview") {
+        systemPrompt = `You are a career coach. The text below is short notes from a business card or brief meeting, not a full job posting. Suggest 6–10 realistic questions the candidate might face or should prepare for in early conversations with this employer, plus brief tips. Prefer motivation, fit, scheduling, and clarifying the role; add technical depth only if the notes clearly imply it. Write in the same language as the notes. Format with "Q:" and "Tips:" for each.`;
+      } else if (action === "interview" && (job.status === "interview2" || job.status === "interview3")) {
         systemPrompt = INTERVIEW_TECH_SYSTEM;
       }
-      userContent = `${roleContext}${userPrefix}${jdText}`;
+      userContent = walkIn
+        ? `${roleContext}Notes:\n\n${jdText}`
+        : `${roleContext}${userPrefix}${jdText}`;
     }
 
     const completion = await openai.chat.completions.create({

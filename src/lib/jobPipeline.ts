@@ -39,8 +39,13 @@ export function isAllowedStatusTransition(from: string, to: string): boolean {
   if (to === "rejected" && !TERMINAL_STATUSES.includes(from as "offer" | "rejected")) {
     return true;
   }
-  // After interview 3: offer or rejected only
-  if (from === "interview3" && (to === "offer" || to === "rejected")) return true;
+  // Offer from Applied onward (early acceptance before final round)
+  if (
+    to === "offer" &&
+    ["resume", "interview1", "interview2", "interview3"].includes(from)
+  ) {
+    return true;
+  }
   // Apply flow: applying → resume (or give up)
   if (from === "applying" && (to === "resume" || to === "rejected")) return true;
   return false;
