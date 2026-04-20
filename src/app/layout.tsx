@@ -6,11 +6,13 @@ import SessionProvider from "@/components/provider/SessionWraper";
 // import PageTransition from "@/components/PageTransition";
 import ThemeProvider from "@/components/ThemeProvider";
 import ErudaLoader from "@/components/ErudaLoader";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: "#4f46e5",
 };
 
 export const metadata: Metadata = {
@@ -18,8 +20,15 @@ export const metadata: Metadata = {
   description: "Track and manage your job applications with ease. Monitor interview progress, analyze statistics, and stay organized throughout your job search journey.",
   keywords: ["job tracking", "job application", "career management", "interview tracker", "job search"],
   authors: [{ name: "Jobflow" }],
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Jobflow",
+  },
   other: {
     google: "notranslate",
+    "mobile-web-app-capable": "yes",
   },
   openGraph: {
     title: "Jobflow - Job Tracking Dashboard",
@@ -51,6 +60,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Script id="theme-init" strategy="beforeInteractive">
           {themeScript}
         </Script>
+        <ServiceWorkerRegister />
         <ThemeProvider>
           <Suspense fallback={null}>
             <ErudaLoader />
