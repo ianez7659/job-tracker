@@ -11,8 +11,12 @@
     "typecheck": "tsc --noEmit",
     "check": "npm run lint && npm run typecheck && npm test && npm run build",
     "test": "jest",
+    "start-task": "tsx scripts/start-task.ts",
     "check:test-files": "tsx scripts/check-test-files.ts",
     "harness:context": "tsx scripts/harness-run.ts",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:report": "playwright show-report",
     "prepare": "husky"
   },
   "dependencies": {
@@ -57,6 +61,7 @@
     "jest-environment-jsdom": "^30.2.0",
     "prisma": "^6.11.0",
     "tailwindcss": "^4",
+    "@playwright/test": "^1.52.0",
     "tsx": "^4.21.0",
     "typescript": "^5",
     "undici": "^7.22.0",

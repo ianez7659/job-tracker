@@ -18,5 +18,6 @@ export async function GET(req: Request) {
     });
   }
 
-  return appIconImageResponse(size);
+  const origin = new URL(req.url).origin;
+  return appIconImageResponse(size, origin);
 }

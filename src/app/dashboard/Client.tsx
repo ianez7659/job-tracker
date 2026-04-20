@@ -14,6 +14,7 @@ import JobList from "@/app/dashboard/components/JobList";
 import NewJobModal from "@/app/dashboard/components/NewJobModal";
 import NewJobModePicker from "@/app/dashboard/components/NewJobModePicker";
 import SimpleNewJobModal from "@/app/dashboard/components/SimpleNewJobModal";
+import { InstallButton } from "@/components/InstallButton";
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
 import { useAllJobs } from "@/app/dashboard/hooks/useAllJobs";
 import {
@@ -164,7 +165,8 @@ export default function DashboardClient({
             Here is your current applications
           </p>
         </div>
-        <div className="flex gap-2 py-4">
+        <div className="flex flex-wrap justify-end gap-2 py-4">
+          <InstallButton />
           <button
             type="button"
             onClick={() => setNewJobUi("picker")}

@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import NavBar from "@/components/NavBar";
 import MobileNav from "@/components/MobileNav";
 import Sidebar from "@/components/Sidebar";
+import { IOSInstallOverlay } from "@/components/IOSInstallOverlay";
 import CategoryGuard from "./CategoryGuard";
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default async function DashboardLayout({
         </div>
       </div>
       <MobileNav />
+      <IOSInstallOverlay />
     </>
   );
 }
