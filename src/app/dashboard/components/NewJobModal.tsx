@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { X, Clipboard } from "lucide-react";
 import {
   inputBase,
   selectBase,
@@ -16,8 +17,18 @@ type NewJobModalProps = {
   onCreated: (job: any) => void;
 };
 
+function getDetectionHint(url: string, jd: string): string | null {
+  if (url && jd) return "Job URL and description detected from clipboard";
+  if (url) return "Job URL detected from clipboard";
+  if (jd) return "Job description detected from clipboard";
+  return null;
+}
+
 export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
   const { sharedUrl, sharedJd } = useSharedDataStore();
+
+  const detectionHint = getDetectionHint(sharedUrl, sharedJd);
+  const [hintVisible, setHintVisible] = useState(!!detectionHint);
 
   const [fetchJdError, setFetchJdError] = useState<string | null>(null);
   const [fetchJdLoading, setFetchJdLoading] = useState(false);
@@ -157,6 +168,21 @@ export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
           </button>
         </div>
 
+        {hintVisible && detectionHint && (
+          <div className="flex items-center gap-2 mx-4 mt-3 px-3 py-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-sm">
+            <Clipboard size={15} className="flex-shrink-0" aria-hidden />
+            <span className="flex-1">{detectionHint}</span>
+            <button
+              type="button"
+              onClick={() => setHintVisible(false)}
+              className="flex-shrink-0 p-0.5 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900"
+              aria-label="Dismiss"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        )}
+
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 pb-10 sm:px-6 sm:py-5 sm:pb-8">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-sm:gap-3">
             <div>
@@ -200,15 +226,24 @@ export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
               <label htmlFor="url" className={labelBase}>
                 Job Posting URL (optional)
               </label>
-              <input
-                type="url"
-                id="url"
-                name="url"
-                value={form.url}
-                onChange={handleChange}
-                placeholder="https://example.com/job-posting"
-                className={inputBase}
-              />
+              <div className="flex items-center gap-2">
+                <input
+                  type="url"
+                  id="url"
+                  name="url"
+                  value={form.url}
+                  onChange={handleChange}
+                  placeholder="https://example.com/job-posting"
+                  className={`${inputBase} flex-1`}
+                />
+                <ClipboardPasteButton
+                  onText={(text) => {
+                    const trimmed = text.trim();
+                    setForm((prev) => ({ ...prev, url: trimmed }));
+                    setFetchJdError(null);
+                  }}
+                />
+              </div>
               <p className="text-xs text-gray-500 mt-1">
                 You can add a link to the job posting if available.
               </p>
