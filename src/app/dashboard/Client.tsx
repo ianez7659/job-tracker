@@ -17,6 +17,8 @@ import SimpleNewJobModal from "@/app/dashboard/components/SimpleNewJobModal";
 import { InstallButton } from "@/components/InstallButton";
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
 import { useAllJobs } from "@/app/dashboard/hooks/useAllJobs";
+import { useSharedEntry } from "@/app/dashboard/hooks/useSharedEntry";
+import { useSharedDataStore } from "@/stores/useSharedDataStore";
 import {
   activeOnly,
   countDecided,
@@ -66,6 +68,11 @@ export default function DashboardClient({
   openNewJobFromQuery = false,
 }: Props) {
   const router = useRouter();
+
+  // Hybrid share/clipboard pipeline
+  useSharedEntry();
+  const { isSharedEntry, clearSharedData } = useSharedDataStore();
+
   // Data fetching hooks
   const { jobs, setJobs, refetchJobs } = useJobs();
   const { allJobs, setAllJobs, refetchAllJobs } = useAllJobs();
@@ -102,6 +109,12 @@ export default function DashboardClient({
     setNewJobUi("picker");
     router.replace("/dashboard", { scroll: false });
   }, [openNewJobFromQuery, router]);
+
+  // Auto-open standard modal when shared data arrives via pipeline
+  useEffect(() => {
+    if (!isSharedEntry) return;
+    setNewJobUi("standard");
+  }, [isSharedEntry]);
 
   const setFilterStatusFromFilter = (s: FilterStatus) => {
     setFilterStatus(s);
@@ -268,8 +281,9 @@ export default function DashboardClient({
       )}
       {newJobUi === "standard" && (
         <NewJobModal
-          onClose={() => setNewJobUi(null)}
+          onClose={() => { clearSharedData(); setNewJobUi(null); }}
           onCreated={(job: Job) => {
+            clearSharedData();
             setJobs((prev) => upsertJobList(prev, job));
             setAllJobs((prev) => upsertJobList(prev, job));
             setNewJobUi(null);

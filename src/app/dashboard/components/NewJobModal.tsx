@@ -9,6 +9,7 @@ import {
 } from "@/lib/styles";
 import { POSITION_LEVELS } from "@/lib/constants/positions";
 import { ClipboardPasteButton } from "@/components/ClipboardPasteButton";
+import { useSharedDataStore } from "@/stores/useSharedDataStore";
 
 type NewJobModalProps = {
   onClose: () => void;
@@ -16,6 +17,8 @@ type NewJobModalProps = {
 };
 
 export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
+  const { sharedUrl, sharedJd } = useSharedDataStore();
+
   const [fetchJdError, setFetchJdError] = useState<string | null>(null);
   const [fetchJdLoading, setFetchJdLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -24,8 +27,8 @@ export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
     company: "",
     status: "applying",
     tags: "",
-    url: "",
-    jd: "",
+    url: sharedUrl,
+    jd: sharedJd,
   });
 
   const handleChange = (
