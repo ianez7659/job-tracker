@@ -24,7 +24,6 @@ const JD_KEYWORDS = [
 ];
 
 function isLikelyJd(text: string): boolean {
-  if (text.length >= 200) return true;
   const lower = text.toLowerCase();
   return JD_KEYWORDS.some((kw) => lower.includes(kw));
 }

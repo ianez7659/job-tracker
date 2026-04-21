@@ -77,16 +77,14 @@ describe("useSharedEntry", () => {
     expect(window.location.search).toBe("");
   });
 
-  it("captures valid clipboard JD (>=200 chars)", async () => {
-    const longJd = "a".repeat(200);
-    mockClipboard(longJd);
+  it("ignores long text that has no job keywords", async () => {
+    const longNonJd = "a".repeat(200);
+    mockClipboard(longNonJd);
 
     renderHook(() => useSharedEntry());
 
     await waitFor(() => {
-      const state = useSharedDataStore.getState();
-      expect(state.isSharedEntry).toBe(true);
-      expect(state.sharedJd).toBe(longJd);
+      expect(useSharedDataStore.getState().isSharedEntry).toBe(false);
     });
   });
 

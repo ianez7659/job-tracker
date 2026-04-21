@@ -154,9 +154,7 @@ export default function DashboardClient({
           if (text.startsWith("http")) {
             url = text;
           } else {
-            const isJd =
-              text.length >= 200 ||
-              [
+            const isJd = [
                 "responsibilities", "requirements", "qualifications",
                 "experience", "salary", "benefits", "apply", "position",
                 "job description", "we are looking", "you will",
