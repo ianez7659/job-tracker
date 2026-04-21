@@ -8,6 +8,14 @@
   "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#4f46e5",
+  "share_target": {
+    "action": "/dashboard",
+    "method": "GET",
+    "params": {
+      "title": "share_title",
+      "url": "share_url"
+    }
+  },
   "icons": [
     {
       "src": "/api/pwa/icon?size=192",
