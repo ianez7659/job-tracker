@@ -71,7 +71,7 @@ export default function DashboardClient({
 
   // Hybrid share/clipboard pipeline
   useSharedEntry();
-  const { isSharedEntry, clearSharedData } = useSharedDataStore();
+  const { isSharedEntry, setSharedData, clearSharedData } = useSharedDataStore();
 
   // Data fetching hooks
   const { jobs, setJobs, refetchJobs } = useJobs();
@@ -136,6 +136,48 @@ export default function DashboardClient({
       });
   }, [safeJobs, searchTerm, filterStatus]);
 
+  // Add New button handler — attempts clipboard read on user gesture (works on iOS)
+  const handleAddNew = async () => {
+    // Auto-detect already ran and populated the store → open modal directly
+    if (isSharedEntry) {
+      setNewJobUi("standard");
+      return;
+    }
+
+    let url = "";
+    let jd = "";
+
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard?.readText) {
+        const text = (await navigator.clipboard.readText())?.trim() ?? "";
+        if (text) {
+          if (text.startsWith("http")) {
+            url = text;
+          } else {
+            const isJd =
+              text.length >= 200 ||
+              [
+                "responsibilities", "requirements", "qualifications",
+                "experience", "salary", "benefits", "apply", "position",
+                "job description", "we are looking", "you will",
+                "must have", "nice to have", "full-time", "part-time", "remote",
+              ].some((kw) => text.toLowerCase().includes(kw));
+            if (isJd) jd = text;
+          }
+        }
+      }
+    } catch {
+      // NotAllowedError or unavailable — fall through to Mode Picker
+    }
+
+    if (url || jd) {
+      setSharedData(url, jd);
+      setNewJobUi("standard");
+    } else {
+      setNewJobUi("picker");
+    }
+  };
+
   // Actions
   const onDelete = async (id: string) => {
     // Optimistically remove from active list; mirror deletedAt in allJobs
@@ -182,7 +224,7 @@ export default function DashboardClient({
           <InstallButton />
           <button
             type="button"
-            onClick={() => setNewJobUi("picker")}
+            onClick={handleAddNew}
             className="flex gap-2 border border-indigo-800 dark:border-yellow-800 shadow-md items-center bg-indigo-500 dark:bg-yellow-500 text-white px-4 py-2 rounded hover:bg-indigo-600 dark:hover:bg-yellow-600 text-sm"
           >
             <Plus size={20} /> Add New
