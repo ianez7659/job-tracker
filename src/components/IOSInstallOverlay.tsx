@@ -39,26 +39,12 @@ function openInChrome() {
   window.location.href = `googlechromes://${url}`;
 }
 
-async function copyUrlForSafari(): Promise<boolean> {
-  try {
-    await navigator.clipboard.writeText(window.location.href);
-    return true;
-  } catch {
-    return false;
-  }
+function openInSafari() {
+  const url = window.location.href.replace(/^https?:\/\//, "");
+  window.location.href = `x-web-search://${url}`;
 }
 
 function GoogleSteps() {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyForSafari = async () => {
-    const ok = await copyUrlForSafari();
-    if (ok) {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
-    }
-  };
-
   return (
     <div className="mt-3 space-y-3">
       <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -69,10 +55,10 @@ function GoogleSteps() {
       <div className="flex gap-2">
         <button
           type="button"
-          onClick={handleCopyForSafari}
+          onClick={openInSafari}
           className="flex-1 rounded-lg border border-indigo-300 dark:border-indigo-700 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950"
         >
-          {copied ? "Copied! Paste in Safari" : "Open in Safari"}
+          Open in Safari
         </button>
         <button
           type="button"
