@@ -6,11 +6,16 @@ type IOSBrowser = "safari" | "chrome" | "firefox" | "other";
 
 interface IOSContext {
   isIOS: boolean;
+  isStandalone: boolean;
   browser: IOSBrowser;
 }
 
+const DISMISSED_KEY = "ios-install-overlay-dismissed";
+
 function detectIOS(): IOSContext {
-  if (typeof window === "undefined") return { isIOS: false, browser: "other" };
+  if (typeof window === "undefined") {
+    return { isIOS: false, isStandalone: false, browser: "other" };
+  }
 
   const ua = window.navigator.userAgent;
   const isIOS = /iphone|ipad|ipod/i.test(ua);
@@ -18,14 +23,14 @@ function detectIOS(): IOSContext {
     "standalone" in window.navigator &&
     (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
 
-  if (!isIOS || isStandalone) return { isIOS: false, browser: "other" };
+  if (!isIOS) return { isIOS: false, isStandalone: false, browser: "other" };
 
   let browser: IOSBrowser = "other";
   if (/crios/i.test(ua)) browser = "chrome";
   else if (/fxios/i.test(ua)) browser = "firefox";
   else if (/safari/i.test(ua)) browser = "safari";
 
-  return { isIOS: true, browser };
+  return { isIOS: true, isStandalone, browser };
 }
 
 const STEP_ONE: Record<IOSBrowser, React.ReactNode> = {
@@ -84,8 +89,25 @@ export function IOSInstallOverlay() {
 
   useEffect(() => {
     const detected = detectIOS();
-    if (detected.isIOS) setCtx(detected);
+    if (!detected.isIOS) return;
+
+    if (detected.isStandalone) {
+      // Running from home screen icon — reset dismissed flag so that
+      // if the user later deletes the icon and revisits in browser,
+      // the overlay shows again.
+      localStorage.removeItem(DISMISSED_KEY);
+      return;
+    }
+
+    // Browser mode — only show if not previously dismissed
+    const dismissed = localStorage.getItem(DISMISSED_KEY);
+    if (!dismissed) setCtx(detected);
   }, []);
+
+  const handleDismiss = () => {
+    localStorage.setItem(DISMISSED_KEY, "1");
+    setCtx(null);
+  };
 
   if (!ctx) return null;
 
@@ -99,7 +121,7 @@ export function IOSInstallOverlay() {
       className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-sm rounded-t-2xl bg-white px-6 py-5 shadow-2xl dark:bg-gray-800"
     >
       <button
-        onClick={() => setCtx(null)}
+        onClick={handleDismiss}
         aria-label="Dismiss install prompt"
         className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
       >
