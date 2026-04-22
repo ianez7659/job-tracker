@@ -1,4 +1,4 @@
-const CACHE_NAME = "jobflow-v5";
+const CACHE_NAME = "jobflow-v7";
 
 // Cache only static app shell assets — exclude Next.js internals and API routes
 const PRECACHE_URLS = ["/", "/manifest.json"];

@@ -39,9 +39,17 @@ function openInChrome() {
   window.location.href = `googlechromes://${url}`;
 }
 
-function openInSafari() {
-  const url = window.location.href.replace(/^https?:\/\//, "");
-  window.location.href = `x-web-search://${url}`;
+async function shareToSafari() {
+  if (typeof navigator !== "undefined" && navigator.share) {
+    try {
+      await navigator.share({
+        title: "Jobflow",
+        url: window.location.href,
+      });
+    } catch {
+      // User dismissed share sheet — no action needed
+    }
+  }
 }
 
 function GoogleSteps() {
@@ -55,7 +63,7 @@ function GoogleSteps() {
       <div className="flex gap-2">
         <button
           type="button"
-          onClick={openInSafari}
+          onClick={shareToSafari}
           className="flex-1 rounded-lg border border-indigo-300 dark:border-indigo-700 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950"
         >
           Open in Safari
