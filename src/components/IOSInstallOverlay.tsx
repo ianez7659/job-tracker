@@ -39,41 +39,55 @@ function openInChrome() {
   window.location.href = `googlechromes://${url}`;
 }
 
-async function shareToSafari() {
-  if (typeof navigator !== "undefined" && navigator.share) {
-    try {
-      await navigator.share({
-        title: "Jobflow",
-        url: window.location.href,
-      });
-    } catch {
-      // User dismissed share sheet — no action needed
-    }
-  }
-}
-
 function GoogleSteps() {
   return (
     <div className="mt-3 space-y-3">
       <p className="text-sm text-gray-600 dark:text-gray-300">
         Adding to Home Screen is not supported in the Google app.
         <br />
-        Please open Jobflow in Safari or Chrome to install it.
+        To install Jobflow, open it in Safari or Chrome first.
       </p>
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={shareToSafari}
-          className="flex-1 rounded-lg border border-indigo-300 dark:border-indigo-700 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950"
-        >
+
+      {/* Open in Safari — manual guide */}
+      <div className="rounded-lg border border-indigo-200 dark:border-indigo-800 px-3 py-2">
+        <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-1">
           Open in Safari
-        </button>
+        </p>
+        <ol className="space-y-1 text-xs text-gray-600 dark:text-gray-300">
+          <li className="flex items-start gap-1">
+            <span className="flex-shrink-0">1.</span>
+            <span>
+              Tap the{" "}
+              <span className="font-medium text-indigo-600 dark:text-indigo-400">
+                Share button
+              </span>{" "}
+              in the Google app toolbar.
+            </span>
+          </li>
+          <li className="flex items-start gap-1">
+            <span className="flex-shrink-0">2.</span>
+            <span>
+              Tap{" "}
+              <span className="font-medium text-indigo-600 dark:text-indigo-400">
+                Open in Safari
+              </span>{" "}
+              from the menu.
+            </span>
+          </li>
+        </ol>
+      </div>
+
+      {/* Open in Chrome — direct button */}
+      <div className="rounded-lg border border-indigo-200 dark:border-indigo-800 px-3 py-2">
+        <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-1">
+          Open in Chrome
+        </p>
         <button
           type="button"
           onClick={openInChrome}
-          className="flex-1 rounded-lg border border-indigo-300 dark:border-indigo-700 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950"
+          className="w-full rounded-md border border-indigo-300 dark:border-indigo-700 py-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950"
         >
-          Open in Chrome
+          Tap to open in Chrome
         </button>
       </div>
     </div>
