@@ -95,12 +95,14 @@ describe("IOSInstallOverlay", () => {
     expect(screen.getByText(/share button/i)).toBeInTheDocument();
   });
 
-  it("shows Google app redirect buttons", () => {
+  it("shows Google app Safari guide and Chrome button", () => {
     setUserAgent(IOS_GOOGLE_UA);
     render(<IOSInstallOverlay />);
     fireEvent.click(screen.getByText(/how to install/i));
-    expect(screen.getByRole("button", { name: /open in safari/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /open in chrome/i })).toBeInTheDocument();
+    // Safari: manual guide (no button), Chrome: direct button
+    expect(screen.getByText(/share button/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/open in safari/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole("button", { name: /tap to open in chrome/i })).toBeInTheDocument();
   });
 
   it("dismisses overlay on X click", () => {
