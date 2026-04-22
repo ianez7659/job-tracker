@@ -145,6 +145,17 @@ export default function Navbar() {
 
 
                       <Link
+                        href="/dashboard/profile"
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-600"
+                        onClick={() => setProfileOpen(false)}
+                      >
+                        <span className="flex items-center gap-2">
+                          <User size={16} />
+                          Profile
+                        </span>
+                      </Link>
+
+                      <Link
                         href="/dashboard/settings"
                         className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-600"
                         onClick={() => setProfileOpen(false)}
@@ -247,6 +258,16 @@ export default function Navbar() {
                 onClick={() => setMobileOpen(false)}
               >
                 <BarChart size={16} /> Stats
+              </Link>
+
+              <Link
+                href="/dashboard/profile"
+                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 ${isActive(
+                  "/dashboard/profile"
+                )}`}
+                onClick={() => setMobileOpen(false)}
+              >
+                <User size={16} /> Profile
               </Link>
 
               <Link
