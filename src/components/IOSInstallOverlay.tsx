@@ -2,17 +2,13 @@
 
 import { useEffect, useState } from "react";
 
-type IOSBrowser = "safari" | "chrome" | "firefox" | "other";
-type OverlayState = "install" | "reinstall";
+type IOSBrowser = "safari" | "chrome" | "firefox" | "google" | "other";
 
 interface IOSContext {
   isIOS: boolean;
   isStandalone: boolean;
   browser: IOSBrowser;
 }
-
-/** Saved when the user opens the app in standalone mode (icon exists). */
-const INSTALLED_KEY = "ios-pwa-installed";
 
 function detectIOS(): IOSContext {
   if (typeof window === "undefined") {
@@ -22,66 +18,107 @@ function detectIOS(): IOSContext {
   const ua = window.navigator.userAgent;
   const isIOS = /iphone|ipad|ipod/i.test(ua);
   const isStandalone =
-    "standalone" in window.navigator &&
-    (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+    ("standalone" in window.navigator &&
+      (window.navigator as Navigator & { standalone?: boolean }).standalone === true) ||
+    (typeof window.matchMedia === "function" &&
+      window.matchMedia("(display-mode: standalone)").matches);
 
   if (!isIOS) return { isIOS: false, isStandalone: false, browser: "other" };
 
   let browser: IOSBrowser = "other";
-  if (/crios/i.test(ua)) browser = "chrome";
+  if (/GSA\//i.test(ua)) browser = "google";
+  else if (/crios/i.test(ua)) browser = "chrome";
   else if (/fxios/i.test(ua)) browser = "firefox";
   else if (/safari/i.test(ua)) browser = "safari";
 
   return { isIOS: true, isStandalone, browser };
 }
 
-const STEP_ONE: Record<IOSBrowser, React.ReactNode> = {
-  safari: (
-    <span>
-      Tap the{" "}
-      <span className="font-medium text-indigo-600 dark:text-indigo-400">Share</span>{" "}
-      button <span aria-hidden="true">⬆</span> in the bottom toolbar.
-    </span>
-  ),
-  chrome: (
-    <span>
-      Tap the{" "}
-      <span className="font-medium text-indigo-600 dark:text-indigo-400">···</span>{" "}
-      menu in the bottom-right corner.
-    </span>
-  ),
-  firefox: (
-    <span>
-      Tap the{" "}
-      <span className="font-medium text-indigo-600 dark:text-indigo-400">···</span>{" "}
-      menu at the bottom of the screen.
-    </span>
-  ),
-  other: (
-    <span>
-      Open your browser&apos;s{" "}
-      <span className="font-medium text-indigo-600 dark:text-indigo-400">Share</span>{" "}
-      or menu option.
-    </span>
-  ),
-};
+function openInChrome() {
+  const url = window.location.href.replace(/^https?:\/\//, "");
+  window.location.href = `googlechromes://${url}`;
+}
 
-const BROWSER_LABEL: Record<IOSBrowser, string> = {
-  safari: "Safari",
-  chrome: "Chrome",
-  firefox: "Firefox",
-  other: "",
-};
+function openInSafari() {
+  window.location.href = window.location.href;
+}
 
 function InstallSteps({ browser }: { browser: IOSBrowser }) {
+  if (browser === "google") {
+    return (
+      <div className="mt-3 space-y-3">
+        <p className="text-sm text-gray-600 dark:text-gray-300">
+          Adding to Home Screen is not supported in the Google app.
+          <br />
+          Please open Jobflow in Safari or Chrome to install it.
+        </p>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={openInSafari}
+            className="flex-1 rounded-lg border border-indigo-300 dark:border-indigo-700 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950"
+          >
+            Open in Safari
+          </button>
+          <button
+            type="button"
+            onClick={openInChrome}
+            className="flex-1 rounded-lg border border-indigo-300 dark:border-indigo-700 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950"
+          >
+            Open in Chrome
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const stepOne: Record<Exclude<IOSBrowser, "google">, React.ReactNode> = {
+    safari: (
+      <span>
+        Tap the{" "}
+        <span className="font-medium text-indigo-600 dark:text-indigo-400">
+          Share button
+        </span>{" "}
+        in the bottom toolbar.
+      </span>
+    ),
+    chrome: (
+      <span>
+        Tap the{" "}
+        <span className="font-medium text-indigo-600 dark:text-indigo-400">
+          Share button
+        </span>{" "}
+        on the right side of the address bar.
+      </span>
+    ),
+    firefox: (
+      <span>
+        Tap the{" "}
+        <span className="font-medium text-indigo-600 dark:text-indigo-400">
+          Share button
+        </span>{" "}
+        in the toolbar.
+      </span>
+    ),
+    other: (
+      <span>
+        Tap the{" "}
+        <span className="font-medium text-indigo-600 dark:text-indigo-400">
+          Share button
+        </span>{" "}
+        in your browser.
+      </span>
+    ),
+  };
+
   return (
-    <ol className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+    <ol className="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-300">
       <li className="flex items-start gap-2">
-        <span className="mt-0.5 flex-shrink-0">1.</span>
-        {STEP_ONE[browser]}
+        <span className="flex-shrink-0">1.</span>
+        {stepOne[browser as Exclude<IOSBrowser, "google">]}
       </li>
       <li className="flex items-start gap-2">
-        <span className="mt-0.5 flex-shrink-0">2.</span>
+        <span className="flex-shrink-0">2.</span>
         <span>
           Tap{" "}
           <span className="font-medium text-indigo-600 dark:text-indigo-400">
@@ -91,10 +128,12 @@ function InstallSteps({ browser }: { browser: IOSBrowser }) {
         </span>
       </li>
       <li className="flex items-start gap-2">
-        <span className="mt-0.5 flex-shrink-0">3.</span>
+        <span className="flex-shrink-0">3.</span>
         <span>
           Tap{" "}
-          <span className="font-medium text-indigo-600 dark:text-indigo-400">Add</span>{" "}
+          <span className="font-medium text-indigo-600 dark:text-indigo-400">
+            Add
+          </span>{" "}
           to confirm.
         </span>
       </li>
@@ -103,40 +142,25 @@ function InstallSteps({ browser }: { browser: IOSBrowser }) {
 }
 
 /**
- * Bottom-sheet overlay for iOS users.
+ * Bottom-sheet overlay for iOS users (browser mode only).
  *
- * State A — no install record: guides the user to add the app to home screen.
- * State B — install record exists (standalone was used before): informs the
- *   user the app is installed and offers reinstall steps in case the icon
- *   was deleted.
- *
- * The X button closes the overlay for the current session only.
- * Running in standalone mode saves the install record and hides the overlay.
+ * - Already installed section: reminds users to open via icon.
+ * - Not installed section: collapsible install steps, browser-specific.
+ * - Google app: redirects to Safari or Chrome (no Add to Home Screen support).
+ * - X closes for current session only (no persistent dismissal).
  */
 export function IOSInstallOverlay() {
   const [ctx, setCtx] = useState<IOSContext | null>(null);
-  const [overlayState, setOverlayState] = useState<OverlayState>("install");
   const [stepsVisible, setStepsVisible] = useState(false);
 
   useEffect(() => {
     const detected = detectIOS();
     if (!detected.isIOS) return;
-
-    if (detected.isStandalone) {
-      // App opened via home screen icon — record install and hide overlay
-      localStorage.setItem(INSTALLED_KEY, "1");
-      return;
-    }
-
-    // Browser mode
-    const installed = localStorage.getItem(INSTALLED_KEY);
-    setOverlayState(installed ? "reinstall" : "install");
+    if (detected.isStandalone) return;
     setCtx(detected);
   }, []);
 
   if (!ctx) return null;
-
-  const label = BROWSER_LABEL[ctx.browser];
 
   return (
     <div
@@ -153,44 +177,30 @@ export function IOSInstallOverlay() {
         ✕
       </button>
 
-      {overlayState === "install" ? (
-        <>
-          <p className="mb-1 text-sm font-semibold text-gray-800 dark:text-gray-100">
-            Install Jobflow
-          </p>
-          {label && (
-            <p className="mb-3 text-xs text-gray-400 dark:text-gray-500">{label}</p>
-          )}
-          <p className="mb-3 text-sm text-gray-600 dark:text-gray-300">
-            Add to your home screen to use it like an app.
-          </p>
-          <InstallSteps browser={ctx.browser} />
-        </>
-      ) : (
-        <>
-          <p className="mb-1 text-sm font-semibold text-gray-800 dark:text-gray-100">
-            Jobflow is installed
-          </p>
-          <p className="mb-3 text-sm text-gray-600 dark:text-gray-300">
-            Open Jobflow from your home screen. If you deleted the icon, you can add it again.
-          </p>
-          <button
-            type="button"
-            onClick={() => setStepsVisible((v) => !v)}
-            className="text-sm text-indigo-600 dark:text-indigo-400 underline mb-3"
-          >
-            {stepsVisible ? "Hide steps" : "How to reinstall"}
-          </button>
-          {stepsVisible && (
-            <>
-              {label && (
-                <p className="mb-2 text-xs text-gray-400 dark:text-gray-500">{label}</p>
-              )}
-              <InstallSteps browser={ctx.browser} />
-            </>
-          )}
-        </>
-      )}
+      {/* Already installed */}
+      <div className="mb-4 rounded-lg bg-gray-50 dark:bg-slate-700 px-4 py-3">
+        <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-1">
+          Already added to your home screen?
+        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Open Jobflow from the home screen icon instead of the browser.
+        </p>
+      </div>
+
+      {/* Not installed yet */}
+      <div>
+        <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-1">
+          Not installed yet?
+        </p>
+        <button
+          type="button"
+          onClick={() => setStepsVisible((v) => !v)}
+          className="text-sm text-indigo-600 dark:text-indigo-400 underline"
+        >
+          {stepsVisible ? "Hide steps" : "How to install"}
+        </button>
+        {stepsVisible && <InstallSteps browser={ctx.browser} />}
+      </div>
     </div>
   );
 }
