@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Plus, Trash2, LayoutList, LayoutDashboard, Search } from "lucide-react";
+import { Plus, Briefcase, LayoutList, LayoutDashboard, Search } from "lucide-react";
 
 // Dashboard-local pieces
 import OverviewSection from "@/app/dashboard/components/OverviewSection";
@@ -14,6 +13,7 @@ import JobList from "@/app/dashboard/components/JobList";
 import NewJobModal from "@/app/dashboard/components/NewJobModal";
 import NewJobModePicker from "@/app/dashboard/components/NewJobModePicker";
 import SimpleNewJobModal from "@/app/dashboard/components/SimpleNewJobModal";
+import JobSearchModal from "@/app/dashboard/components/JobSearchModal";
 import { InstallButton } from "@/components/InstallButton";
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
 import { useAllJobs } from "@/app/dashboard/hooks/useAllJobs";
@@ -74,8 +74,8 @@ export default function DashboardClient({
   const { isSharedEntry, setSharedData, clearSharedData } = useSharedDataStore();
 
   // Data fetching hooks
-  const { jobs, setJobs, refetchJobs } = useJobs();
-  const { allJobs, setAllJobs, refetchAllJobs } = useAllJobs();
+  const { jobs, setJobs } = useJobs();
+  const { allJobs, setAllJobs } = useAllJobs();
 
   // Ensure arrays are always arrays (defensive programming)
   const safeJobs = Array.isArray(jobs) ? jobs : [];
@@ -102,6 +102,7 @@ export default function DashboardClient({
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
   const [newJobUi, setNewJobUi] = useState<NewJobUi>(null);
+  const [showJobSearch, setShowJobSearch] = useState(false);
 
   // Open mode picker when sidebar uses ?newJob=1 (search read on server, not useSearchParams)
   useEffect(() => {
@@ -227,13 +228,14 @@ export default function DashboardClient({
           >
             <Plus size={20} /> Add New
           </button>
-          <Link
-            href="/dashboard/trash"
-            className="flex items-center gap-2 border border-red-400 dark:border-red-800 shadow-md bg-red-200 dark:bg-red-600 text-red-700 dark:text-red-100 px-4 py-2 rounded hover:bg-red-200 dark:hover:bg-red-700 transition-all text-sm"
+          <button
+            type="button"
+            onClick={() => setShowJobSearch(true)}
+            className="flex items-center gap-2 border border-green-600 dark:border-green-700 shadow-md bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded hover:bg-green-600 dark:hover:bg-green-700 transition-all text-sm"
           >
-            <Trash2 size={20} />
-            Trash Bin
-          </Link>
+            <Briefcase size={20} />
+            Find Jobs
+          </button>
         </div>
       </div>
 
@@ -312,6 +314,9 @@ export default function DashboardClient({
         </motion.div>
       </motion.div>
 
+      {showJobSearch && (
+        <JobSearchModal onClose={() => setShowJobSearch(false)} />
+      )}
       {newJobUi === "picker" && (
         <NewJobModePicker
           onClose={() => setNewJobUi(null)}
