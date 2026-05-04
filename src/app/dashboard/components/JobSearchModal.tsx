@@ -7,7 +7,10 @@ type Props = {
   onClose: () => void;
 };
 
-const backdropTransition = { duration: 0.22, ease: [0.25, 0.1, 0.25, 1] as const };
+const backdropTransition = {
+  duration: 0.22,
+  ease: [0.25, 0.1, 0.25, 1] as const,
+};
 const panelTransition = {
   type: "spring" as const,
   damping: 26,
@@ -56,7 +59,7 @@ const JOB_SITES = [
   {
     name: "GoJobs",
     description: "Canadian-focused job board for local opportunities.",
-    url: "https://gojobs.ca",
+    url: "https://gojobs.app",
     icon: <Briefcase size={24} aria-hidden />,
     iconBg: "bg-green-600 dark:bg-green-500",
     border: "border-green-200 dark:border-green-800",
@@ -142,7 +145,9 @@ export default function JobSearchModal({ onClose }: Props) {
               onClick={() => handleSelect(site.url)}
               className={`flex items-start gap-4 w-full text-left p-4 rounded-xl border-2 ${site.border} ${site.bg} ${site.hoverBorder} transition-colors min-h-[5rem] active:scale-[0.99]`}
             >
-              <span className={`flex-shrink-0 mt-0.5 p-2 rounded-lg ${site.iconBg} text-white`}>
+              <span
+                className={`flex-shrink-0 mt-0.5 p-2 rounded-lg ${site.iconBg} text-white`}
+              >
                 {site.icon}
               </span>
               <span className="min-w-0">
