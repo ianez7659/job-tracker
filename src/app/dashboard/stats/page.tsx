@@ -2,29 +2,19 @@
 
 import { useEffect, useState, useMemo } from "react";
 import type { Job } from "@/generated/prisma";
-import { ChartNoAxesCombined, ThumbsUp, Calendar } from "lucide-react";
-
-const STATUS_COLORS: Record<string, string> = {
-  resume: "#9fa8b7",
-  interview1: "#5694f7",
-  interview2: "#4625cb",
-  interview3: "#a213b2",
-  offer: "#10b981",
-  rejected: "#ef4444",
-};
+import { ChartNoAxesCombined, Calendar } from "lucide-react";
+import {
+  buildCurrentStatusEntries,
+  buildCycleEndEntries,
+  countClosedCycles,
+  type StatsBarEntry,
+} from "@/app/dashboard/lib/stats/statsTransforms";
 
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 type YearMonthRow = { year: number; m1: number; m2: number; m3: number; m4: number; m5: number; m6: number; m7: number; m8: number; m9: number; m10: number; m11: number; m12: number; total: number };
 
-type SimpleBarEntry = {
-  key: string;
-  label: string;
-  count: number;
-  color: string;
-};
-
-function SimpleBars({ entries }: { entries: SimpleBarEntry[] }) {
+function SimpleBars({ entries }: { entries: StatsBarEntry[] }) {
   const max = Math.max(1, ...entries.map((e) => e.count));
 
   return (
@@ -34,7 +24,7 @@ function SimpleBars({ entries }: { entries: SimpleBarEntry[] }) {
         return (
           <div
             key={entry.key}
-            className="grid grid-cols-[90px_1fr_38px] gap-2 items-center"
+            className="grid grid-cols-[120px_1fr_38px] gap-2 items-center"
           >
             <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 truncate">
               {entry.label}
@@ -92,11 +82,14 @@ function buildYearMonthTable(jobs: Job[]): YearMonthRow[] {
   });
 }
 
+type StatsTab = "current" | "cycle-end";
+
 export default function StatsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [allJobs, setAllJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<StatsTab>("current");
 
   const safeJobs = Array.isArray(jobs) ? jobs : [];
   const safeAllJobs = Array.isArray(allJobs) ? allJobs : [];
@@ -147,33 +140,20 @@ export default function StatsPage() {
     };
   }, []);
 
-  const chartData = ["resume", "interview1", "interview2", "interview3"].map(
-    (status) => ({
-      statusKey: status,
-      status: status.charAt(0).toUpperCase() + status.slice(1),
-      count: safeJobs.filter((job) => job.status === status).length,
-    })
+  const currentEntries = useMemo(
+    () => buildCurrentStatusEntries(safeJobs),
+    [safeJobs],
   );
 
-  const outcomeData = ["offer", "rejected"].map((status) => ({
-    statusKey: status,
-    status: status.charAt(0).toUpperCase() + status.slice(1),
-    count: safeAllJobs.filter((job) => job.status === status).length,
-  }));
+  const cycleEndEntries = useMemo(
+    () => buildCycleEndEntries(safeAllJobs),
+    [safeAllJobs],
+  );
 
-  const chartEntries: SimpleBarEntry[] = chartData.map((e) => ({
-    key: e.statusKey,
-    label: e.status,
-    count: e.count,
-    color: STATUS_COLORS[e.statusKey] ?? "#94a3b8",
-  }));
-
-  const outcomeEntries: SimpleBarEntry[] = outcomeData.map((e) => ({
-    key: e.statusKey,
-    label: e.status,
-    count: e.count,
-    color: STATUS_COLORS[e.statusKey] ?? "#94a3b8",
-  }));
+  const closedCycleCount = useMemo(
+    () => countClosedCycles(safeAllJobs),
+    [safeAllJobs],
+  );
 
   const monthlyData = useMemo(
     () => buildYearMonthTable(safeAllJobs),
@@ -206,16 +186,10 @@ export default function StatsPage() {
     return MONTH_LABELS.map((label, i) => ({ label, count: counts[i] })).filter((m) => m.count > 0);
   }, [selectedYearRow]);
 
-  const offerCount = safeAllJobs.filter((job) => job.status === "offer").length;
-  const rejectedCount = safeAllJobs.filter(
-    (job) => job.status === "rejected"
-  ).length;
-
-  const totalFinalized = offerCount + rejectedCount;
-  const offerRate =
-    totalFinalized > 0
-      ? ((offerCount / totalFinalized) * 100).toFixed(1)
-      : "N/A";
+  const TAB_ITEMS: { id: StatsTab; label: string }[] = [
+    { id: "current", label: "Current" },
+    { id: "cycle-end", label: "Cycle End" },
+  ];
 
   return (
     <section className="p-6 bg-slate-50 dark:bg-slate-900 min-h-screen">
@@ -227,15 +201,55 @@ export default function StatsPage() {
         <p className="mb-4 text-sm text-red-600 dark:text-red-400">{loadError}</p>
       )}
 
-      {/* Current Application Status */}
+      {/* Status Distribution — tabbed */}
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md dark:shadow-slate-900/50 p-4 mb-8 border border-transparent dark:border-slate-600">
-        <h2 className="flex text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+        <h2 className="flex items-center text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
           <ChartNoAxesCombined className="mr-2" size={25} />
-          Current Application Status
+          Application Status
         </h2>
-        <div className="w-full">
-          <SimpleBars entries={chartEntries} />
+
+        {/* Tab bar */}
+        <div className="flex gap-1 mb-5 border-b border-gray-200 dark:border-slate-600">
+          {TAB_ITEMS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-1.5 text-sm font-medium rounded-t transition-colors ${
+                activeTab === tab.id
+                  ? "bg-white dark:bg-slate-800 border border-b-white dark:border-slate-600 dark:border-b-slate-800 -mb-px text-blue-600 dark:text-blue-400"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
+
+        {/* Current tab */}
+        {activeTab === "current" && (
+          <div className="w-full">
+            <SimpleBars entries={currentEntries} />
+          </div>
+        )}
+
+        {/* Cycle End tab */}
+        {activeTab === "cycle-end" && (
+          <div className="w-full">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+              How far did each closed application progress?
+            </p>
+            {cycleEndEntries.length === 0 ? (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                No closed cycles yet.
+              </p>
+            ) : (
+              <SimpleBars entries={cycleEndEntries} />
+            )}
+            <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">
+              Total closed cycles: <span className="font-medium text-gray-700 dark:text-gray-300">{closedCycleCount}</span>
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Monthly posts created - one year at a time, year dropdown */}
@@ -292,23 +306,6 @@ export default function StatsPage() {
             )}
           </tbody>
         </table>
-      </div>
-
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md dark:shadow-slate-900/50 p-4 border border-transparent dark:border-slate-600">
-        <div className="flex justify-between mb-4">
-          <h2 className="flex text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
-            <ChartNoAxesCombined className="mr-2" size={25} />
-            Final Outcomes
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300 flex flex-row gap-2">
-            <ThumbsUp size={18} />
-            Rate: {offerRate === "N/A" ? "Not available yet" : `${offerRate}%`}
-          </p>
-        </div>
-
-        <div className="w-full">
-          <SimpleBars entries={outcomeEntries} />
-        </div>
       </div>
     </section>
   );
