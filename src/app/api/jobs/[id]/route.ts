@@ -3,6 +3,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { isAllowedStatusTransition } from "@/lib/jobPipeline";
+import { deriveCycleEndStage } from "@/lib/xp/cycleStage";
+import { awardForCycleCompletion, awardDailyActivity } from "@/lib/xp/service";
+
+const TERMINAL = new Set(["offer", "rejected"]);
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   console.log("✅ PATCH called");
@@ -103,16 +107,36 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         );
       }
       try {
+        const newStatus: string = body.status;
+        const isTerminal = TERMINAL.has(newStatus);
+        const cycleEndStage = isTerminal
+          ? deriveCycleEndStage(existing.status)
+          : undefined;
+
         const updated = await prisma.job.update({
           where: { id },
           data: {
-            status: body.status,
-            deletedAt:
-              body.status === "offer" || body.status === "rejected"
-                ? new Date()
-                : null,
+            status: newStatus,
+            deletedAt: isTerminal ? new Date() : null,
+            ...(cycleEndStage !== undefined && { cycleEndStage }),
           },
         });
+
+        if (isTerminal) {
+          void awardForCycleCompletion(existing.userId, {
+            id: existing.id,
+            company: existing.company,
+            title: existing.title,
+            status: newStatus,
+            appliedAt: existing.appliedAt,
+            url: existing.url ?? null,
+            jd: existing.jd ?? null,
+            cycleEndStage: cycleEndStage ?? null,
+          });
+        } else {
+          void awardDailyActivity(existing.userId);
+        }
+
         return NextResponse.json({ message: "Status updated", job: updated });
       } catch (error) {
         console.error("❌ Status update error:", error);
@@ -134,6 +158,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     }
 
     try {
+      const isTerminal = TERMINAL.has(status);
+      const cycleEndStage = isTerminal
+        ? deriveCycleEndStage(existing.status)
+        : undefined;
+
       const updated = await prisma.job.update({
         where: { id },
         data: {
@@ -143,8 +172,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
           tags: Array.isArray(tags) ? tags.join(",") : tags ?? null,
           url: url ?? undefined,
           jd: typeof jd === "string" ? jd.trim() || null : undefined,
-          deletedAt:
-            status === "offer" || status === "rejected" ? new Date() : null,
+          deletedAt: isTerminal ? new Date() : null,
+          ...(cycleEndStage !== undefined && { cycleEndStage }),
         },
       });
 
@@ -184,6 +213,21 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             }
           }
         }
+      }
+
+      if (isTerminal) {
+        void awardForCycleCompletion(existing.userId, {
+          id: existing.id,
+          company: updated.company,
+          title: updated.title,
+          status,
+          appliedAt: updated.appliedAt,
+          url: updated.url ?? null,
+          jd: updated.jd ?? null,
+          cycleEndStage: cycleEndStage ?? null,
+        });
+      } else {
+        void awardDailyActivity(existing.userId);
       }
 
       return NextResponse.json({ message: "Updated", job: updated });

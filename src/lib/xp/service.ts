@@ -1,0 +1,170 @@
+// DB-aware XP service.
+// Wraps pure reward functions with prisma persistence and idempotency guards.
+// All public functions are fire-and-forget safe: errors are caught internally
+// and never propagate to callers (so job operations always succeed).
+
+import { prisma } from "@/lib/prisma";
+import type { XpGrant, XpJobInput } from "./types";
+import {
+  grantsForJobCreation,
+  grantsForCycleCompletion,
+  grantDailyActivity,
+  grantWeeklyReview,
+  isDailyRewardEligible,
+} from "./rewards";
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+// ── Internal helpers ──────────────────────────────────────────────────────────
+
+async function ensureUserXp(userId: string) {
+  return prisma.userXp.upsert({
+    where: { userId },
+    create: { userId },
+    update: {},
+  });
+}
+
+async function applyGrants(
+  userXpId: string,
+  grants: XpGrant[],
+  jobId?: string,
+): Promise<void> {
+  if (grants.length === 0) return;
+  const totalAmount = grants.reduce((sum, g) => sum + g.amount, 0);
+  await prisma.$transaction([
+    ...grants.map((g) =>
+      prisma.xpEvent.create({
+        data: {
+          userXpId,
+          reason: g.reason,
+          amount: g.amount,
+          jobId: jobId ?? null,
+        },
+      }),
+    ),
+    prisma.userXp.update({
+      where: { id: userXpId },
+      data: { totalXp: { increment: totalAmount } },
+    }),
+  ]);
+}
+
+async function applyDailyIfEligible(
+  userXpId: string,
+  lastDailyAt: Date | null,
+): Promise<void> {
+  if (!isDailyRewardEligible(lastDailyAt)) return;
+  const grant = grantDailyActivity();
+  await prisma.$transaction([
+    prisma.xpEvent.create({
+      data: { userXpId, reason: grant.reason, amount: grant.amount },
+    }),
+    prisma.userXp.update({
+      where: { id: userXpId },
+      data: {
+        totalXp: { increment: grant.amount },
+        lastDailyAt: new Date(),
+      },
+    }),
+  ]);
+}
+
+// ── Public API ────────────────────────────────────────────────────────────────
+
+/**
+ * Award XP for job card creation.
+ * Idempotent: skips if JOB_CREATED already logged for this jobId.
+ * Also checks daily activity reward.
+ */
+export async function awardForJobCreation(
+  userId: string,
+  job: XpJobInput & { id: string },
+): Promise<void> {
+  try {
+    const userXp = await ensureUserXp(userId);
+    const alreadyAwarded = await prisma.xpEvent.findFirst({
+      where: { userXpId: userXp.id, reason: "JOB_CREATED", jobId: job.id },
+    });
+    if (alreadyAwarded) return;
+
+    const grants = grantsForJobCreation(job);
+    await applyGrants(userXp.id, grants, job.id);
+
+    // Re-fetch lastDailyAt after grants (totalXp may have changed, lastDailyAt unchanged)
+    await applyDailyIfEligible(userXp.id, userXp.lastDailyAt);
+  } catch (err) {
+    console.error("[XP] awardForJobCreation failed:", err);
+  }
+}
+
+/**
+ * Award XP when a job cycle closes (status = offer | rejected).
+ * Idempotent: skips if CYCLE_COMPLETED already logged for this jobId.
+ * Also checks daily activity reward.
+ */
+export async function awardForCycleCompletion(
+  userId: string,
+  job: XpJobInput & { id: string },
+): Promise<void> {
+  try {
+    const userXp = await ensureUserXp(userId);
+    const alreadyAwarded = await prisma.xpEvent.findFirst({
+      where: { userXpId: userXp.id, reason: "CYCLE_COMPLETED", jobId: job.id },
+    });
+    if (alreadyAwarded) return;
+
+    const grants = grantsForCycleCompletion(job);
+    await applyGrants(userXp.id, grants, job.id);
+    await applyDailyIfEligible(userXp.id, userXp.lastDailyAt);
+  } catch (err) {
+    console.error("[XP] awardForCycleCompletion failed:", err);
+  }
+}
+
+/**
+ * Award daily activity XP for any meaningful action that doesn't have its own
+ * dedicated award path (e.g. non-terminal status update, note edit).
+ */
+export async function awardDailyActivity(userId: string): Promise<void> {
+  try {
+    const userXp = await ensureUserXp(userId);
+    await applyDailyIfEligible(userXp.id, userXp.lastDailyAt);
+  } catch (err) {
+    console.error("[XP] awardDailyActivity failed:", err);
+  }
+}
+
+/**
+ * Award weekly review XP.
+ * Idempotent: skips if WEEKLY_REVIEW already logged within the last 7 days.
+ * Returns { awarded: true } if XP was granted, { awarded: false } if already earned.
+ *
+ * NOTE: There is no dedicated weekly review UI flow in the current codebase.
+ * This endpoint exists as the integration point for future UI or for manual
+ * triggering. The /api/xp/weekly-review route calls this function.
+ */
+export async function awardWeeklyReview(
+  userId: string,
+): Promise<{ awarded: boolean }> {
+  try {
+    const userXp = await ensureUserXp(userId);
+    const oneWeekAgo = new Date(Date.now() - WEEK_MS);
+    const recent = await prisma.xpEvent.findFirst({
+      where: {
+        userXpId: userXp.id,
+        reason: "WEEKLY_REVIEW",
+        createdAt: { gte: oneWeekAgo },
+      },
+    });
+    if (recent) return { awarded: false };
+
+    const grant = grantWeeklyReview();
+    await applyGrants(userXp.id, [grant]);
+    await applyDailyIfEligible(userXp.id, userXp.lastDailyAt);
+    return { awarded: true };
+  } catch (err) {
+    console.error("[XP] awardWeeklyReview failed:", err);
+    return { awarded: false };
+  }
+}

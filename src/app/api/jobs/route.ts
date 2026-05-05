@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { JobSource } from "@/generated/prisma";
+import { awardForJobCreation } from "@/lib/xp/service";
 
 export async function POST(req: Request) {
   try {
@@ -46,6 +47,17 @@ export async function POST(req: Request) {
         jd: (typeof jd === "string" ? jd.trim() : null) || null,
         userId: user.id,
       },
+    });
+
+    // Fire-and-forget XP award — does not affect response or error handling
+    void awardForJobCreation(user.id, {
+      id: job.id,
+      company: job.company,
+      title: job.title,
+      status: job.status,
+      appliedAt: job.appliedAt,
+      url: job.url ?? null,
+      jd: job.jd ?? null,
     });
 
     return NextResponse.json({ message: "Job created", job }, { status: 201 });
