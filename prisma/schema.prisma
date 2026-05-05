@@ -22,6 +22,7 @@ model User {
   accounts      Account[]
   jobs          Job[]
   sessions      Session[]
+  xp            UserXp?
 
   @@map("User")
 }
@@ -39,20 +40,21 @@ enum JobSource {
 }
 
 model Job {
-  id         String    @id @default(cuid())
-  title      String
-  company    String
-  status     String
-  appliedAt  DateTime
-  tags       String?
-  source     JobSource @default(ONLINE)
-  userId     String
-  createdAt  DateTime  @default(now())
-  deletedAt  DateTime?
-  url        String?
-  jd         String?
-  resumeFile String?
-  user       User      @relation(fields: [userId], references: [id])
+  id            String    @id @default(cuid())
+  title         String
+  company       String
+  status        String
+  appliedAt     DateTime
+  tags          String?
+  source        JobSource @default(ONLINE)
+  userId        String
+  createdAt     DateTime  @default(now())
+  deletedAt     DateTime?
+  url           String?
+  jd            String?
+  resumeFile    String?
+  cycleEndStage String?   // last non-terminal stage when job reached offer/rejected
+  user          User      @relation(fields: [userId], references: [id])
   atsMatchSnapshots AtsMatchSnapshot[]
 }
 
@@ -101,4 +103,43 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// ── XP System ────────────────────────────────────────────────────────────────
+
+enum XpReason {
+  DAILY_ACTIVITY       // +8 XP once per day when meaningful action taken
+  JOB_CREATED          // +10 XP on job card creation
+  JOB_CREATED_COMPLETE // +5 XP bonus when card has all core fields filled
+  CYCLE_COMPLETED      // +30 XP when job reaches offer or rejected
+  CYCLE_INTERVIEW_BONUS // +10 XP when cycle passed at least one interview stage
+  CYCLE_NOTE_BONUS     // +5 XP when job has a final note/jd on cycle close
+  WEEKLY_REVIEW        // +20 XP when weekly review requirement is completed
+}
+
+/// One row per user — aggregate XP state.
+model UserXp {
+  id           String    @id @default(cuid())
+  userId       String    @unique
+  totalXp      Int       @default(0)
+  currentLevel Int       @default(1)
+  lastDailyAt  DateTime? // UTC date of last DAILY_ACTIVITY award
+  user         User      @relation(fields: [userId], references: [id])
+  events       XpEvent[]
+
+  @@map("UserXp")
+}
+
+/// Append-only log of every XP grant.
+model XpEvent {
+  id        String    @id @default(cuid())
+  userXpId  String
+  reason    XpReason
+  amount    Int
+  jobId     String?   // which job triggered the event (nullable for daily/weekly)
+  createdAt DateTime  @default(now())
+  userXp    UserXp    @relation(fields: [userXpId], references: [id])
+
+  @@index([userXpId, createdAt])
+  @@map("XpEvent")
 }
