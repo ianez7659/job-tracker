@@ -14,6 +14,7 @@ import NewJobModal from "@/app/dashboard/components/NewJobModal";
 import NewJobModePicker from "@/app/dashboard/components/NewJobModePicker";
 import SimpleNewJobModal from "@/app/dashboard/components/SimpleNewJobModal";
 import JobSearchModal from "@/app/dashboard/components/JobSearchModal";
+import XpSummaryCard from "@/app/dashboard/components/XpSummaryCard";
 import { InstallButton } from "@/components/InstallButton";
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
 import { useAllJobs } from "@/app/dashboard/hooks/useAllJobs";
@@ -276,6 +277,7 @@ export default function DashboardClient({
               setFilterStatus={setFilterStatus}
               embedded
             />
+            <XpSummaryCard />
             <ProgressSection
               resumeCount={waitingCount}
               totalActive={activeJobs.length}
