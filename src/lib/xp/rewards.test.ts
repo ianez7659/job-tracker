@@ -1,6 +1,5 @@
 import {
   isJobCardComplete,
-  isDailyRewardEligible,
   grantsForJobCreation,
   grantsForCycleCompletion,
   grantDailyActivity,
@@ -52,26 +51,6 @@ describe("isJobCardComplete", () => {
 
   it("returns false when title is whitespace only", () => {
     expect(isJobCardComplete({ ...completeJob, title: "   " })).toBe(false);
-  });
-});
-
-// ── isDailyRewardEligible ────────────────────────────────────────────────────
-
-describe("isDailyRewardEligible", () => {
-  const today = new Date("2026-05-04T10:00:00Z");
-  const yesterday = new Date("2026-05-03T23:59:00Z");
-
-  it("returns true when lastDailyAt is null (never claimed)", () => {
-    expect(isDailyRewardEligible(null, today)).toBe(true);
-  });
-
-  it("returns true when last daily was on a previous UTC day", () => {
-    expect(isDailyRewardEligible(yesterday, today)).toBe(true);
-  });
-
-  it("returns false when last daily was already today", () => {
-    const alreadyToday = new Date("2026-05-04T00:30:00Z");
-    expect(isDailyRewardEligible(alreadyToday, today)).toBe(false);
   });
 });
 

@@ -10,8 +10,13 @@ import {
   grantsForCycleCompletion,
   grantDailyActivity,
   grantWeeklyReview,
-  isDailyRewardEligible,
 } from "./rewards";
+import {
+  effectiveLastDailyPeriodKey,
+  getDailyPeriodKey,
+  isDailyRewardEligibleForPeriod,
+  isValidIanaTimeZone,
+} from "./dailyPeriod";
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -50,21 +55,34 @@ async function applyGrants(
   ]);
 }
 
-async function applyDailyIfEligible(
-  userXpId: string,
-  lastDailyAt: Date | null,
+/**
+ * One daily award per (IANA timeZone) “day” starting at 05:00 local (see getDailyPeriodKey).
+ * When `dailyTimeZone` is null (user never sent TZ from dashboard), uses UTC for side-effect paths.
+ */
+async function tryApplyDailyGrantForUser(
+  userId: string,
+  timeZone: string,
 ): Promise<void> {
-  if (!isDailyRewardEligible(lastDailyAt)) return;
+  const row = await prisma.userXp.findUnique({ where: { userId } });
+  if (!row) return;
+
+  const now = new Date();
+  const currentKey = getDailyPeriodKey(now, timeZone);
+  const lastKey = effectiveLastDailyPeriodKey(row);
+  if (!isDailyRewardEligibleForPeriod(lastKey, currentKey)) return;
+
   const grant = grantDailyActivity();
   await prisma.$transaction([
     prisma.xpEvent.create({
-      data: { userXpId, reason: grant.reason, amount: grant.amount },
+      data: { userXpId: row.id, reason: grant.reason, amount: grant.amount },
     }),
     prisma.userXp.update({
-      where: { id: userXpId },
+      where: { id: row.id },
       data: {
         totalXp: { increment: grant.amount },
-        lastDailyAt: new Date(),
+        lastDailyAt: now,
+        lastDailyPeriodKey: currentKey,
+        dailyTimeZone: timeZone,
       },
     }),
   ]);
@@ -91,8 +109,8 @@ export async function awardForJobCreation(
     const grants = grantsForJobCreation(job);
     await applyGrants(userXp.id, grants, job.id);
 
-    // Re-fetch lastDailyAt after grants (totalXp may have changed, lastDailyAt unchanged)
-    await applyDailyIfEligible(userXp.id, userXp.lastDailyAt);
+    const tz = userXp.dailyTimeZone ?? "UTC";
+    await tryApplyDailyGrantForUser(userId, tz);
   } catch (err) {
     console.error("[XP] awardForJobCreation failed:", err);
   }
@@ -116,20 +134,37 @@ export async function awardForCycleCompletion(
 
     const grants = grantsForCycleCompletion(job);
     await applyGrants(userXp.id, grants, job.id);
-    await applyDailyIfEligible(userXp.id, userXp.lastDailyAt);
+    const tz = userXp.dailyTimeZone ?? "UTC";
+    await tryApplyDailyGrantForUser(userId, tz);
   } catch (err) {
     console.error("[XP] awardForCycleCompletion failed:", err);
   }
 }
 
 /**
- * Award daily activity XP for any meaningful action that doesn't have its own
- * dedicated award path (e.g. non-terminal status update, note edit).
+ * Award daily activity XP (dashboard open + optional body timeZone).
+ * When `timeZone` is a valid IANA id, it is stored on UserXp for future side-effect awards.
  */
-export async function awardDailyActivity(userId: string): Promise<void> {
+export async function awardDailyActivity(
+  userId: string,
+  options?: { timeZone?: string },
+): Promise<void> {
   try {
     const userXp = await ensureUserXp(userId);
-    await applyDailyIfEligible(userXp.id, userXp.lastDailyAt);
+    const fromClient =
+      options?.timeZone && isValidIanaTimeZone(options.timeZone)
+        ? options.timeZone
+        : null;
+    const tz = fromClient ?? userXp.dailyTimeZone ?? "UTC";
+
+    if (fromClient && userXp.dailyTimeZone !== fromClient) {
+      await prisma.userXp.update({
+        where: { id: userXp.id },
+        data: { dailyTimeZone: fromClient },
+      });
+    }
+
+    await tryApplyDailyGrantForUser(userId, tz);
   } catch (err) {
     console.error("[XP] awardDailyActivity failed:", err);
   }
@@ -141,8 +176,7 @@ export async function awardDailyActivity(userId: string): Promise<void> {
  * Returns { awarded: true } if XP was granted, { awarded: false } if already earned.
  *
  * NOTE: There is no dedicated weekly review UI flow in the current codebase.
- * This endpoint exists as the integration point for future UI or for manual
- * triggering. The /api/xp/weekly-review route calls this function.
+ * The /api/xp/weekly-review route calls this function.
  */
 export async function awardWeeklyReview(
   userId: string,
@@ -161,7 +195,8 @@ export async function awardWeeklyReview(
 
     const grant = grantWeeklyReview();
     await applyGrants(userXp.id, [grant]);
-    await applyDailyIfEligible(userXp.id, userXp.lastDailyAt);
+    const tz = userXp.dailyTimeZone ?? "UTC";
+    await tryApplyDailyGrantForUser(userId, tz);
     return { awarded: true };
   } catch (err) {
     console.error("[XP] awardWeeklyReview failed:", err);

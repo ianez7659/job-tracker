@@ -33,26 +33,7 @@ export function isJobCardComplete(job: XpJobInput): boolean {
   );
 }
 
-// ── Daily activity ────────────────────────────────────────────────────────────
-
-/**
- * Returns true if the daily XP reward should be granted.
- * `lastDailyAt` is the UTC date of the last daily award (null = never).
- * `now` defaults to current time (injectable for testing).
- */
-export function isDailyRewardEligible(
-  lastDailyAt: Date | null,
-  now: Date = new Date(),
-): boolean {
-  if (!lastDailyAt) return true;
-  const lastDay = toUtcDateString(lastDailyAt);
-  const today = toUtcDateString(now);
-  return lastDay !== today;
-}
-
-function toUtcDateString(d: Date): string {
-  return d.toISOString().slice(0, 10); // "YYYY-MM-DD"
-}
+// Daily XP period logic (local anchor hour + IANA TZ): see `dailyPeriod.ts`.
 
 // ── Job creation rewards ─────────────────────────────────────────────────────
 
