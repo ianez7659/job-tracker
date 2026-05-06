@@ -119,13 +119,15 @@ enum XpReason {
 
 /// One row per user — aggregate XP state.
 model UserXp {
-  id           String    @id @default(cuid())
-  userId       String    @unique
-  totalXp      Int       @default(0)
-  currentLevel Int       @default(1)
-  lastDailyAt  DateTime? // UTC date of last DAILY_ACTIVITY award
-  user         User      @relation(fields: [userId], references: [id])
-  events       XpEvent[]
+  id                  String    @id @default(cuid())
+  userId              String    @unique
+  totalXp             Int       @default(0)
+  currentLevel        Int       @default(1)
+  lastDailyAt         DateTime? // last DAILY_ACTIVITY award instant (audit)
+  dailyTimeZone       String? // IANA TZ from client (e.g. America/Vancouver)
+  lastDailyPeriodKey  String? // YYYY-MM-DD of "day" starting at local anchor hour (see lib/xp/dailyPeriod)
+  user                User      @relation(fields: [userId], references: [id])
+  events              XpEvent[]
 
   @@map("UserXp")
 }
