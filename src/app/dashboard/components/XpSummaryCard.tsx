@@ -19,7 +19,12 @@ const DEFAULT_SUMMARY: XpSummary = {
   progress: 0,
 };
 
-export default function XpSummaryCard() {
+interface Props {
+  /** Increment to trigger a refetch (e.g. after job creation). */
+  refreshToken?: number;
+}
+
+export default function XpSummaryCard({ refreshToken = 0 }: Props) {
   const [summary, setSummary] = useState<XpSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -38,7 +43,7 @@ export default function XpSummaryCard() {
       }
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [refreshToken]);
 
   const data = summary ?? DEFAULT_SUMMARY;
   const pct = Math.round(data.progress * 100);
