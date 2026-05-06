@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { isAllowedStatusTransition } from "@/lib/jobPipeline";
 import { deriveCycleEndStage } from "@/lib/xp/cycleStage";
 import { awardForCycleCompletion, awardDailyActivity } from "@/lib/xp/service";
+import { grantsForCycleCompletion } from "@/lib/xp/rewards";
 
 const TERMINAL = new Set(["offer", "rejected"]);
 
@@ -122,22 +123,28 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
           },
         });
 
+        const cycleJob = {
+          id: existing.id,
+          company: existing.company,
+          title: existing.title,
+          status: newStatus,
+          appliedAt: existing.appliedAt,
+          url: existing.url ?? null,
+          jd: existing.jd ?? null,
+          cycleEndStage: cycleEndStage ?? null,
+        };
+
         if (isTerminal) {
-          void awardForCycleCompletion(existing.userId, {
-            id: existing.id,
-            company: existing.company,
-            title: existing.title,
-            status: newStatus,
-            appliedAt: existing.appliedAt,
-            url: existing.url ?? null,
-            jd: existing.jd ?? null,
-            cycleEndStage: cycleEndStage ?? null,
-          });
+          void awardForCycleCompletion(existing.userId, cycleJob);
         } else {
           void awardDailyActivity(existing.userId);
         }
 
-        return NextResponse.json({ message: "Status updated", job: updated });
+        const xpGained = isTerminal
+          ? grantsForCycleCompletion(cycleJob).reduce((s, g) => s + g.amount, 0)
+          : 0;
+
+        return NextResponse.json({ message: "Status updated", job: updated, xpGained });
       } catch (error) {
         console.error("❌ Status update error:", error);
         return NextResponse.json({ message: "Status update failed" }, { status: 500 });
@@ -215,22 +222,28 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         }
       }
 
+      const fullCycleJob = {
+        id: existing.id,
+        company: updated.company,
+        title: updated.title,
+        status,
+        appliedAt: updated.appliedAt,
+        url: updated.url ?? null,
+        jd: updated.jd ?? null,
+        cycleEndStage: cycleEndStage ?? null,
+      };
+
       if (isTerminal) {
-        void awardForCycleCompletion(existing.userId, {
-          id: existing.id,
-          company: updated.company,
-          title: updated.title,
-          status,
-          appliedAt: updated.appliedAt,
-          url: updated.url ?? null,
-          jd: updated.jd ?? null,
-          cycleEndStage: cycleEndStage ?? null,
-        });
+        void awardForCycleCompletion(existing.userId, fullCycleJob);
       } else {
         void awardDailyActivity(existing.userId);
       }
 
-      return NextResponse.json({ message: "Updated", job: updated });
+      const xpGained = isTerminal
+        ? grantsForCycleCompletion(fullCycleJob).reduce((s, g) => s + g.amount, 0)
+        : 0;
+
+      return NextResponse.json({ message: "Updated", job: updated, xpGained });
     } catch (error) {
       console.error(" Update error:", error);
       return NextResponse.json({ message: "Update failed" }, { status: 500 });
