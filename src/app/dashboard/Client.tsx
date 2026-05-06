@@ -15,6 +15,7 @@ import NewJobModePicker from "@/app/dashboard/components/NewJobModePicker";
 import SimpleNewJobModal from "@/app/dashboard/components/SimpleNewJobModal";
 import JobSearchModal from "@/app/dashboard/components/JobSearchModal";
 import XpSummaryCard from "@/app/dashboard/components/XpSummaryCard";
+import XpToast from "@/components/XpToast";
 import { InstallButton } from "@/components/InstallButton";
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
 import { useAllJobs } from "@/app/dashboard/hooks/useAllJobs";
@@ -104,6 +105,15 @@ export default function DashboardClient({
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
   const [newJobUi, setNewJobUi] = useState<NewJobUi>(null);
   const [showJobSearch, setShowJobSearch] = useState(false);
+
+  // XP toast + XpSummaryCard refresh
+  const [xpToast, setXpToast] = useState(0);
+  const [xpRefreshToken, setXpRefreshToken] = useState(0);
+
+  const handleXpGained = (amount: number) => {
+    setXpToast(amount);
+    setXpRefreshToken((t) => t + 1);
+  };
 
   // Open mode picker when sidebar uses ?newJob=1 (search read on server, not useSearchParams)
   useEffect(() => {
@@ -277,7 +287,7 @@ export default function DashboardClient({
               setFilterStatus={setFilterStatus}
               embedded
             />
-            <XpSummaryCard />
+            <XpSummaryCard refreshToken={xpRefreshToken} />
             <ProgressSection
               resumeCount={waitingCount}
               totalActive={activeJobs.length}
@@ -335,6 +345,7 @@ export default function DashboardClient({
             setAllJobs((prev) => upsertJobList(prev, job));
             setNewJobUi(null);
           }}
+          onXpGained={handleXpGained}
         />
       )}
       {newJobUi === "simple" && (
@@ -348,6 +359,11 @@ export default function DashboardClient({
           }}
         />
       )}
+
+      <XpToast
+        xp={xpToast}
+        onDismiss={() => setXpToast(0)}
+      />
     </section>
   );
 }

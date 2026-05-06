@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { JobSource } from "@/generated/prisma";
 import { awardForJobCreation } from "@/lib/xp/service";
+import { grantsForJobCreation } from "@/lib/xp/rewards";
 
 export async function POST(req: Request) {
   try {
@@ -49,8 +50,7 @@ export async function POST(req: Request) {
       },
     });
 
-    // Fire-and-forget XP award — does not affect response or error handling
-    void awardForJobCreation(user.id, {
+    const jobForXp = {
       id: job.id,
       company: job.company,
       title: job.title,
@@ -58,9 +58,15 @@ export async function POST(req: Request) {
       appliedAt: job.appliedAt,
       url: job.url ?? null,
       jd: job.jd ?? null,
-    });
+    };
 
-    return NextResponse.json({ message: "Job created", job }, { status: 201 });
+    // Compute expected XP using pure functions (no extra DB query needed)
+    const xpGained = grantsForJobCreation(jobForXp).reduce((s, g) => s + g.amount, 0);
+
+    // Fire-and-forget XP award — does not affect response or error handling
+    void awardForJobCreation(user.id, jobForXp);
+
+    return NextResponse.json({ message: "Job created", job, xpGained }, { status: 201 });
   } catch (error) {
     console.error("Error creating job:", error);
     const detail = error instanceof Error ? error.message : "Unknown error";

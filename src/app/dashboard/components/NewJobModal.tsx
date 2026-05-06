@@ -15,6 +15,7 @@ import { useSharedDataStore } from "@/stores/useSharedDataStore";
 type NewJobModalProps = {
   onClose: () => void;
   onCreated: (job: any) => void;
+  onXpGained?: (amount: number) => void;
 };
 
 function getDetectionHint(url: string, jd: string): string | null {
@@ -24,7 +25,7 @@ function getDetectionHint(url: string, jd: string): string | null {
   return null;
 }
 
-export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
+export default function NewJobModal({ onClose, onCreated, onXpGained }: NewJobModalProps) {
   const { sharedUrl, sharedJd } = useSharedDataStore();
 
   const detectionHint = getDetectionHint(sharedUrl, sharedJd);
@@ -110,6 +111,7 @@ export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
         message?: string;
         error?: string;
         job?: unknown;
+        xpGained?: number;
       };
       let result: CreateJobJson = {};
       try {
@@ -132,6 +134,9 @@ export default function NewJobModal({ onClose, onCreated }: NewJobModalProps) {
       }
 
       onCreated(created);
+      if (onXpGained && typeof result.xpGained === "number" && result.xpGained > 0) {
+        onXpGained(result.xpGained);
+      }
       onClose();
     } catch (error) {
       console.error(error);
