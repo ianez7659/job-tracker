@@ -19,6 +19,7 @@ import {
 } from "@/lib/jobPipeline";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { AiAssistCheeringCallout } from "@/components/AiAssistCheeringCallout";
+import XpToast from "@/components/XpToast";
 import { ClipboardPasteButton } from "@/components/ClipboardPasteButton";
 import WalkInCompanyPrepPanel from "@/components/WalkInCompanyPrepPanel";
 import { JobSource } from "@/generated/prisma";
@@ -66,6 +67,8 @@ export default function EditJobClient({ job }: Props) {
     url: job.url || "",
     jd: job.jd || "",
   });
+
+  const [xpToast, setXpToast] = useState(0);
 
   const [adviceText, setAdviceText] = useState<string | null>(null);
   const [adviceLoading, setAdviceLoading] = useState(false);
@@ -248,7 +251,10 @@ export default function EditJobClient({ job }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: nextStatus }),
       });
-      const data = await res.json().catch(() => ({}));
+      const data = (await res.json().catch(() => ({}))) as {
+        message?: string;
+        xpGained?: number;
+      };
       if (!res.ok) {
         alert(
           typeof data.message === "string"
@@ -258,6 +264,9 @@ export default function EditJobClient({ job }: Props) {
         return;
       }
       setStage(nextStatus);
+      if ((data.xpGained ?? 0) > 0) {
+        setXpToast(data.xpGained!);
+      }
       router.refresh();
     } finally {
       setPipelineLoading(false);
@@ -645,6 +654,7 @@ export default function EditJobClient({ job }: Props) {
           </div>
         </div>
       </div>
+      <XpToast xp={xpToast} onDismiss={() => setXpToast(0)} />
     </section>
   );
 }

@@ -115,6 +115,19 @@ export default function DashboardClient({
     setXpRefreshToken((t) => t + 1);
   };
 
+  // Daily XP: award once per day after local 05:00, show toast if newly granted
+  useEffect(() => {
+    if (new Date().getHours() < 5) return;
+    fetch("/api/xp/daily-check", { method: "POST" })
+      .then((r) => r.json())
+      .then((data: { awarded?: boolean; xpGained?: number }) => {
+        if (data.awarded && (data.xpGained ?? 0) > 0) {
+          handleXpGained(data.xpGained!);
+        }
+      })
+      .catch(() => {/* fire-and-forget */});
+  }, []);
+
   // Open mode picker when sidebar uses ?newJob=1 (search read on server, not useSearchParams)
   useEffect(() => {
     if (!openNewJobFromQuery) return;
