@@ -115,10 +115,14 @@ export default function DashboardClient({
     setXpRefreshToken((t) => t + 1);
   };
 
-  // Daily XP: award once per day after local 05:00, show toast if newly granted
+  // Daily XP: once per local day anchored at 05:00 (timezone from browser); server decides eligibility
   useEffect(() => {
-    if (new Date().getHours() < 5) return;
-    fetch("/api/xp/daily-check", { method: "POST" })
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    fetch("/api/xp/daily-check", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ timeZone }),
+    })
       .then((r) => r.json())
       .then((data: { awarded?: boolean; xpGained?: number }) => {
         if (data.awarded && (data.xpGained ?? 0) > 0) {
