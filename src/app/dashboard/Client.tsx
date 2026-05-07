@@ -1,31 +1,29 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Plus, Briefcase, LayoutList, LayoutDashboard, Search } from "lucide-react";
+import { LayoutList, LayoutDashboard, Search, Plus } from "lucide-react";
 
 // Dashboard-local pieces
 import OverviewSection from "@/app/dashboard/components/OverviewSection";
 import ProgressSection from "@/app/dashboard/components/ProgressSection";
-import RecentActivitySection from "@/app/dashboard/components/RecentActivitySection";
 import JobList from "@/app/dashboard/components/JobList";
 import NewJobModal from "@/app/dashboard/components/NewJobModal";
 import NewJobModePicker from "@/app/dashboard/components/NewJobModePicker";
 import SimpleNewJobModal from "@/app/dashboard/components/SimpleNewJobModal";
 import JobSearchModal from "@/app/dashboard/components/JobSearchModal";
+import FindJobsCtaCard from "@/app/dashboard/components/FindJobsCtaCard";
 import XpSummaryCard from "@/app/dashboard/components/XpSummaryCard";
 import XpToast from "@/components/XpToast";
-import { InstallButton } from "@/components/InstallButton";
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
 import { useAllJobs } from "@/app/dashboard/hooks/useAllJobs";
 import { useSharedEntry } from "@/app/dashboard/hooks/useSharedEntry";
 import { useSharedDataStore } from "@/stores/useSharedDataStore";
 import {
   activeOnly,
-  countDecided,
-  countToday,
   countWaitingActive,
+  isFinal,
   statusCountsActive,
 } from "@/app/dashboard/lib/jobs/metrics";
 import type { Job } from "@/generated/prisma";
@@ -51,12 +49,17 @@ type Props = {
   };
   /** Set by server from ?newJob=1 — avoids useSearchParams (CSR bailout / fragile hydration). */
   openNewJobFromQuery?: boolean;
+  /** ?newJob=auto — same as header “Add New” (clipboard / shared pipeline). */
+  openNewJobAutoFromQuery?: boolean;
+  /** ?jobSearch=1 — open job search modal. */
+  openJobSearchFromQuery?: boolean;
 };
 
 // Narrowed union for safer filtering (matches your UI statuses)
 type FilterStatus =
   | "all"
   | "applying"
+  | "postApplying"
   | "resume"
   | "interview1"
   | "interview2"
@@ -68,6 +71,8 @@ type NewJobUi = null | "picker" | "standard" | "simple";
 export default function DashboardClient({
   user,
   openNewJobFromQuery = false,
+  openNewJobAutoFromQuery = false,
+  openJobSearchFromQuery = false,
 }: Props) {
   const router = useRouter();
 
@@ -86,8 +91,15 @@ export default function DashboardClient({
   // Derived sets and counts
   const activeJobs = useMemo(() => activeOnly(safeJobs), [safeJobs]);
   const counts = useMemo(() => statusCountsActive(activeJobs), [activeJobs]);
-  const todayCount = useMemo(() => countToday(safeAllJobs), [safeAllJobs]);
-  const decidedCount = useMemo(() => countDecided(safeAllJobs), [safeAllJobs]);
+  const pipelineTotal = useMemo(
+    () => activeJobs.filter((j) => !isFinal(j)).length,
+    [activeJobs],
+  );
+  const applyingCount = counts["applying"] ?? 0;
+  const appliedCount = useMemo(
+    () => Math.max(0, pipelineTotal - applyingCount),
+    [pipelineTotal, applyingCount],
+  );
   const waitingCount = useMemo(
     () => countWaitingActive(activeJobs),
     [activeJobs],
@@ -115,21 +127,38 @@ export default function DashboardClient({
     setXpRefreshToken((t) => t + 1);
   };
 
-  // Daily XP: once per local day anchored at 05:00 (timezone from browser); server decides eligibility
+  // Daily XP: once per local day anchored at 05:00 (timezone from browser); server decides eligibility.
+  // Re-run when the tab becomes visible so long-lived sessions still pick up the next local period.
   useEffect(() => {
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    fetch("/api/xp/daily-check", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ timeZone }),
-    })
-      .then((r) => r.json())
-      .then((data: { awarded?: boolean; xpGained?: number }) => {
-        if (data.awarded && (data.xpGained ?? 0) > 0) {
-          handleXpGained(data.xpGained!);
-        }
+    const runDailyCheck = () => {
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      fetch("/api/xp/daily-check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ timeZone }),
       })
-      .catch(() => {/* fire-and-forget */});
+        .then(async (r) => {
+          if (!r.ok) return;
+          let data: { xpGained?: number } = {};
+          try {
+            data = (await r.json()) as { xpGained?: number };
+          } catch {
+            /* non-JSON */
+          }
+          const gained = typeof data.xpGained === "number" ? data.xpGained : 0;
+          if (gained > 0) {
+            setXpToast(gained);
+          }
+          setXpRefreshToken((t) => t + 1);
+        })
+        .catch(() => {/* fire-and-forget */});
+    };
+    runDailyCheck();
+    const onVis = () => {
+      if (document.visibilityState === "visible") runDailyCheck();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
   }, []);
 
   // Open mode picker when sidebar uses ?newJob=1 (search read on server, not useSearchParams)
@@ -160,7 +189,9 @@ export default function DashboardClient({
         const matchesSearch =
           company.includes(q) || title.includes(q);
         const matchesStatus =
-          filterStatus === "all" || job.status === filterStatus;
+          filterStatus === "all" ||
+          (filterStatus === "postApplying" && job.status !== "applying") ||
+          job.status === filterStatus;
         return matchesSearch && matchesStatus;
       });
   }, [safeJobs, searchTerm, filterStatus]);
@@ -205,6 +236,23 @@ export default function DashboardClient({
     }
   };
 
+  const handleAddNewRef = useRef(handleAddNew);
+  handleAddNewRef.current = handleAddNew;
+
+  // ?newJob=auto — smart add (clipboard / shared), same as former header button
+  useEffect(() => {
+    if (!openNewJobAutoFromQuery) return;
+    void handleAddNewRef.current();
+    router.replace("/dashboard", { scroll: false });
+  }, [openNewJobAutoFromQuery, router]);
+
+  // ?jobSearch=1 — open Find Jobs modal
+  useEffect(() => {
+    if (!openJobSearchFromQuery) return;
+    setShowJobSearch(true);
+    router.replace("/dashboard", { scroll: false });
+  }, [openJobSearchFromQuery, router]);
+
   // Actions
   const onDelete = async (id: string) => {
     // Optimistically remove from active list; mirror deletedAt in allJobs
@@ -233,65 +281,60 @@ export default function DashboardClient({
   };
 
   return (
-    <section className="p-4 sm:px-6 sm:py-2 min-h-screen flex flex-col lg:h-[calc(100vh-8rem)]">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-3 flex-shrink-0">
+    <section className="flex min-h-screen flex-col p-4 sm:px-6 sm:py-2 lg:h-[calc(100vh-1rem)] lg:min-h-0">
+      {/* Header + compact XP (actions moved to sidebar / mobile menu) */}
+      <div className="mb-3 flex flex-shrink-0 flex-col gap-3 rounded-lg bg-indigo-600 p-4 dark:bg-indigo-800 sm:p-5 md:flex-row md:items-start md:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+          <h1 className="text-xl sm:text-3xl font-bold text-gray-50 dark:text-gray-100 mb-2">
             Welcome,{" "}
-            <span className="text-indigo-600 dark:text-yellow-400">
+            <span className="text-yellow-400 dark:text-yellow-500">
               {user.name}
             </span>
           </h1>
-          <p className="text-md sm:text-lg text-gray-600 dark:text-gray-300 ">
+          <p className="text-md sm:text-lg text-gray-50 dark:text-gray-300 ">
             Here is your current applications
           </p>
         </div>
-        <div className="flex flex-wrap justify-end gap-2 py-4">
-          <InstallButton />
-          <button
-            type="button"
-            onClick={handleAddNew}
-            className="flex gap-2 border border-indigo-800 dark:border-yellow-800 shadow-md items-center bg-indigo-500 dark:bg-yellow-500 text-white px-4 py-2 rounded hover:bg-indigo-600 dark:hover:bg-yellow-600 text-sm"
-          >
-            <Plus size={20} /> Add New
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowJobSearch(true)}
-            className="flex items-center gap-2 border border-green-600 dark:border-green-700 shadow-md bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded hover:bg-green-600 dark:hover:bg-green-700 transition-all text-sm"
-          >
-            <Briefcase size={20} />
-            Find Jobs
-          </button>
+        <div className="w-full md:w-[24rem] md:flex-shrink-0">
+          <XpSummaryCard refreshToken={xpRefreshToken} variant="inline" />
         </div>
       </div>
 
-      {/* Single card: left (overview + progress + filter) + right (scrollable job cards) */}
+      {/* Main card: left (overview + Find Jobs CTA) | right (card list) */}
       <motion.div
-        className="flex flex-col lg:flex-row flex-1 min-h-0 rounded-lg border border-gray-300 dark:border-slate-300 bg-slate-50 dark:bg-slate-800 shadow-md overflow-hidden"
+        className="flex flex-col flex-1 min-h-0 rounded-lg border border-gray-300 dark:border-slate-300 bg-slate-50 dark:bg-slate-800 shadow-md overflow-hidden"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.25, 0.1, 0.35, 1] }}
       >
-        {/* Left column: same structure as right (title + scrollable content) */}
+        <div className="flex min-h-0 flex-1 flex-col lg:flex-row lg:items-stretch">
         <motion.div
-          className="lg:w-xl xl:w-2xl flex-shrink-0 flex flex-col min-h-0 border-r border-gray-200 dark:border-slate-600"
+          className="flex min-h-0 flex-col border-gray-200 dark:border-slate-600 lg:w-xl lg:flex-shrink-0 lg:border-r xl:w-2xl"
           initial={{ opacity: 0, x: 0 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.08, ease: [0.25, 0.1, 0.35, 1] }}
         >
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 p-4 pb-0 flex-shrink-0">
-            <h2 className="flex items-center gap-2 font-bold text-2xl text-gray-700 dark:text-gray-200">
-              <LayoutDashboard size={24} aria-hidden="true" />
-              Overview & Filters
-            </h2>
-            <div className="flex items-center gap-1 border border-gray-300 dark:border-slate-500 rounded-lg bg-white dark:bg-slate-800 pl-2 pr-2 min-w-0 w-full lg:max-w-[12rem] xl:max-w-[19rem]">
+          <div className="flex flex-col gap-3 p-4 pb-0 flex-shrink-0">
+            <div className="flex flex-row items-center justify-between gap-3 min-w-0">
+              <h2 className="flex min-w-0 items-center gap-2 font-bold text-2xl text-gray-700 dark:text-gray-200">
+                <LayoutDashboard size={24} aria-hidden="true" className="shrink-0" />
+                <span className="truncate">Overview</span>
+              </h2>
+              <button
+                type="button"
+                onClick={() => void handleAddNew()}
+                className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+              >
+                <Plus size={18} aria-hidden />
+                Add New
+              </button>
+            </div>
+            <div className="flex min-w-0 w-full items-center gap-1 rounded-lg border border-gray-300 bg-white pl-2 pr-2 dark:border-slate-500 dark:bg-slate-800">
               <Search size={18} className="flex-shrink-0 text-gray-400 dark:text-gray-400" aria-hidden />
               <input
                 type="text"
                 placeholder="Search..."
-                className="p-2 w-full outline-none text-sm bg-transparent text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full bg-transparent p-2 text-sm text-gray-800 outline-none placeholder-gray-500 dark:text-gray-200 dark:placeholder-gray-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -299,29 +342,37 @@ export default function DashboardClient({
           </div>
           <div className="flex-1 min-h-0 overflow-y-auto p-4 pt-3">
             <OverviewSection
-              todayCount={todayCount}
-              totalActive={activeJobs.length}
+              pipelineTotal={pipelineTotal}
+              applyingCount={applyingCount}
+              appliedCount={appliedCount}
               setFilterStatus={setFilterStatus}
               embedded
+              embeddedExtras={
+                <>
+                  <div className="hidden lg:block">
+                    <ProgressSection
+                      resumeCount={waitingCount}
+                      totalActive={activeJobs.length}
+                      interviewCount={interviewCount}
+                      setFilterStatus={setFilterStatusFromFilter}
+                      embedded
+                      currentStatus={filterStatus}
+                    />
+                  </div>
+                  <div className="dashboard-cta-desktop-only mt-4">
+                    <FindJobsCtaCard
+                      onFindJobs={() => setShowJobSearch(true)}
+                    />
+                  </div>
+                </>
+              }
             />
-            <XpSummaryCard refreshToken={xpRefreshToken} />
-            <ProgressSection
-              resumeCount={waitingCount}
-              totalActive={activeJobs.length}
-              interviewCount={interviewCount}
-              decidedCount={decidedCount}
-              setFilterStatus={setFilterStatusFromFilter}
-              onArchiveClick={() => router.push("/dashboard/archive")}
-              embedded
-              currentStatus={filterStatus}
-            />
-            <RecentActivitySection jobs={safeAllJobs} maxItems={5} />
           </div>
         </motion.div>
 
         {/* Right column: same structure as left (title + scrollable content) */}
         <motion.div
-          className="flex-1 min-w-0 min-h-0 flex flex-col pb-4"
+          className="flex min-h-0 min-w-0 flex-1 flex-col pb-4 lg:pb-0"
           initial={{ opacity: 0, x: 0 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.08, ease: [0.25, 0.1, 0.35, 1] }}
@@ -341,6 +392,11 @@ export default function DashboardClient({
             />
           </div>
         </motion.div>
+        </div>
+
+        <div className="dashboard-cta-mobile-only shrink-0 border-t border-gray-200 bg-white p-3 dark:border-slate-600 dark:bg-slate-800/90 sm:p-4">
+          <FindJobsCtaCard onFindJobs={() => setShowJobSearch(true)} />
+        </div>
       </motion.div>
 
       {showJobSearch && (

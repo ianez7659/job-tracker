@@ -1,75 +1,75 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import type { ReactNode } from "react";
 import {
   ClipboardList,
-  Hourglass,
-  CalendarDays,
-  Archive,
   Briefcase,
+  FileInput,
+  BadgeCheck,
 } from "lucide-react";
 import SummarySection from "@/components/SummarySection";
 
 type FilterStatus =
   | "all"
+  | "applying"
+  | "postApplying"
   | "resume"
   | "interview1"
   | "interview2"
   | "interview3";
 
 type Props = {
-  todayCount: number;
-  totalActive: number;
-  // waitingCount: number;
-  // decidedCount: number;
+  /** Active jobs still in the pipeline (not offer/rejected). */
+  pipelineTotal: number;
+  /** Jobs in the applying stage. */
+  applyingCount: number;
+  /** Pipeline jobs past the applying stage (resume + interviews). */
+  appliedCount: number;
   setFilterStatus: (s: FilterStatus) => void;
   embedded?: boolean;
+  /** Shown below summary cards when embedded (e.g. Progress + desktop Find Jobs CTA). */
+  embeddedExtras?: ReactNode;
 };
 
 const OverviewSection: React.FC<Props> = ({
-  todayCount,
-  totalActive,
-  // waitingCount,
-  // decidedCount,
+  pipelineTotal,
+  applyingCount,
+  appliedCount,
   setFilterStatus,
   embedded = false,
+  embeddedExtras,
 }) => {
-  const router = useRouter();
-
-  // Overview cards
   const overviewCards = [
     {
-      title: "Today:",
-      value: todayCount,
-      color: "bg-blue-100 border border-blue-300",
-      textColor: "text-blue-800",
-      icon: <CalendarDays size={18} />,
+      title: "Total",
+      shortTitle: "Total",
+      value: pipelineTotal,
+      color:
+        "bg-indigo-100 border border-indigo-300 dark:bg-indigo-900/80 dark:border-indigo-500",
+      textColor: "text-indigo-800 dark:text-indigo-100",
+      icon: <Briefcase size={20} />,
       onClick: () => setFilterStatus("all"),
     },
     {
-      title: "Total:",
-      value: totalActive,
-      color: "bg-green-100 border border-green-300",
-      textColor: "text-green-800",
-      icon: <Briefcase size={18} />,
-      onClick: () => setFilterStatus("all"),
+      title: "Applying",
+      shortTitle: "Applying",
+      value: applyingCount,
+      color:
+        "bg-amber-50 border border-amber-300 dark:bg-amber-950/40 dark:border-amber-700",
+      textColor: "text-amber-900 dark:text-amber-100",
+      icon: <FileInput size={20} />,
+      onClick: () => setFilterStatus("applying"),
     },
-    // {
-    //   title: "Waiting",
-    //   value: waitingCount,
-    //   color: "bg-gray-100 border border-gray-300",
-    //   textColor: "text-gray-800",
-    //   icon: <Hourglass size={18} />,
-    //   onClick: () => setFilterStatus("resume"),
-    // },
-    // {
-    //   title: "Decided",
-    //   value: decidedCount,
-    //   color: "bg-purple-100 border border-purple-300",
-    //   textColor: "text-purple-800",
-    //   icon: <Archive size={18} />,
-    //   onClick: () => router.push("/dashboard/archive"),
-    // },
+    {
+      title: "Applied",
+      shortTitle: "Applied",
+      value: appliedCount,
+      color:
+        "bg-emerald-50 border border-emerald-300 dark:bg-emerald-950/40 dark:border-emerald-700",
+      textColor: "text-emerald-900 dark:text-emerald-100",
+      icon: <BadgeCheck size={20} />,
+      onClick: () => setFilterStatus("postApplying"),
+    },
   ];
 
   if (embedded) {
@@ -80,9 +80,11 @@ const OverviewSection: React.FC<Props> = ({
         </h3>
         <SummarySection
           cards={overviewCards}
-          grid="grid-cols-2 gap-2"
+          grid="grid-cols-3 gap-1 sm:gap-2"
           className="mb-0"
+          cardVariant="compact"
         />
+        {embeddedExtras}
       </div>
     );
   }
@@ -95,8 +97,9 @@ const OverviewSection: React.FC<Props> = ({
       </h2>
       <SummarySection
         cards={overviewCards}
-        grid="grid-cols-2 md:grid-cols-4 gap-3"
+        grid="grid-cols-3 gap-1.5 sm:gap-3"
         className="mb-0"
+        cardVariant="compact"
       />
     </section>
   );

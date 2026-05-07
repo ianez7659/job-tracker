@@ -25,6 +25,22 @@ body {
   color: #e2e8f0;
 }
 
+/* Dashboard Find Jobs CTA: one surface at a time (Tailwind lg == 1024px) */
+.dashboard-cta-desktop-only {
+  display: none;
+}
+.dashboard-cta-mobile-only {
+  display: block;
+}
+@media (min-width: 1024px) {
+  .dashboard-cta-desktop-only {
+    display: block;
+  }
+  .dashboard-cta-mobile-only {
+    display: none;
+  }
+}
+
 /* Recharts axis/labels in dark mode */
 .dark .recharts-cartesian-axis-tick text,
 .dark .recharts-label {
