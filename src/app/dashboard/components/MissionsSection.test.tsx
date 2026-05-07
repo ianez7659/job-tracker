@@ -55,14 +55,15 @@ describe("MissionsSection", () => {
     }) as jest.Mock;
   });
 
-  it("renders daily and weekly mission headings and footer", async () => {
+  it("renders mission tabs and footer", async () => {
     render(
       <MissionsSection refreshToken={0} onStartNewJob={jest.fn()} />,
     );
     await waitFor(() => {
-      expect(screen.getByText("Daily Missions")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Missions" })).toBeInTheDocument();
     });
-    expect(screen.getByText("Weekly Missions")).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /Daily/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /Weekly/i })).toBeInTheDocument();
     expect(
       screen.getByText(/Complete your missions to earn XP/i),
     ).toBeInTheDocument();

@@ -4,14 +4,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   CalendarDays,
-  ChevronDown,
-  ChevronUp,
   CircleCheck,
   ClipboardList,
   Loader2,
+  PartyPopper,
   Send,
   Sparkles,
   Star,
+  Sun,
   Target,
 } from "lucide-react";
 import {
@@ -101,6 +101,8 @@ type Props = {
   onXpActivity?: () => void;
 };
 
+type MissionTab = "daily" | "weekly";
+
 export default function MissionsSection({
   refreshToken = 0,
   onStartNewJob,
@@ -111,7 +113,7 @@ export default function MissionsSection({
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<MissionId | null>(null);
   const [showCompleted, setShowCompleted] = useState(false);
-  const [weeklyOpen, setWeeklyOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<MissionTab>("daily");
 
   const load = useCallback(async () => {
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -207,73 +209,137 @@ export default function MissionsSection({
         <p className="text-center text-sm text-gray-600 dark:text-gray-400">Loading missions…</p>
       ) : (
         <>
-          <div className="mb-4 flex items-center justify-end">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-gray-100 sm:text-lg">
+              <span className="flex h-9 w-9 items-center justify-center  text-rose-700 dark:text-rose-300">
+                <Target className="h-5 w-5" aria-hidden />
+              </span>
+              Missions
+            </h2>
             <button
               type="button"
               onClick={() => setShowCompleted((v) => !v)}
-              className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-yellow-700 transition-colors hover:bg-yell-100 dark:border-yellow-500 dark:text-yellow-200 dark:hover:bg-yellow-700"
+              className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-yellow-700 transition-colors hover:bg-yellow-100 dark:border-yellow-500 dark:text-yellow-200 dark:hover:bg-yellow-950/40"
             >
               {showCompleted ? "Hide completed" : "Show completed"}
             </button>
           </div>
 
-          <div className="mb-4 flex items-start justify-between gap-2">
-            <h2 className="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-gray-100 sm:text-lg">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg  text-rose-600 dark:text-rose-300">
-                <Target className="h-5 w-5" aria-hidden />
-              </span>
-              Daily Missions
-            </h2>
-            <span className="shrink-0 rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-200">
-              {payload.dailyRemaining} left
-            </span>
+          <div
+            className="mb-4 rounded-2xl border border-gray-200 bg-slate-100/95 p-1 dark:border-slate-600 dark:bg-slate-800/90"
+            role="tablist"
+            aria-label="Mission schedule"
+          >
+            <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+              <button
+                type="button"
+                role="tab"
+                id="missions-tab-daily"
+                aria-selected={activeTab === "daily"}
+                aria-controls="missions-panel-daily"
+                tabIndex={activeTab === "daily" ? 0 : -1}
+                onClick={() => setActiveTab("daily")}
+                className={`flex min-h-[2.85rem] flex-col items-center justify-center gap-1 rounded-xl px-2 py-2.5 text-center text-sm font-semibold transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 sm:flex-row sm:gap-2.5 sm:px-3 ${
+                  activeTab === "daily"
+                    ? "bg-emerald-500 text-white shadow-md ring-2 ring-emerald-200/90 dark:bg-emerald-600 dark:ring-emerald-400/40"
+                    : "border-2 border-emerald-300/90 bg-white text-emerald-950 shadow-sm hover:border-emerald-500 hover:bg-emerald-50 dark:border-emerald-500/50 dark:bg-slate-800/80 dark:text-emerald-100 dark:hover:border-emerald-400 dark:hover:bg-emerald-950/35"
+                }`}
+              >
+                <span className="flex items-center gap-1.5">
+                  <Sun
+                    className={`h-4 w-4 ${
+                      activeTab === "daily"
+                        ? "text-white"
+                        : "text-emerald-700 dark:text-emerald-300"
+                    }`}
+                    aria-hidden
+                  />
+                  Daily
+                </span>
+                <span
+                  className={`rounded-full px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide tabular-nums ring-1 sm:text-xs ${
+                    activeTab === "daily"
+                      ? "bg-white/25 text-white ring-white/35"
+                      : "bg-emerald-100 text-emerald-900 ring-emerald-300/80 dark:bg-emerald-950/70 dark:text-emerald-200 dark:ring-emerald-500/35"
+                  }`}
+                >
+                  {payload.dailyRemaining} left
+                </span>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                id="missions-tab-weekly"
+                aria-selected={activeTab === "weekly"}
+                aria-controls="missions-panel-weekly"
+                tabIndex={activeTab === "weekly" ? 0 : -1}
+                onClick={() => setActiveTab("weekly")}
+                className={`flex min-h-[2.85rem] flex-col items-center justify-center gap-1 rounded-xl px-2 py-2.5 text-center text-sm font-semibold transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 sm:flex-row sm:gap-2.5 sm:px-3 ${
+                  activeTab === "weekly"
+                    ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-200/90 dark:bg-blue-600 dark:ring-blue-400/40"
+                    : "border-2 border-blue-400/90 bg-white text-blue-950 shadow-sm hover:border-blue-500 hover:bg-blue-50 dark:border-blue-500/50 dark:bg-slate-800/80 dark:text-blue-100 dark:hover:border-blue-400 dark:hover:bg-blue-950/40"
+                }`}
+              >
+                <span className="flex items-center gap-1.5">
+                  <CalendarDays
+                    className={`h-4 w-4 ${
+                      activeTab === "weekly"
+                        ? "text-white"
+                        : "text-blue-700 dark:text-blue-300"
+                    }`}
+                    aria-hidden
+                  />
+                  <span className="tracking-tight">Weekly</span>
+                </span>
+                <span
+                  className={`rounded-full px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide tabular-nums ring-1 sm:text-xs ${
+                    activeTab === "weekly"
+                      ? "bg-white/25 text-white ring-white/35"
+                      : "bg-blue-100 text-blue-900 ring-blue-300/80 dark:bg-blue-950/70 dark:text-blue-200 dark:ring-blue-500/35"
+                  }`}
+                >
+                  {payload.weeklyRemaining} left
+                </span>
+              </button>
+            </div>
           </div>
-          <div className="flex flex-col gap-2.5">
+
+          <div
+            role="tabpanel"
+            id="missions-panel-daily"
+            aria-labelledby="missions-tab-daily"
+            hidden={activeTab !== "daily"}
+            className="flex flex-col gap-2.5"
+          >
             {visibleDaily.map((row) => (
               <MissionRow key={row.id} row={row} onStart={handleStart} busyId={busyId} />
             ))}
             {visibleDaily.length === 0 && (
-              <p className="rounded-lg border border-dashed border-gray-300 bg-white/70 p-3 text-center text-xs text-gray-500 dark:border-slate-600 dark:bg-slate-800/60 dark:text-gray-400">
-                All daily missions are done. They will reset in the next daily period.
+              <p className="rounded-lg border border-dashed border-gray-300 bg-white/70 p-3 text-center text-xs leading-normal text-gray-500 dark:border-slate-600 dark:bg-slate-800/60 dark:text-gray-400">
+                <PartyPopper
+                  className="mr-1 inline-block h-[1.1em] w-[1.1em] align-[-0.15em] text-amber-500 dark:text-amber-400"
+                  aria-hidden
+                />
+                <span className="font-semibold text-gray-700 dark:text-gray-200 text-base">Congratulations!</span><br/>
+                All daily missions are done. See you tomorrow!
               </p>
             )}
           </div>
 
-          <div className="mt-6 border-t border-gray-200 pt-5 dark:border-slate-600">
-            <button
-              type="button"
-              onClick={() => setWeeklyOpen((v) => !v)}
-              aria-expanded={weeklyOpen}
-              className="mb-4 flex w-full items-center justify-between gap-2 rounded-lg px-1 py-1 text-left hover:bg-gray-100/70 dark:hover:bg-slate-800/60"
-            >
-              <h2 className="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-gray-100 sm:text-lg">
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg  text-violet-600 dark:text-violet-300">
-                  <CalendarDays className="h-5 w-5" aria-hidden />
-                </span>
-                Weekly Missions
-              </h2>
-              <div className="flex items-center gap-2">
-                <span className="shrink-0 rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-200">
-                  {payload.weeklyRemaining} left
-                </span>
-                {weeklyOpen ? (
-                  <ChevronUp className="h-4 w-4 text-gray-600 dark:text-gray-300" aria-hidden />
-                ) : (
-                  <ChevronDown className="h-4 w-4 text-gray-600 dark:text-gray-300" aria-hidden />
-                )}
-              </div>
-            </button>
-            {weeklyOpen && (
-              <div className="flex flex-col gap-2.5">
-                {visibleWeekly.map((row) => (
-                  <MissionRow key={row.id} row={row} onStart={handleStart} busyId={busyId} />
-                ))}
-                {visibleWeekly.length === 0 && (
-                  <p className="rounded-lg border border-dashed border-gray-300 bg-white/70 p-3 text-center text-xs text-gray-500 dark:border-slate-600 dark:bg-slate-800/60 dark:text-gray-400">
-                    All weekly missions are done.
-                  </p>
-                )}
-              </div>
+          <div
+            role="tabpanel"
+            id="missions-panel-weekly"
+            aria-labelledby="missions-tab-weekly"
+            hidden={activeTab !== "weekly"}
+            className="flex flex-col gap-2.5"
+          >
+            {visibleWeekly.map((row) => (
+              <MissionRow key={row.id} row={row} onStart={handleStart} busyId={busyId} />
+            ))}
+            {visibleWeekly.length === 0 && (
+              <p className="rounded-lg border border-dashed border-gray-300 bg-white/70 p-3 text-center text-xs text-gray-500 dark:border-slate-600 dark:bg-slate-800/60 dark:text-gray-400">
+                All weekly missions are done.
+              </p>
             )}
           </div>
 

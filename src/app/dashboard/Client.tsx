@@ -284,20 +284,38 @@ export default function DashboardClient({
   return (
     <section className="flex min-h-screen flex-col p-4 sm:px-6 sm:py-2">
       {/* Header + compact XP (actions moved to sidebar / mobile menu) */}
-      <div className="mb-3 flex flex-shrink-0 flex-col gap-3 rounded-lg bg-indigo-600 p-4 dark:bg-indigo-800 sm:p-5 md:flex-row md:items-start md:justify-between">
-        <div>
-          <h1 className="text-xl sm:text-3xl font-bold text-gray-50 dark:text-gray-100 mb-2">
-            Welcome,{" "}
-            <span className="text-yellow-400 dark:text-yellow-500">
-              {user.name}
-            </span>
-          </h1>
-          <p className="text-md sm:text-lg text-gray-50 dark:text-gray-300 ">
-            Here is your current applications
-          </p>
-        </div>
-        <div className="w-full md:w-[24rem] md:flex-shrink-0">
-          <XpSummaryCard refreshToken={xpRefreshToken} variant="inline" />
+      <div
+        className="relative mb-3 flex flex-shrink-0 flex-col gap-3 overflow-hidden rounded-xl bg-gradient-to-br from-fuchsia-500 via-violet-600 to-indigo-700 p-4 shadow-[0_10px_28px_-6px_rgba(109,40,217,0.55),0_0_0_1px_rgba(255,255,255,0.2)_inset,0_-1px_0_0_rgba(0,0,0,0.15)_inset] ring-2 ring-cyan-200/45 dark:from-fuchsia-600 dark:via-violet-600 dark:to-sky-800 dark:shadow-[0_12px_32px_-8px_rgba(76,29,149,0.65),0_0_0_1px_rgba(255,255,255,0.12)_inset] dark:ring-cyan-400/30 sm:p-5 md:flex-row md:items-start md:justify-between"
+      >
+        <span
+          className="pointer-events-none absolute -left-1/4 top-0 h-[200%] w-2/3 -rotate-12 bg-gradient-to-r from-white/25 via-white/5 to-transparent dark:from-white/18"
+          aria-hidden
+        />
+        <span
+          className="pointer-events-none absolute -bottom-20 right-0 h-44 w-44 rounded-full bg-cyan-400/35 blur-3xl dark:bg-sky-400/22"
+          aria-hidden
+        />
+        <span
+          className="pointer-events-none absolute -right-10 -top-20 h-40 w-40 rounded-full bg-fuchsia-400/40 blur-3xl dark:bg-fuchsia-500/28"
+          aria-hidden
+        />
+        <span
+          className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/65 to-transparent dark:via-white/38"
+          aria-hidden
+        />
+        <div className="relative z-[1] flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+          <div>
+            <h1 className="mb-2 text-xl font-bold text-white drop-shadow-sm sm:text-3xl">
+              Welcome,{" "}
+              <span className="text-yellow-300 dark:text-yellow-200">{user.name}</span>
+            </h1>
+            <p className="text-md text-white/90 sm:text-lg dark:text-white/85">
+              Here is your current applications
+            </p>
+          </div>
+          <div className="w-full md:w-[24rem] md:flex-shrink-0">
+            <XpSummaryCard refreshToken={xpRefreshToken} variant="inline" />
+          </div>
         </div>
       </div>
 
