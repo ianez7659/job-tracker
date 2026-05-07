@@ -82,7 +82,7 @@ export default function JobCard({
         className={`w-2 sm:w-3 h-full ${statusColors[status]} absolute left-0 top-0 z-[1]`}
       />
 
-      <div className="py-2 px-6 pl-6 flex-1 flex flex-col gap-3">
+      <div className="py-2 sm:py-1 px-6 pl-6 flex-1 flex flex-col gap-3">
         <div>
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 min-w-0 flex-1 leading-snug">

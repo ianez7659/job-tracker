@@ -15,14 +15,22 @@ import { awardDailyActivity } from "@/lib/xp/service";
  */
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  if (!session?.user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    select: { id: true },
-  });
+  const user =
+    session.user.id != null && session.user.id !== ""
+      ? await prisma.user.findUnique({
+          where: { id: session.user.id },
+          select: { id: true },
+        })
+      : session.user.email
+        ? await prisma.user.findUnique({
+            where: { email: session.user.email },
+            select: { id: true },
+          })
+        : null;
 
   if (!user) {
     return NextResponse.json({ message: "User not found" }, { status: 404 });

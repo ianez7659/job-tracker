@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import JobCard from "@/components/JobCard";
 import type { Job } from "@/generated/prisma";
 
-const INITIAL_SIZE = 6;
-const LOAD_MORE_SIZE = 6;
+const INITIAL_SIZE = 3;
+const LOAD_MORE_SIZE = 5;
 
 const cardTransition = {
   duration: 0.28,

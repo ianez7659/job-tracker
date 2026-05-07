@@ -58,7 +58,7 @@ const JOB_SITES = [
   },
   {
     name: "GoJobs",
-    description: "Canadian-focused job board for local opportunities.",
+    description: "Job searching with AI-powered verification and smart matching your profile.",
     url: "https://gojobs.app",
     icon: <Briefcase size={24} aria-hidden />,
     iconBg: "bg-green-600 dark:bg-green-500",

@@ -142,6 +142,9 @@ export const authOptions: NextAuthOptions = {
             imageType: user.image?.startsWith("data:") ? "base64" : "url",
           });
           token.id = user.id;
+          if (user.email) {
+            token.email = user.email;
+          }
           // Explicitly remove image from user object to prevent it from being stored in token
           // Base64 images are too large for JWT tokens
           // Images will be fetched from DB when needed
@@ -164,6 +167,7 @@ export const authOptions: NextAuthOptions = {
               const dbUser = await prisma.user.findUnique({
                 where: { id: token.id },
                 select: {
+                  email: true,
                   category: true,
                   image: true,
                   name: true,
@@ -172,6 +176,9 @@ export const authOptions: NextAuthOptions = {
                 },
               });
               if (dbUser) {
+                if (dbUser.email) {
+                  session.user.email = dbUser.email;
+                }
                 session.user.category = dbUser.category;
                 session.user.name = dbUser.name;
                 session.user.hubStatus = dbUser.hubStatus;
@@ -183,6 +190,13 @@ export const authOptions: NextAuthOptions = {
               if ((dbErr as { code?: string })?.code !== "P2022") throw dbErr;
               (session.user as { category?: string | null }).category = undefined;
             }
+          }
+          if (
+            (!session.user.email || session.user.email === "") &&
+            typeof token.email === "string" &&
+            token.email
+          ) {
+            session.user.email = token.email;
           }
         }
         return session;

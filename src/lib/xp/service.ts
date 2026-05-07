@@ -28,6 +28,11 @@ async function ensureUserXp(userId: string) {
     where: { userId },
     create: { userId },
     update: {},
+    // Backward-compatible select: avoid selecting columns that may not exist yet.
+    select: {
+      id: true,
+      lastDailyAt: true,
+    },
   });
 }
 
@@ -52,6 +57,7 @@ async function applyGrants(
     prisma.userXp.update({
       where: { id: userXpId },
       data: { totalXp: { increment: totalAmount } },
+      select: { id: true },
     }),
   ]);
 }
@@ -64,7 +70,40 @@ async function tryApplyDailyGrantForUser(
   userId: string,
   timeZone: string,
 ): Promise<void> {
-  const row = await prisma.userXp.findUnique({ where: { userId } });
+  let row:
+    | {
+        id: string;
+        lastDailyAt: Date | null;
+        lastDailyPeriodKey: string | null;
+      }
+    | {
+        id: string;
+        lastDailyAt: Date | null;
+        lastDailyPeriodKey: null;
+      }
+    | null = null;
+  try {
+    row = await prisma.userXp.findUnique({
+      where: { userId },
+      select: {
+        id: true,
+        lastDailyAt: true,
+        lastDailyPeriodKey: true,
+      },
+    });
+  } catch (err) {
+    if ((err as { code?: string })?.code !== "P2022") throw err;
+    const legacy = await prisma.userXp.findUnique({
+      where: { userId },
+      select: {
+        id: true,
+        lastDailyAt: true,
+      },
+    });
+    row = legacy
+      ? { id: legacy.id, lastDailyAt: legacy.lastDailyAt, lastDailyPeriodKey: null }
+      : null;
+  }
   if (!row) return;
 
   const now = new Date();
@@ -73,20 +112,39 @@ async function tryApplyDailyGrantForUser(
   if (!isDailyRewardEligibleForPeriod(lastKey, currentKey)) return;
 
   const grant = grantDailyActivity();
-  await prisma.$transaction([
-    prisma.xpEvent.create({
-      data: { userXpId: row.id, reason: grant.reason, amount: grant.amount },
-    }),
-    prisma.userXp.update({
-      where: { id: row.id },
-      data: {
-        totalXp: { increment: grant.amount },
-        lastDailyAt: now,
-        lastDailyPeriodKey: currentKey,
-        dailyTimeZone: timeZone,
-      },
-    }),
-  ]);
+  try {
+    await prisma.$transaction([
+      prisma.xpEvent.create({
+        data: { userXpId: row.id, reason: grant.reason, amount: grant.amount },
+      }),
+      prisma.userXp.update({
+        where: { id: row.id },
+        data: {
+          totalXp: { increment: grant.amount },
+          lastDailyAt: now,
+          lastDailyPeriodKey: currentKey,
+          dailyTimeZone: timeZone,
+        },
+        select: { id: true },
+      }),
+    ]);
+  } catch (err) {
+    // Backward compatibility for DBs without dailyTimeZone / lastDailyPeriodKey.
+    if ((err as { code?: string })?.code !== "P2022") throw err;
+    await prisma.$transaction([
+      prisma.xpEvent.create({
+        data: { userXpId: row.id, reason: grant.reason, amount: grant.amount },
+      }),
+      prisma.userXp.update({
+        where: { id: row.id },
+        data: {
+          totalXp: { increment: grant.amount },
+          lastDailyAt: now,
+        },
+        select: { id: true },
+      }),
+    ]);
+  }
 }
 
 // ── Public API ────────────────────────────────────────────────────────────────
@@ -110,8 +168,7 @@ export async function awardForJobCreation(
     const grants = grantsForJobCreation(job);
     await applyGrants(userXp.id, grants, job.id);
 
-    const tz = userXp.dailyTimeZone ?? "UTC";
-    await tryApplyDailyGrantForUser(userId, tz);
+    await tryApplyDailyGrantForUser(userId, "UTC");
   } catch (err) {
     console.error("[XP] awardForJobCreation failed:", err);
   }
@@ -135,8 +192,7 @@ export async function awardForCycleCompletion(
 
     const grants = grantsForCycleCompletion(job);
     await applyGrants(userXp.id, grants, job.id);
-    const tz = userXp.dailyTimeZone ?? "UTC";
-    await tryApplyDailyGrantForUser(userId, tz);
+    await tryApplyDailyGrantForUser(userId, "UTC");
   } catch (err) {
     console.error("[XP] awardForCycleCompletion failed:", err);
   }
@@ -156,13 +212,18 @@ export async function awardDailyActivity(
       options?.timeZone && isValidIanaTimeZone(options.timeZone)
         ? options.timeZone
         : null;
-    const tz = fromClient ?? userXp.dailyTimeZone ?? "UTC";
+    const tz = fromClient ?? "UTC";
 
-    if (fromClient && userXp.dailyTimeZone !== fromClient) {
-      await prisma.userXp.update({
-        where: { id: userXp.id },
-        data: { dailyTimeZone: fromClient },
-      });
+    if (fromClient) {
+      try {
+        await prisma.userXp.update({
+          where: { id: userXp.id },
+          data: { dailyTimeZone: fromClient },
+          select: { id: true },
+        });
+      } catch (err) {
+        if ((err as { code?: string })?.code !== "P2022") throw err;
+      }
     }
 
     await tryApplyDailyGrantForUser(userId, tz);
@@ -196,8 +257,7 @@ export async function awardWeeklyReview(
 
     const grant = grantWeeklyReview();
     await applyGrants(userXp.id, [grant]);
-    const tz = userXp.dailyTimeZone ?? "UTC";
-    await tryApplyDailyGrantForUser(userId, tz);
+    await tryApplyDailyGrantForUser(userId, "UTC");
     return { awarded: true };
   } catch (err) {
     console.error("[XP] awardWeeklyReview failed:", err);

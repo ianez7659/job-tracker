@@ -14,6 +14,7 @@ import NewJobModePicker from "@/app/dashboard/components/NewJobModePicker";
 import SimpleNewJobModal from "@/app/dashboard/components/SimpleNewJobModal";
 import JobSearchModal from "@/app/dashboard/components/JobSearchModal";
 import FindJobsCtaCard from "@/app/dashboard/components/FindJobsCtaCard";
+import MissionsSection from "@/app/dashboard/components/MissionsSection";
 import XpSummaryCard from "@/app/dashboard/components/XpSummaryCard";
 import XpToast from "@/components/XpToast";
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
@@ -281,7 +282,7 @@ export default function DashboardClient({
   };
 
   return (
-    <section className="flex min-h-screen flex-col p-4 sm:px-6 sm:py-2 lg:h-[calc(100vh-1rem)] lg:min-h-0">
+    <section className="flex min-h-screen flex-col p-4 sm:px-6 sm:py-2">
       {/* Header + compact XP (actions moved to sidebar / mobile menu) */}
       <div className="mb-3 flex flex-shrink-0 flex-col gap-3 rounded-lg bg-indigo-600 p-4 dark:bg-indigo-800 sm:p-5 md:flex-row md:items-start md:justify-between">
         <div>
@@ -299,6 +300,12 @@ export default function DashboardClient({
           <XpSummaryCard refreshToken={xpRefreshToken} variant="inline" />
         </div>
       </div>
+
+      <MissionsSection
+        refreshToken={xpRefreshToken}
+        onStartNewJob={() => void handleAddNew()}
+        onXpActivity={() => setXpRefreshToken((t) => t + 1)}
+      />
 
       {/* Main card: left (overview + Find Jobs CTA) | right (card list) */}
       <motion.div
@@ -384,7 +391,7 @@ export default function DashboardClient({
               {filteredJobs.length}
             </span>
           </h2>
-          <div className="flex-1 min-h-0 overflow-y-auto p-4 pt-3">
+          <div className="flex-1 min-h-0 overflow-y-auto p-4 pt-3 lg:max-h-[calc(100vh-12rem)]">
             <JobList
               jobs={filteredJobs}
               onDelete={onDelete}
