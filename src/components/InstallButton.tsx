@@ -5,13 +5,18 @@ import { Download } from "lucide-react";
 import { isStandaloneDisplay } from "@/lib/pwa/isStandaloneDisplay";
 
 /** Extends the standard Event type with the non-standard BeforeInstallPrompt API (Chromium only). */
-interface BeforeInstallPromptEvent extends Event {
+export interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
 type InstallButtonProps = {
   className?: string;
+  /** External deferredPrompt captured by a parent (e.g. NavBar).
+   *  When provided, the component skips its own window listener and uses this instead. */
+  deferredPrompt?: BeforeInstallPromptEvent | null;
+  /** Called when the user accepts the install prompt (parent should clear its state). */
+  onInstalled?: () => void;
 };
 
 /**
@@ -19,10 +24,16 @@ type InstallButtonProps = {
  * Hidden when already running as an installed PWA (standalone).
  * Chromium-only (Chrome, Edge, Samsung Internet). Returns null on unsupported browsers.
  * For iOS Safari, use <IOSInstallOverlay /> instead.
+ *
+ * Two modes:
+ * - Controlled: pass `deferredPrompt` + `onInstalled` from a parent that captured the event.
+ * - Uncontrolled: omit both props — component listens on `window` itself (use when always mounted).
  */
-export function InstallButton({ className }: InstallButtonProps = {}) {
+export function InstallButton({ className, deferredPrompt: externalPrompt, onInstalled }: InstallButtonProps = {}) {
+  const controlled = externalPrompt !== undefined;
+
   const [installed, setInstalled] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] =
+  const [internalPrompt, setInternalPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
@@ -33,24 +44,31 @@ export function InstallButton({ className }: InstallButtonProps = {}) {
     return () => mq.removeEventListener("change", check);
   }, []);
 
+  // Only register window listener in uncontrolled mode
   useEffect(() => {
+    if (controlled) return;
     const handler = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
+      setInternalPrompt(e as BeforeInstallPromptEvent);
     };
-
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
+  }, [controlled]);
+
+  const prompt = controlled ? externalPrompt : internalPrompt;
 
   if (installed) return null;
-  if (!deferredPrompt) return null;
+  if (!prompt) return null;
 
   const handleInstall = async () => {
-    await deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+    await prompt.prompt();
+    const { outcome } = await prompt.userChoice;
     if (outcome === "accepted") {
-      setDeferredPrompt(null);
+      if (controlled) {
+        onInstalled?.();
+      } else {
+        setInternalPrompt(null);
+      }
     }
   };
 
