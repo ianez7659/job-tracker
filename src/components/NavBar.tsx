@@ -17,7 +17,7 @@ import {
   Search,
 } from "lucide-react";
 import Image from "next/image";
-import { InstallButton } from "@/components/InstallButton";
+import { InstallButton, type BeforeInstallPromptEvent } from "@/components/InstallButton";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef } from "react";
@@ -30,6 +30,19 @@ export default function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null); // desktop dropdown reference
   const mobileMenuRef = useRef<HTMLDivElement>(null); // mobile menu reference
+
+  // Capture beforeinstallprompt at NavBar level so it's never missed
+  // regardless of whether the burger menu is open.
+  const [installPrompt, setInstallPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e as BeforeInstallPromptEvent);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
 
   // Desktop dropdown click outside handler
   useEffect(() => {
@@ -239,7 +252,11 @@ export default function Navbar() {
               )}
               {session && (
                 <div className="flex flex-col gap-2 px-2 pb-3 border-b dark:border-slate-600">
-                  <InstallButton className="w-full justify-center py-2.5" />
+                  <InstallButton
+                    className="w-full justify-center py-2.5"
+                    deferredPrompt={installPrompt}
+                    onInstalled={() => setInstallPrompt(null)}
+                  />
                   <Link
                     href="/dashboard?newJob=auto"
                     className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-colors"
