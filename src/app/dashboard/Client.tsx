@@ -86,8 +86,8 @@ export default function DashboardClient({
   const { allJobs, setAllJobs } = useAllJobs();
 
   // Ensure arrays are always arrays (defensive programming)
-  const safeJobs = Array.isArray(jobs) ? jobs : [];
-  const safeAllJobs = Array.isArray(allJobs) ? allJobs : [];
+  const safeJobs = useMemo(() => (Array.isArray(jobs) ? jobs : []), [jobs]);
+  const safeAllJobs = useMemo(() => (Array.isArray(allJobs) ? allJobs : []), [allJobs]);
 
   // Derived sets and counts
   const activeJobs = useMemo(() => activeOnly(safeJobs), [safeJobs]);

@@ -11,10 +11,11 @@ import {
 import { POSITION_LEVELS } from "@/lib/constants/positions";
 import { ClipboardPasteButton } from "@/components/ClipboardPasteButton";
 import { useSharedDataStore } from "@/stores/useSharedDataStore";
+import type { Job } from "@/generated/prisma";
 
 type NewJobModalProps = {
   onClose: () => void;
-  onCreated: (job: any) => void;
+  onCreated: (job: Job) => void;
   onXpGained?: (amount: number) => void;
 };
 
@@ -133,7 +134,7 @@ export default function NewJobModal({ onClose, onCreated, onXpGained }: NewJobMo
         throw new Error("Server did not return the new job. Try refreshing.");
       }
 
-      onCreated(created);
+      onCreated(created as Job);
       if (onXpGained && typeof result.xpGained === "number" && result.xpGained > 0) {
         onXpGained(result.xpGained);
       }

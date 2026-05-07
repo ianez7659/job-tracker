@@ -16,6 +16,7 @@ import {
   Plus,
   Search,
 } from "lucide-react";
+import Image from "next/image";
 import { InstallButton } from "@/components/InstallButton";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -121,9 +122,11 @@ export default function Navbar() {
                   className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline"
                 >
                   {(session.user as { image?: string | null })?.image ? (
-                    <img
+                    <Image
                       src={(session.user as { image?: string | null }).image!}
                       alt="Profile"
+                      width={32}
+                      height={32}
                       className="w-8 h-8 rounded-full object-cover flex-shrink-0"
                     />
                   ) : (
@@ -217,9 +220,11 @@ export default function Navbar() {
               {session && (
                 <div className="flex items-center gap-3 px-2 py-3 mb-2 border-b dark:border-slate-600">
                   {(session.user as { image?: string | null })?.image ? (
-                    <img
+                    <Image
                       src={(session.user as { image?: string | null }).image!}
                       alt="Profile"
+                      width={40}
+                      height={40}
                       className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                     />
                   ) : (

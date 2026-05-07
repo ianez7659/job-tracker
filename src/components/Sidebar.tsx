@@ -14,6 +14,7 @@ import {
   LogOut,
   Search,
 } from "lucide-react";
+import Image from "next/image";
 import { getSignOutCallbackUrl } from "@/lib/constants/demoAccount";
 import { InstallButton } from "@/components/InstallButton";
 
@@ -106,9 +107,11 @@ export default function Sidebar() {
               }`}
             >
               {(session.user as { image?: string | null })?.image ? (
-                <img
+                <Image
                   src={(session.user as { image?: string | null }).image!}
                   alt=""
+                  width={24}
+                  height={24}
                   className="w-6 h-6 rounded-full object-cover flex-shrink-0"
                 />
               ) : (
