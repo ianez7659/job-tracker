@@ -13,6 +13,16 @@ function envTrim(name: string): string | undefined {
   return typeof v === "string" ? v.trim() : undefined;
 }
 
+function getStringProp(
+  value: unknown,
+  key: string,
+): string | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const record = value as Record<string, unknown>;
+  const prop = record[key];
+  return typeof prop === "string" ? prop : undefined;
+}
+
 // Logs SIGNIN_OAUTH_ERROR with the real exception (see Vercel function logs).
 const nextAuthLogger: NextAuthOptions["logger"] = {
   error(
@@ -117,7 +127,7 @@ export const authOptions: NextAuthOptions = {
         console.log("  - account provider:", account?.provider);
         console.log("  - profile:", profile);
         
-        const email = user.email || (profile as any)?.email;
+        const email = user.email || getStringProp(profile, "email");
         console.log("  - resolved email:", email);
         
         if (!email) {
@@ -149,7 +159,7 @@ export const authOptions: NextAuthOptions = {
           // Base64 images are too large for JWT tokens
           // Images will be fetched from DB when needed
           if (user.image) {
-            delete (user as any).image;
+            delete (user as Partial<User>).image;
           }
         }
         return token;
@@ -210,20 +220,22 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       try {
         console.log("🔐 signIn event - user:", user.email, "provider:", account?.provider);
-        if (account?.provider === "github" && (profile as any)?.avatar_url) {
+        const avatarUrl = getStringProp(profile, "avatar_url");
+        if (account?.provider === "github" && avatarUrl) {
           await prisma.user.update({
             where: { email: user.email! }, // or use user.id if reliable
             data: {
-              image: (profile as any).avatar_url,
+              image: avatarUrl,
             },
           });
           console.log("✅ User image updated successfully");
         }
-        if (account?.provider === "google" && (profile as any)?.picture) {
+        const pictureUrl = getStringProp(profile, "picture");
+        if (account?.provider === "google" && pictureUrl) {
           await prisma.user.update({
             where: { email: user.email! },
             data: {
-              image: (profile as any).picture,
+              image: pictureUrl,
             },
           });
           console.log("✅ Google user image updated successfully");
