@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { awardDailyActivity } from "@/lib/xp/service";
-import { XP_DAILY_ACTIVITY } from "@/lib/xp/rewards";
 
 /**
  * POST /api/xp/daily-check
@@ -12,7 +11,7 @@ import { XP_DAILY_ACTIVITY } from "@/lib/xp/rewards";
  * `Intl.DateTimeFormat().resolvedOptions().timeZone`. Used to anchor “daily” at local 05:00.
  * Idempotent — safe to call multiple times per mount.
  *
- * Response: { awarded: boolean, xpGained: number }
+ * Response: { awarded: boolean, xpGained: number } — xpGained is actual totalXp delta from this call.
  */
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
@@ -52,7 +51,8 @@ export async function POST(req: Request) {
   });
 
   const diff = (after?.totalXp ?? 0) - (before?.totalXp ?? 0);
-  const awarded = diff >= XP_DAILY_ACTIVITY;
+  const xpGained = Math.max(0, diff);
+  const awarded = xpGained > 0;
 
-  return NextResponse.json({ awarded, xpGained: awarded ? XP_DAILY_ACTIVITY : 0 });
+  return NextResponse.json({ awarded, xpGained });
 }

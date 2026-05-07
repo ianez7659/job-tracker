@@ -7,14 +7,16 @@ import {
   Home,
   BarChart,
   User,
-  Search,
   LogOut,
   Menu,
   X,
   Archive,
   ChevronDown,
   Settings,
+  Plus,
+  Search,
 } from "lucide-react";
+import { InstallButton } from "@/components/InstallButton";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef } from "react";
@@ -228,6 +230,27 @@ export default function Navbar() {
                   <span className="font-medium text-gray-900 dark:text-gray-100 truncate">
                     {session.user?.name || "User"}
                   </span>
+                </div>
+              )}
+              {session && (
+                <div className="flex flex-col gap-2 px-2 pb-3 border-b dark:border-slate-600">
+                  <InstallButton className="w-full justify-center py-2.5" />
+                  <Link
+                    href="/dashboard?newJob=auto"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-colors"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <Plus size={18} />
+                    Add New
+                  </Link>
+                  <Link
+                    href="/dashboard?jobSearch=1"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <Search size={18} />
+                    Find Jobs
+                  </Link>
                 </div>
               )}
               <Link

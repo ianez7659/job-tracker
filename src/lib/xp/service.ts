@@ -16,6 +16,7 @@ import {
   getDailyPeriodKey,
   isDailyRewardEligibleForPeriod,
   isValidIanaTimeZone,
+  normalizePeriodKey,
 } from "./dailyPeriod";
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
@@ -67,7 +68,7 @@ async function tryApplyDailyGrantForUser(
   if (!row) return;
 
   const now = new Date();
-  const currentKey = getDailyPeriodKey(now, timeZone);
+  const currentKey = normalizePeriodKey(getDailyPeriodKey(now, timeZone));
   const lastKey = effectiveLastDailyPeriodKey(row);
   if (!isDailyRewardEligibleForPeriod(lastKey, currentKey)) return;
 

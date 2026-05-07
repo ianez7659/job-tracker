@@ -12,6 +12,7 @@ export default function SummaryCard({
   textColor = "text-gray-800",
   onClick,
   icon,
+  variant = "default",
 }: {
   title: string;
   shortTitle?: string;
@@ -20,6 +21,7 @@ export default function SummaryCard({
   textColor?: string;
   onClick?: () => void;
   icon?: ReactNode;
+  variant?: "default" | "compact";
 }) {
   const isClickable = typeof onClick === "function";
   const motionValue = useMotionValue(0);
@@ -38,9 +40,21 @@ export default function SummaryCard({
     return () => controls.stop();
   }, [value, motionValue]);
 
+  const isCompact = variant === "compact";
+  const padClass = isCompact ? "p-1.5 sm:p-3" : "p-4";
+  const layoutClass = isCompact
+    ? "flex flex-col items-center justify-center gap-0.5 min-w-0 text-center w-full"
+    : "flex flex-col items-center text-center sm:flex-row sm:items-center sm:justify-between sm:text-left sm:gap-3";
+  const titleClass = isCompact
+    ? "text-sm leading-tight sm:text-lg font-medium"
+    : "text-md font-medium";
+  const valueClass = isCompact
+    ? "text-base sm:text-2xl font-semibold tabular-nums leading-none"
+    : "text-xl sm:text-4xl font-medium";
+
   return (
     <div
-      className={`rounded-lg shadow-sm p-4 ${color} ${
+      className={`rounded-lg shadow-sm ${padClass} ${color} ${
         isClickable ? "cursor-pointer" : ""
       }`}
       role={isClickable ? "button" : undefined}
@@ -54,22 +68,36 @@ export default function SummaryCard({
         }
       }}
     >
-      {/* Mobile: stacked, centered. Desktop: number left, icon+title right */}
-      <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:justify-between sm:text-left sm:gap-3">
-        <p className={`text-md font-medium ${textColor}`}>
-          <span className="inline-flex items-center justify-center gap-1 sm:justify-end">
+      <div className={layoutClass}>
+        <p className={`${titleClass} ${textColor} min-w-0`}>
+          <span
+            className={`inline-flex items-center gap-0.5 min-w-0 ${
+              isCompact ? "justify-center" : "justify-center sm:justify-end"
+            }`}
+          >
             {icon ? (
-              <span aria-hidden="true" className="shrink-0">
+              <span
+                aria-hidden="true"
+                className={
+                  isCompact
+                    ? "shrink-0 [&_svg]:size-3.5 sm:[&_svg]:size-[18px]"
+                    : "shrink-0"
+                }
+              >
                 {icon}
               </span>
             ) : null}
-            <span className="block sm:hidden">{shortTitle ?? title}</span>
-            <span className="hidden sm:block">{title}</span>
+            {isCompact ? (
+              <span className="truncate">{shortTitle ?? title}</span>
+            ) : (
+              <>
+                <span className="block sm:hidden">{shortTitle ?? title}</span>
+                <span className="hidden sm:block">{title}</span>
+              </>
+            )}
           </span>
         </p>
-        <h2 className={`text-xl sm:text-4xl font-medium ${textColor}`}>
-          {displayValue}
-        </h2>
+        <h2 className={`${valueClass} ${textColor}`}>{displayValue}</h2>
       </div>
     </div>
   );

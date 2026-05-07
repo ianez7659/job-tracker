@@ -19,11 +19,73 @@ function pad2(n: number): string {
   return String(n).padStart(2, "0");
 }
 
+/** Normalize YYYY-M-D strings for stable comparison (DB / legacy keys). */
+export function normalizePeriodKey(key: string): string {
+  const parts = key.trim().split("-");
+  if (parts.length !== 3) return key;
+  const y = Number(parts[0]);
+  const m = Number(parts[1]);
+  const d = Number(parts[2]);
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) {
+    return key;
+  }
+  return `${y}-${pad2(m)}-${pad2(d)}`;
+}
+
 /** Pure Gregorian: (y,m,d) 하루 전 (UTC 달력 연산). */
 function prevGregorianDay(y: number, m: number, d: number): { y: number; m: number; d: number } {
   const dt = new Date(Date.UTC(y, m - 1, d));
   dt.setUTCDate(dt.getUTCDate() - 1);
   return { y: dt.getUTCFullYear(), m: dt.getUTCMonth() + 1, d: dt.getUTCDate() };
+}
+
+/**
+ * Parse calendar parts in an IANA zone. Uses formatToParts so we never rely on
+ * locale-specific date string separators (en-CA can be YYYY-MM-DD or YYYY/MM/DD).
+ */
+function computeDailyPeriodKeyInZone(
+  instant: Date,
+  timeZone: string,
+  anchorHour: number,
+): string | null {
+  try {
+    const dtf = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "numeric",
+      hourCycle: "h23",
+    });
+    const parts = dtf.formatToParts(instant);
+    const num = (t: Intl.DateTimeFormatPartTypes) =>
+      Number(parts.find((p) => p.type === t)?.value ?? "NaN");
+    const y = num("year");
+    const m = num("month");
+    const d = num("day");
+    const hour = num("hour");
+    if (![y, m, d, hour].every((n) => Number.isFinite(n))) return null;
+    if (hour < anchorHour) {
+      const prev = prevGregorianDay(y, m, d);
+      return `${prev.y}-${pad2(prev.m)}-${pad2(prev.d)}`;
+    }
+    return `${y}-${pad2(m)}-${pad2(d)}`;
+  } catch {
+    return null;
+  }
+}
+
+/** UTC-only fallback if a zone string fails parsing (should be rare). */
+function dailyPeriodKeyUtcCalendar(instant: Date, anchorHour: number): string {
+  const y = instant.getUTCFullYear();
+  const m = instant.getUTCMonth() + 1;
+  const d = instant.getUTCDate();
+  const hour = instant.getUTCHours();
+  if (hour < anchorHour) {
+    const prev = prevGregorianDay(y, m, d);
+    return `${prev.y}-${pad2(prev.m)}-${pad2(prev.d)}`;
+  }
+  return `${y}-${pad2(m)}-${pad2(d)}`;
 }
 
 /**
@@ -36,30 +98,13 @@ export function getDailyPeriodKey(
   timeZone: string,
   anchorHour = DAILY_ANCHOR_HOUR,
 ): string {
-  const wall = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(instant);
-
-  const hour = parseInt(
-    new Intl.DateTimeFormat("en-US", {
-      timeZone,
-      hour: "numeric",
-      hourCycle: "h23",
-    })
-      .formatToParts(instant)
-      .find((p) => p.type === "hour")?.value ?? "0",
-    10,
-  );
-
-  const [y, m, d] = wall.split("-").map(Number);
-  if (hour < anchorHour) {
-    const prev = prevGregorianDay(y, m, d);
-    return `${prev.y}-${pad2(prev.m)}-${pad2(prev.d)}`;
+  const key = computeDailyPeriodKeyInZone(instant, timeZone, anchorHour);
+  if (key !== null) return key;
+  if (timeZone !== "UTC") {
+    const utcTry = computeDailyPeriodKeyInZone(instant, "UTC", anchorHour);
+    if (utcTry !== null) return utcTry;
   }
-  return wall;
+  return dailyPeriodKeyUtcCalendar(instant, anchorHour);
 }
 
 /** 마지막으로 일일 XP를 받은 구간과 현재 구간이 다르면 지급 가능. */
@@ -78,8 +123,17 @@ export function isDailyRewardEligibleForPeriod(
 export function effectiveLastDailyPeriodKey(row: {
   lastDailyPeriodKey: string | null;
   lastDailyAt: Date | null;
+  dailyTimeZone?: string | null;
 }): string | null {
-  if (row.lastDailyPeriodKey) return row.lastDailyPeriodKey;
-  if (row.lastDailyAt) return getDailyPeriodKey(row.lastDailyAt, "UTC");
+  if (row.lastDailyPeriodKey) {
+    return normalizePeriodKey(row.lastDailyPeriodKey);
+  }
+  if (row.lastDailyAt) {
+    const tz =
+      row.dailyTimeZone && isValidIanaTimeZone(row.dailyTimeZone)
+        ? row.dailyTimeZone
+        : "UTC";
+    return getDailyPeriodKey(row.lastDailyAt, tz);
+  }
   return null;
 }

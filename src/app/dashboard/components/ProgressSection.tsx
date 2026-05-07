@@ -1,10 +1,11 @@
 "use client";
 
-import { FileInput, Send, MessageSquare, Gavel } from "lucide-react";
+import { FileInput, Send, MessageSquare } from "lucide-react";
 
 type FilterStatus =
   | "all"
   | "applying"
+  | "postApplying"
   | "resume"
   | "interview1"
   | "interview2"
@@ -14,9 +15,7 @@ type Props = {
   resumeCount: number;
   totalActive: number;
   interviewCount: number;
-  decidedCount: number;
   setFilterStatus: (s: FilterStatus) => void;
-  onArchiveClick: () => void;
   embedded?: boolean;
   currentStatus?: FilterStatus;
 };
@@ -25,9 +24,7 @@ export default function ProgressSection({
   resumeCount,
   totalActive,
   interviewCount,
-  decidedCount,
   setFilterStatus,
-  onArchiveClick,
   embedded = false,
   currentStatus,
 }: Props) {
@@ -44,7 +41,8 @@ export default function ProgressSection({
       value: totalActive,
       icon: <Send size={18} />,
       onClick: () => setFilterStatus("resume"),
-      isActive: (s?: FilterStatus) => s === "resume",
+      isActive: (s?: FilterStatus) =>
+        s === "resume" || s === "postApplying",
     },
     {
       label: "Interviews",
@@ -53,13 +51,6 @@ export default function ProgressSection({
       onClick: () => setFilterStatus("interview1"),
       isActive: (s?: FilterStatus) =>
         s === "interview1" || s === "interview2" || s === "interview3",
-    },
-    {
-      label: "Decision",
-      value: decidedCount,
-      icon: <Gavel size={18} />,
-      onClick: onArchiveClick,
-      isActive: () => false,
     },
   ];
 

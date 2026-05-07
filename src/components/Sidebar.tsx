@@ -12,8 +12,10 @@ import {
   Plus,
   User,
   LogOut,
+  Search,
 } from "lucide-react";
 import { getSignOutCallbackUrl } from "@/lib/constants/demoAccount";
+import { InstallButton } from "@/components/InstallButton";
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "Dashboard" },
@@ -45,15 +47,24 @@ export default function Sidebar() {
         </Link>
       </div>
 
-      {/* Add job */}
-      <div className="p-3 border-b border-slate-200 dark:border-slate-700">
+      {/* Install + Add New + Find Jobs (desktop) */}
+      <div className="p-3 border-b border-slate-200 dark:border-slate-700 space-y-2">
+        <InstallButton className="w-full justify-center py-2.5" />
         <button
           type="button"
-          onClick={() => router.push("/dashboard?newJob=1")}
-          className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-colors"
+          onClick={() => router.push("/dashboard?newJob=auto")}
+          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-colors"
         >
           <Plus size={18} />
-          Add job
+          Add New
+        </button>
+        <button
+          type="button"
+          onClick={() => router.push("/dashboard?jobSearch=1")}
+          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors"
+        >
+          <Search size={18} />
+          Find Jobs
         </button>
       </div>
 

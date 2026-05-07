@@ -60,7 +60,7 @@ describe("XpSummaryCard", () => {
     expect(bar).toHaveAttribute("aria-valuenow", "50");
   });
 
-  it("shows 'Progress' heading", async () => {
+  it("shows 'Progress' heading in card variant", async () => {
     mockFetch({
       totalXp: 0,
       level: 1,
@@ -72,5 +72,20 @@ describe("XpSummaryCard", () => {
     await waitFor(() =>
       expect(screen.getByText("Progress")).toBeInTheDocument()
     );
+  });
+
+  it("inline variant has no Progress heading", async () => {
+    mockFetch({
+      totalXp: 0,
+      level: 1,
+      currentLevelXp: 0,
+      xpToNextLevel: 100,
+      progress: 0,
+    });
+    render(<XpSummaryCard variant="inline" />);
+    await waitFor(() =>
+      expect(screen.getByText("Level 1")).toBeInTheDocument()
+    );
+    expect(screen.queryByText("Progress")).not.toBeInTheDocument();
   });
 });

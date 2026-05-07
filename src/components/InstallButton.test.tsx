@@ -8,10 +8,46 @@ function makeMockPromptEvent(outcome: "accepted" | "dismissed" = "accepted") {
   });
 }
 
+function mockMatchMediaStandalone(matches: boolean) {
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    configurable: true,
+    value: jest.fn().mockImplementation((q: string) => ({
+      matches: q === "(display-mode: standalone)" ? matches : false,
+      media: q,
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    })),
+  });
+}
+
 describe("InstallButton", () => {
-  it("renders nothing when beforeinstallprompt has not fired", () => {
+  beforeEach(() => {
+    mockMatchMediaStandalone(false);
+    Object.defineProperty(window.navigator, "standalone", {
+      value: undefined,
+      writable: true,
+      configurable: true,
+    });
+  });
+  it("renders nothing when beforeinstallprompt has not fired", async () => {
     const { container } = render(<InstallButton />);
-    expect(container).toBeEmptyDOMElement();
+    await waitFor(() => {
+      expect(container).toBeEmptyDOMElement();
+    });
+  });
+
+  it("renders nothing when already in standalone display mode", async () => {
+    mockMatchMediaStandalone(true);
+    render(<InstallButton />);
+    act(() => {
+      fireEvent(window, makeMockPromptEvent());
+    });
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("button", { name: /install jobflow app/i }),
+      ).not.toBeInTheDocument();
+    });
   });
 
   it("renders install button after beforeinstallprompt fires", () => {

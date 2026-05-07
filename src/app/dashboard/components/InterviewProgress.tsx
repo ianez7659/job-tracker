@@ -51,9 +51,9 @@ export default function InterviewProgress({ counts, setFilterStatus }: Props) {
         Interview Progress
       </h2>
 
-      <SummarySection 
-        cards={interviewCards} 
-        grid="grid-cols-3" 
+      <SummarySection
+        cards={interviewCards}
+        grid="grid-cols-3 gap-4"
         className="mb-0"
       />
     </section>
