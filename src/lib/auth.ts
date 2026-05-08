@@ -196,9 +196,25 @@ export const authOptions: NextAuthOptions = {
                 session.user.image = dbUser.image;
               }
             } catch (dbErr: unknown) {
-              // P2022 = column missing; don't crash, just leave category undefined
+              // P2022 = column missing in DB (migration not yet applied).
+              // Fallback: re-query with only the core fields that are guaranteed to exist.
+              // Do NOT wipe category based on an unrelated column being missing.
               if ((dbErr as { code?: string })?.code !== "P2022") throw dbErr;
-              (session.user as { category?: string | null }).category = undefined;
+              console.warn("[auth] session DB read P2022 — falling back to minimal select", dbErr);
+              try {
+                const fallback = await prisma.user.findUnique({
+                  where: { id: token.id },
+                  select: { email: true, category: true, image: true, name: true },
+                });
+                if (fallback) {
+                  if (fallback.email) session.user.email = fallback.email;
+                  session.user.category = fallback.category;
+                  session.user.name = fallback.name;
+                  session.user.image = fallback.image;
+                }
+              } catch {
+                // If even the minimal select fails, leave session as-is
+              }
             }
           }
           if (
