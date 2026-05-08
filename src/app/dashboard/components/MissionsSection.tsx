@@ -343,10 +343,12 @@ export default function MissionsSection({
             )}
           </div>
 
-          <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-xs text-gray-600 dark:text-gray-400 sm:text-sm">
-            <Star className="h-4 w-4 shrink-0 text-amber-500" aria-hidden />
-            Complete your missions to earn XP!
-          </p>
+          {!(payload.daily.length > 0 && payload.daily.every((m) => m.completed)) && (
+            <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-xs text-gray-600 dark:text-gray-400 sm:text-sm">
+              <Star className="h-4 w-4 shrink-0 text-amber-500" aria-hidden />
+              Complete your missions to earn XP!
+            </p>
+          )}
         </>
       )}
     </section>
