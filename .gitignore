@@ -44,3 +44,26 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma 
+
+# AI Docs
+CLAUDE.md
+AGENT.md
+Architecture.md
+Quality_Score.md
+Security.md
+todo-prompt.md
+Harness-Prompt.md
+/docs
+
+# Harness logs + snapshots (task-specific, not committed)
+/logs/
+/harness/
+/scripts/
+/e2e/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+

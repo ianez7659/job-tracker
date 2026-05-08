@@ -16,7 +16,10 @@ import JobSearchModal from "@/app/dashboard/components/JobSearchModal";
 import FindJobsCtaCard from "@/app/dashboard/components/FindJobsCtaCard";
 import MissionsSection from "@/app/dashboard/components/MissionsSection";
 import XpSummaryCard from "@/app/dashboard/components/XpSummaryCard";
+import DashboardStreakPanel from "@/app/dashboard/components/DashboardStreakPanel";
 import XpToast from "@/components/XpToast";
+import { computeLevel } from "@/lib/xp/levels";
+import { computeLoginStreakDisplay, type WeekCircleDay } from "@/lib/xp/streakDisplayCore";
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
 import { useAllJobs } from "@/app/dashboard/hooks/useAllJobs";
 import { useSharedEntry } from "@/app/dashboard/hooks/useSharedEntry";
@@ -68,6 +71,16 @@ type FilterStatus =
 
 /** Add-job UI: mode picker → standard modal or simple (card) placeholder. */
 type NewJobUi = null | "picker" | "standard" | "simple";
+
+type DashboardHeaderSummaryPayload = {
+  totalXp: number;
+  level: number;
+  currentLevelXp: number;
+  xpToNextLevel: number;
+  progress: number;
+  loginStreak: number;
+  weekDays: WeekCircleDay[];
+};
 
 export default function DashboardClient({
   user,
@@ -122,6 +135,42 @@ export default function DashboardClient({
   // XP toast + XpSummaryCard refresh
   const [xpToast, setXpToast] = useState(0);
   const [xpRefreshToken, setXpRefreshToken] = useState(0);
+  const [headerSummary, setHeaderSummary] = useState<DashboardHeaderSummaryPayload | null>(
+    null,
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    void (async () => {
+      try {
+        const res = await fetch(
+          `/api/xp/summary?timeZone=${encodeURIComponent(tz)}`,
+          { cache: "no-store", credentials: "same-origin" },
+        );
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = (await res.json()) as DashboardHeaderSummaryPayload;
+        if (!cancelled) setHeaderSummary(data);
+      } catch {
+        const streak = computeLoginStreakDisplay(new Date(), tz, new Set());
+        const lv = computeLevel(0);
+        if (!cancelled) {
+          setHeaderSummary({
+            totalXp: 0,
+            level: lv.level,
+            currentLevelXp: lv.currentLevelXp,
+            xpToNextLevel: lv.xpToNextLevel,
+            progress: lv.progress,
+            loginStreak: streak.loginStreak,
+            weekDays: streak.weekDays,
+          });
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [xpRefreshToken]);
 
   const handleXpGained = (amount: number) => {
     setXpToast(amount);
@@ -303,18 +352,41 @@ export default function DashboardClient({
           className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/65 to-transparent dark:via-white/38"
           aria-hidden
         />
-        <div className="relative z-[1] flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-          <div>
+        <div className="relative z-[1] flex w-full flex-col gap-3 md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-start md:gap-x-10 lg:gap-x-14 xl:gap-x-20">
+          <div className="min-w-0 md:pr-2">
             <h1 className="mb-2 text-xl font-bold text-white drop-shadow-sm sm:text-3xl">
               Welcome,{" "}
               <span className="text-yellow-300 dark:text-yellow-200">{user.name}</span>
             </h1>
-            <p className="text-md text-white/90 sm:text-lg dark:text-white/85">
-              Here is your current applications
-            </p>
+            <DashboardStreakPanel
+              loading={headerSummary === null}
+              data={
+                headerSummary
+                  ? {
+                      loginStreak: headerSummary.loginStreak,
+                      weekDays: headerSummary.weekDays,
+                    }
+                  : null
+              }
+            />
           </div>
-          <div className="w-full md:w-[24rem] md:flex-shrink-0">
-            <XpSummaryCard refreshToken={xpRefreshToken} variant="inline" />
+          <div className="w-full shrink-0 md:w-[24rem] md:justify-self-end">
+            <XpSummaryCard
+              variant="inline"
+              refreshToken={xpRefreshToken}
+              skipInternalFetch
+              xpFromParent={
+                headerSummary
+                  ? {
+                      totalXp: headerSummary.totalXp,
+                      level: headerSummary.level,
+                      currentLevelXp: headerSummary.currentLevelXp,
+                      xpToNextLevel: headerSummary.xpToNextLevel,
+                      progress: headerSummary.progress,
+                    }
+                  : undefined
+              }
+            />
           </div>
         </div>
       </div>

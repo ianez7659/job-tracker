@@ -24,16 +24,25 @@ interface Props {
   refreshToken?: number;
   /** `inline`: compact strip without "Progress" title (e.g. dashboard header). */
   variant?: "card" | "inline";
+  /** Dashboard header: parent fetches `/api/xp/summary` once and passes XP fields here. */
+  skipInternalFetch?: boolean;
+  xpFromParent?: XpSummary;
 }
 
 export default function XpSummaryCard({
   refreshToken = 0,
   variant = "card",
+  skipInternalFetch = false,
+  xpFromParent,
 }: Props) {
   const [summary, setSummary] = useState<XpSummary | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!skipInternalFetch);
 
   useEffect(() => {
+    if (skipInternalFetch) {
+      setLoading(false);
+      return;
+    }
     let cancelled = false;
     void (async () => {
       try {
@@ -50,13 +59,19 @@ export default function XpSummaryCard({
     return () => {
       cancelled = true;
     };
-  }, [refreshToken]);
+  }, [refreshToken, skipInternalFetch]);
 
-  const data = summary ?? DEFAULT_SUMMARY;
+  const loadingEffective =
+    skipInternalFetch ? xpFromParent === undefined : loading;
+
+  const data =
+    skipInternalFetch && xpFromParent !== undefined
+      ? xpFromParent
+      : summary ?? DEFAULT_SUMMARY;
   const pct = Math.round(data.progress * 100);
   const xpRemaining = data.xpToNextLevel - data.currentLevelXp;
 
-  const body = loading ? (
+  const body = loadingEffective ? (
     <p className="text-sm text-gray-50 dark:text-gray-400">Loading…</p>
   ) : (
     <div>
