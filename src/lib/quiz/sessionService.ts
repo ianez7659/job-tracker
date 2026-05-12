@@ -250,6 +250,10 @@ export interface AnswerResult {
   isCorrect: boolean;
   correctChoiceId: string;
   correctIndex: number;
+  /** Explanation for the correct choice — shown in post-submit feedback UI. */
+  correctExplanation: string;
+  /** Explanations for each wrong choice — shown in post-submit feedback UI. */
+  wrongExplanations: unknown;
 }
 
 export async function answerQuizItem(
@@ -318,6 +322,8 @@ export async function answerQuizItem(
       isCorrect,
       correctChoiceId: item.correctChoiceIdSnapshot,
       correctIndex: item.correctIndexSnapshot,
+      correctExplanation: item.correctExplanationSnapshot,
+      wrongExplanations: item.wrongExplanationsSnapshot,
     },
   };
 }
