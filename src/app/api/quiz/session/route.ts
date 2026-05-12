@@ -3,10 +3,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateTodayQuizSession } from "@/lib/quiz/sessionService";
+import { serializeSessionForClient } from "@/lib/quiz/sessionSerializer";
 
 /**
  * GET /api/quiz/session?timeZone=America/Vancouver
  * Returns the user's quiz session for today (creates one if needed).
+ *
+ * Answer fields (correctChoiceIdSnapshot, correctIndexSnapshot,
+ * correctExplanationSnapshot, wrongExplanationsSnapshot) are stripped
+ * from unanswered items. Answered items include all fields for review.
  */
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
@@ -35,5 +40,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: result.error, message: result.message }, { status });
   }
 
-  return NextResponse.json(result.value);
+  return NextResponse.json(
+    serializeSessionForClient(result.value.session, result.value.items),
+  );
 }
