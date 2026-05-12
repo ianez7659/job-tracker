@@ -23,6 +23,7 @@ model User {
   jobs          Job[]
   sessions      Session[]
   xp            UserXp?
+  quizSessions  DailyQuizSession[]
 
   @@map("User")
 }
@@ -144,4 +145,110 @@ model XpEvent {
 
   @@index([userXpId, createdAt])
   @@map("XpEvent")
+}
+
+// ── Daily Interview Quiz ──────────────────────────────────────────────────────
+
+/// Question bank: one row per source question imported from data/quiz/*.json.
+/// Content is treated as reviewed source data and must not be auto-generated.
+model QuizQuestion {
+  id                 String   @id @default(cuid())
+  /// Original question id from the JSON file (e.g. "web-dev-html-semantic-001").
+  sourceId           String   @unique
+  /// "common" | "group_common" | "category_specific" | "ai_card_based"
+  sourceType         String
+  /// Quiz JSON categoryGroup (e.g. "Tech", "Management", "Marketing", "Common")
+  categoryGroup      String
+  /// Quiz JSON category in hyphen format (e.g. "web-development")
+  category           String
+  /// "behavioral" | "situational" | "role_specific" | "interview_basics"
+  questionType       String
+  /// "easy" | "medium" | "hard"
+  difficulty         String
+  question           String
+  /// [{id: string, text: string}, ...]
+  choices            Json
+  correctChoiceId    String
+  correctExplanation String
+  /// [{choiceId: string, explanation: string}, ...]
+  wrongExplanations  Json
+  /// string[]
+  tags               Json
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  sessionItems DailyQuizSessionItem[]
+
+  @@index([category, difficulty])
+  @@index([categoryGroup])
+  @@map("QuizQuestion")
+}
+
+/// One quiz session per user per day per category.
+/// Stores the user's progress through 5 daily interview questions.
+model DailyQuizSession {
+  id                 String    @id @default(cuid())
+  userId             String
+  /// YYYY-MM-DD in the user's local timezone
+  dateKey            String
+  /// USER_CATEGORIES value in underscore format (e.g. "web_development")
+  category           String
+  /// PARENT_CATEGORIES id in lowercase (e.g. "tech")
+  categoryGroup      String
+  /// "not_started" | "in_progress" | "completed"
+  status             String    @default("not_started")
+  totalQuestions     Int       @default(5)
+  completedQuestions Int       @default(0)
+  createdAt          DateTime  @default(now())
+  completedAt        DateTime?
+
+  user  User                   @relation(fields: [userId], references: [id])
+  items DailyQuizSessionItem[]
+
+  /// One session per user per day per category
+  @@unique([userId, dateKey, category])
+  @@index([userId, dateKey])
+  @@map("DailyQuizSession")
+}
+
+/// One row per question within a DailyQuizSession.
+/// All question/choices/explanation content is snapshotted at session creation
+/// so the session is stable even if the source question is later edited.
+model DailyQuizSessionItem {
+  id        String @id @default(cuid())
+  sessionId String
+  /// Nullable: AI-generated questions have no QuizQuestion row
+  questionId String?
+  /// "common" | "group_common" | "category_specific" | "ai_card_based"
+  sourceType String
+  /// 0-based position in the session (0–4 for a 5-question session)
+  orderIndex Int
+
+  // ── Question snapshot (immutable after creation) ──────────────────────
+  renderedQuestionSnapshot   String
+  /// [{id, text}, ...] in shuffled order as shown to the user
+  choicesSnapshot            Json
+  /// Correct choice id from the original question
+  correctChoiceIdSnapshot    String
+  /// Index of the correct choice in choicesSnapshot (0-based)
+  correctIndexSnapshot       Int
+  correctExplanationSnapshot String
+  /// [{choiceId, explanation}, ...]
+  wrongExplanationsSnapshot  Json
+
+  // ── User answer (nullable until answered) ─────────────────────────────
+  userAnswerChoiceId String?
+  userAnswerIndex    Int?
+  isCorrect          Boolean?
+  answeredAt         DateTime?
+
+  /// Extensible metadata (e.g. AI generation params, score adjustments)
+  metadata Json?
+
+  session  DailyQuizSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  question QuizQuestion?    @relation(fields: [questionId], references: [id])
+
+  @@index([sessionId, orderIndex])
+  @@map("DailyQuizSessionItem")
 }
