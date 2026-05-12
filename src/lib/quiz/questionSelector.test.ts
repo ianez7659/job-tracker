@@ -67,7 +67,11 @@ const mockAiQuestion: AiGeneratedQuestion = {
   ],
   correctChoiceId: "b",
   correctExplanation: "Explanation",
-  wrongExplanations: { a: "wrong a", c: "wrong c", d: "wrong d" },
+  wrongExplanations: [
+    { choiceId: "a", explanation: "wrong a" },
+    { choiceId: "c", explanation: "wrong c" },
+    { choiceId: "d", explanation: "wrong d" },
+  ],
   tags: ["ai"],
   jobCardId: "job-001",
 };

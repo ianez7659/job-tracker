@@ -1,4 +1,6 @@
 /**
+ * @jest-environment node
+ *
  * sessionService.test.ts
  *
  * Tests for session progress computation and answer result logic.

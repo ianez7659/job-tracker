@@ -215,8 +215,10 @@ async function createTodayQuizSession(
       correctExplanationSnapshot: aiSlot.correctExplanation,
       wrongExplanationsSnapshot: aiSlot.wrongExplanations as unknown as Prisma.InputJsonValue,
       metadata: {
+        source: "ai_card_based",
         jobCardId: aiSlot.jobCardId,
         sourceId: aiSlot.sourceId,
+        generationStatus: "success",
       } as unknown as Prisma.InputJsonValue,
     });
   }
