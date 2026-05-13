@@ -122,6 +122,7 @@ type Props = {
   refreshToken?: number;
   onStartNewJob: () => void;
   onXpActivity?: () => void;
+  onPayloadChange?: (payload: MissionsPayload) => void;
 };
 
 type MissionTab = "daily" | "weekly";
@@ -130,6 +131,7 @@ export default function MissionsSection({
   refreshToken = 0,
   onStartNewJob,
   onXpActivity,
+  onPayloadChange,
 }: Props) {
   const router = useRouter();
   const [data, setData] = useState<MissionsPayload | null>(null);
@@ -160,6 +162,7 @@ export default function MissionsSection({
         return;
       }
       setData(raw as MissionsPayload);
+      onPayloadChange?.(raw as MissionsPayload);
     } catch {
       setData(fallbackIncompleteMissionsPayload(timeZone));
     }
