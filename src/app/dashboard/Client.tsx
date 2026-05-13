@@ -15,6 +15,8 @@ import SimpleNewJobModal from "@/app/dashboard/components/SimpleNewJobModal";
 import JobSearchModal from "@/app/dashboard/components/JobSearchModal";
 import FindJobsCtaCard from "@/app/dashboard/components/FindJobsCtaCard";
 import MissionsSection from "@/app/dashboard/components/MissionsSection";
+import InterviewDrillCtaButton from "@/app/dashboard/components/InterviewDrillCtaButton";
+import type { MissionsPayload, MissionStatus } from "@/lib/xp/missionsDisplayCore";
 import XpSummaryCard from "@/app/dashboard/components/XpSummaryCard";
 import DashboardStreakPanel from "@/app/dashboard/components/DashboardStreakPanel";
 import XpToast from "@/components/XpToast";
@@ -135,6 +137,8 @@ export default function DashboardClient({
   // XP toast + XpSummaryCard refresh
   const [xpToast, setXpToast] = useState(0);
   const [xpRefreshToken, setXpRefreshToken] = useState(0);
+  const [drillStatus, setDrillStatus] = useState<MissionStatus>("not_started");
+  const [allDailyDone, setAllDailyDone] = useState(false);
   const [headerSummary, setHeaderSummary] = useState<DashboardHeaderSummaryPayload | null>(
     null,
   );
@@ -395,7 +399,13 @@ export default function DashboardClient({
         refreshToken={xpRefreshToken}
         onStartNewJob={() => void handleAddNew()}
         onXpActivity={() => setXpRefreshToken((t) => t + 1)}
+        onPayloadChange={(payload: MissionsPayload) => {
+          const drill = payload.daily.find((m) => m.id === "daily_interview_drill");
+          setDrillStatus((drill?.status as MissionStatus) ?? "not_started");
+          setAllDailyDone(payload.dailyRemaining === 0);
+        }}
       />
+      <InterviewDrillCtaButton drillStatus={drillStatus} allDailyDone={allDailyDone} />
 
       {/* Main card: left (overview + Find Jobs CTA) | right (card list) */}
       <motion.div
