@@ -109,13 +109,14 @@ model VerificationToken {
 // ── XP System ────────────────────────────────────────────────────────────────
 
 enum XpReason {
-  DAILY_ACTIVITY       // +8 XP once per day when meaningful action taken
-  JOB_CREATED          // +10 XP on job card creation
-  JOB_CREATED_COMPLETE // +5 XP bonus when card has all core fields filled
-  CYCLE_COMPLETED      // +30 XP when job reaches offer or rejected
-  CYCLE_INTERVIEW_BONUS // +10 XP when cycle passed at least one interview stage
-  CYCLE_NOTE_BONUS     // +5 XP when job has a final note/jd on cycle close
-  WEEKLY_REVIEW        // +20 XP when weekly review requirement is completed
+  DAILY_ACTIVITY         // +8 XP once per day when meaningful action taken
+  JOB_CREATED            // +10 XP on job card creation
+  JOB_CREATED_COMPLETE   // +5 XP bonus when card has all core fields filled
+  CYCLE_COMPLETED        // +30 XP when job reaches offer or rejected
+  CYCLE_INTERVIEW_BONUS  // +10 XP when cycle passed at least one interview stage
+  CYCLE_NOTE_BONUS       // +5 XP when job has a final note/jd on cycle close
+  WEEKLY_REVIEW          // +20 XP when weekly review requirement is completed
+  DAILY_QUIZ_COMPLETED   // +10 XP when daily interview drill session is completed (5/5 questions)
 }
 
 /// One row per user — aggregate XP state.
@@ -202,6 +203,8 @@ model DailyQuizSession {
   completedQuestions Int       @default(0)
   createdAt          DateTime  @default(now())
   completedAt        DateTime?
+  /// Set when +10 XP is awarded for completing this session — prevents double-award
+  xpAwardedAt        DateTime?
 
   user  User                   @relation(fields: [userId], references: [id])
   items DailyQuizSessionItem[]

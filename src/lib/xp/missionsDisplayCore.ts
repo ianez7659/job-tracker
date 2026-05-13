@@ -13,14 +13,40 @@ export const MISSIONS_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 export type MissionId =
   | "daily_check_in"
   | "daily_job_card"
+  | "daily_interview_drill"
   | "weekly_review"
   | "weekly_cycle";
 
+// ---------------------------------------------------------------------------
+// MissionRowDTO — extended with optional fields for richer UI
+// ---------------------------------------------------------------------------
+
+/** 3-state status for missions that have more than a simple done/not-done state. */
+export type MissionStatus = "not_started" | "in_progress" | "completed";
+
+/**
+ * One row in the missions list.
+ *
+ * All fields beyond `completed` are optional to maintain backward compatibility
+ * with existing missions that only use the `completed` boolean.
+ *
+ * New missions (e.g. Daily Interview Drill) can use:
+ *   - `status` for 3-state display
+ *   - `ctaLabel` for custom button text
+ *   - `href` for navigation (link instead of callback)
+ *   - `progressLabel` for "2/5" or "Completed" text
+ *   - `rewardLabel` for "+10 XP" or "+10 XP earned"
+ */
 export type MissionRowDTO = {
   id: MissionId;
   title: string;
   description: string;
   completed: boolean;
+  status?: MissionStatus;
+  ctaLabel?: string;
+  href?: string;
+  progressLabel?: string;
+  rewardLabel?: string;
 };
 
 export type MissionsPayload = {
@@ -29,6 +55,10 @@ export type MissionsPayload = {
   dailyRemaining: number;
   weeklyRemaining: number;
 };
+
+// ---------------------------------------------------------------------------
+// MissionsComputeInput — extended with optional quiz fields
+// ---------------------------------------------------------------------------
 
 export type MissionsComputeInput = {
   now: Date;
@@ -39,7 +69,16 @@ export type MissionsComputeInput = {
   jobCreatedInCurrentPeriod: boolean;
   weeklyReviewDone: boolean;
   cycleCompletedThisWeek: boolean;
+  // Quiz — optional to keep existing callers/tests backward compatible.
+  // When omitted, quiz row shows as not_started with 0/5 progress.
+  quizStatus?: MissionStatus | null;
+  quizCompletedQuestions?: number;
+  quizTotalQuestions?: number;
 };
+
+// ---------------------------------------------------------------------------
+// computeMissionsPayload
+// ---------------------------------------------------------------------------
 
 /** Pure derivation from loaded facts (unit-tested). */
 export function computeMissionsPayload(
@@ -57,6 +96,25 @@ export function computeMissionsPayload(
   const dailyCheckInDone =
     lastKey !== null && normalizePeriodKey(lastKey) === currentKey;
 
+  // Quiz row
+  const quizStatus: MissionStatus = input.quizStatus ?? "not_started";
+  const quizCompleted = input.quizCompletedQuestions ?? 0;
+  const quizTotal = input.quizTotalQuestions ?? 5;
+  const quizDone = quizStatus === "completed";
+
+  const quizCtaLabel =
+    quizStatus === "completed" ? "Review" :
+    quizStatus === "in_progress" ? "Continue" :
+    "Start";
+
+  const quizProgressLabel =
+    quizStatus === "completed"
+      ? "Completed"
+      : `${quizCompleted}/${quizTotal}`;
+
+  const quizRewardLabel =
+    quizStatus === "completed" ? "+10 XP earned" : "+10 XP";
+
   const daily: MissionRowDTO[] = [
     {
       id: "daily_check_in",
@@ -69,6 +127,17 @@ export function computeMissionsPayload(
       title: "Add a job card",
       description: "Log an application to earn XP.",
       completed: input.jobCreatedInCurrentPeriod,
+    },
+    {
+      id: "daily_interview_drill",
+      title: "Daily Interview Drill",
+      description: "Complete today's 5-question interview drill.",
+      completed: quizDone,
+      status: quizStatus,
+      ctaLabel: quizCtaLabel,
+      href: "/dashboard/interview-drill",
+      progressLabel: quizProgressLabel,
+      rewardLabel: quizRewardLabel,
     },
   ];
 

@@ -264,7 +264,7 @@ export async function answerQuizItem(
   // Load item + session for ownership check
   const item = await prisma.dailyQuizSessionItem.findUnique({
     where: { id: sessionItemId },
-    include: { session: { select: { id: true, userId: true, status: true } } },
+    include: { session: { select: { id: true, userId: true, status: true, xpAwardedAt: true } } },
   });
 
   if (!item) {
@@ -304,10 +304,33 @@ export async function answerQuizItem(
 
     // Mark session completed if all answered
     if (updatedSession.completedQuestions >= updatedSession.totalQuestions) {
+      const now = new Date();
       await tx.dailyQuizSession.update({
         where: { id: item.session.id },
-        data: { status: "completed", completedAt: new Date() },
+        data: { status: "completed", completedAt: now },
       });
+
+      // Grant +10 XP atomically — only if not already awarded (idempotent via xpAwardedAt).
+      if (!item.session.xpAwardedAt) {
+        const userXp = await tx.userXp.upsert({
+          where: { userId },
+          create: { userId },
+          update: {},
+          select: { id: true },
+        });
+        await tx.xpEvent.create({
+          data: { userXpId: userXp.id, reason: "DAILY_QUIZ_COMPLETED", amount: 10 },
+        });
+        await tx.userXp.update({
+          where: { id: userXp.id },
+          data: { totalXp: { increment: 10 } },
+          select: { id: true },
+        });
+        await tx.dailyQuizSession.update({
+          where: { id: item.session.id },
+          data: { xpAwardedAt: now },
+        });
+      }
     } else if (item.session.status === "not_started") {
       await tx.dailyQuizSession.update({
         where: { id: item.session.id },
