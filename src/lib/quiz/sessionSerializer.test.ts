@@ -24,6 +24,7 @@ function makeSession(overrides: Partial<DailyQuizSession> = {}): DailyQuizSessio
     completedQuestions: 0,
     createdAt: new Date(),
     completedAt: null,
+    xpAwardedAt: null,
     ...overrides,
   };
 }

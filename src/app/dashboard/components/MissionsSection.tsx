@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  BookOpen,
   CalendarDays,
   CircleCheck,
   ClipboardList,
@@ -41,6 +42,8 @@ function missionIcon(id: MissionId) {
       return <Sparkles className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
     case "daily_job_card":
       return <Send className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
+    case "daily_interview_drill":
+      return <BookOpen className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
     case "weekly_review":
       return <ClipboardList className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
     case "weekly_cycle":
@@ -73,6 +76,26 @@ function MissionRow({
         <p className="mt-0.5 text-xs leading-relaxed text-gray-600 dark:text-gray-400 sm:text-sm">
           {row.description}
         </p>
+        {(row.progressLabel || row.rewardLabel) && (
+          <div className="mt-1.5 flex items-center gap-2.5 text-xs">
+            {row.progressLabel && (
+              <span className="font-medium text-gray-500 dark:text-gray-400">
+                {row.progressLabel}
+              </span>
+            )}
+            {row.rewardLabel && (
+              <span
+                className={
+                  row.completed
+                    ? "font-semibold text-emerald-600 dark:text-emerald-400"
+                    : "font-semibold text-indigo-500 dark:text-indigo-300"
+                }
+              >
+                {row.rewardLabel}
+              </span>
+            )}
+          </div>
+        )}
       </div>
       <div className="flex shrink-0 items-center">
         {row.completed ? (
@@ -87,7 +110,7 @@ function MissionRow({
             disabled={busy}
             className="inline-flex min-h-[2.5rem] min-w-[4.5rem] items-center justify-center rounded-lg border-2 border-indigo-500 px-3 py-2 text-xs font-semibold text-indigo-600 transition-colors hover:bg-indigo-50 disabled:opacity-60 dark:border-indigo-400 dark:text-indigo-300 dark:hover:bg-indigo-950/40 sm:text-sm"
           >
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : "Start"}
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : (row.ctaLabel ?? "Start")}
           </button>
         )}
       </div>
@@ -178,6 +201,10 @@ export default function MissionsSection({
     }
     if (id === "daily_job_card") {
       onStartNewJob();
+      return;
+    }
+    if (id === "daily_interview_drill") {
+      router.push("/dashboard/interview-drill");
       return;
     }
     if (id === "weekly_review") {

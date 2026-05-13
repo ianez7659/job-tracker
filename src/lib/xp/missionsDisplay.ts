@@ -13,6 +13,7 @@ import {
   computeMissionsPayload,
   MISSIONS_WEEK_MS,
   type MissionsPayload,
+  type MissionStatus,
 } from "./missionsDisplayCore";
 
 export {
@@ -22,6 +23,7 @@ export {
   type MissionRowDTO,
   type MissionsPayload,
   type MissionsComputeInput,
+  type MissionStatus,
 } from "./missionsDisplayCore";
 
 function resolveTimeZone(
@@ -84,6 +86,15 @@ export async function loadMissionsPayloadForUser(
   const currentKey = normalizePeriodKey(getDailyPeriodKey(now, tz));
   const weekAgo = new Date(now.getTime() - MISSIONS_WEEK_MS);
 
+  // Query today's quiz session — independent of userXp (quiz works even before first XP event).
+  const quizSession = await prisma.dailyQuizSession.findFirst({
+    where: { userId, dateKey: currentKey },
+    select: { status: true, completedQuestions: true, totalQuestions: true },
+  });
+  const quizStatus = (quizSession?.status ?? "not_started") as MissionStatus;
+  const quizCompletedQuestions = quizSession?.completedQuestions ?? 0;
+  const quizTotalQuestions = quizSession?.totalQuestions ?? 5;
+
   if (!userXp) {
     return computeMissionsPayload({
       now,
@@ -94,6 +105,9 @@ export async function loadMissionsPayloadForUser(
       jobCreatedInCurrentPeriod: false,
       weeklyReviewDone: false,
       cycleCompletedThisWeek: false,
+      quizStatus,
+      quizCompletedQuestions,
+      quizTotalQuestions,
     });
   }
 
@@ -133,5 +147,8 @@ export async function loadMissionsPayloadForUser(
     jobCreatedInCurrentPeriod,
     weeklyReviewDone,
     cycleCompletedThisWeek,
+    quizStatus,
+    quizCompletedQuestions,
+    quizTotalQuestions,
   });
 }
