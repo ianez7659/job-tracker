@@ -12,21 +12,19 @@ type Props = {
 export default function InterviewDrillCtaButton({ drillStatus, allDailyDone }: Props) {
   const router = useRouter();
 
-  const label =
-    drillStatus === "completed"
-      ? "Review Drill"
-      : drillStatus === "in_progress"
-      ? "Continue Drill"
-      : "Start Drill";
-
   const isDone = drillStatus === "completed";
   const isAllDone = allDailyDone && isDone;
+
+  const label = isDone ? "Practice Drill" : drillStatus === "in_progress" ? "Continue Drill" : "Start Drill";
+  const href = isDone
+    ? "/dashboard/interview-drill?mode=practice"
+    : "/dashboard/interview-drill";
 
   return (
     <div className="mb-3 flex-shrink-0">
       <button
         type="button"
-        onClick={() => router.push("/dashboard/interview-drill")}
+        onClick={() => router.push(href)}
         className={`flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold transition-colors ${
           isAllDone
             ? "border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:bg-emerald-950/70"

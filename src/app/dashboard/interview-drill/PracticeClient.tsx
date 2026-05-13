@@ -5,12 +5,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import type {
-  QuizSessionResponse,
-  QuizItem,
+  PracticeItem,
+  PracticeSessionResponse,
   QuizChoice,
   SubmittedAnswer,
 } from "@/lib/quiz/quizClientTypes";
-import { findFirstUnansweredIndex, isSessionComplete } from "@/lib/quiz/quizHelpers";
 import QuizProgressBar from "./components/QuizProgressBar";
 import QuizChoiceButton from "./components/QuizChoiceButton";
 import QuizFeedback from "./components/QuizFeedback";
@@ -24,43 +23,35 @@ type Props = {
 
 type UiPhase = "loading" | "error" | "question" | "feedback" | "complete";
 
-export default function QuizClient({ userName }: Props) {
+export default function PracticeClient({ userName }: Props) {
   const [phase, setPhase] = useState<UiPhase>("loading");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [sessionData, setSessionData] = useState<QuizSessionResponse | null>(null);
+  const [items, setItems] = useState<PracticeItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
   const [selectedChoiceId, setSelectedChoiceId] = useState<string | null>(null);
   const [submittedAnswer, setSubmittedAnswer] = useState<SubmittedAnswer | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showReview, setShowReview] = useState(false);
 
-  // ---------------------------------------------------------------------------
-  // Fetch session on mount
-  // ---------------------------------------------------------------------------
-  const fetchSession = useCallback(async () => {
+  const fetchQuestions = useCallback(async () => {
     setPhase("loading");
+    setCurrentIndex(0);
+    setCompletedCount(0);
+    setCorrectCount(0);
+    setSelectedChoiceId(null);
+    setSubmittedAnswer(null);
+    setShowReview(false);
+
     try {
-      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const res = await fetch(`/api/quiz/session?timeZone=${encodeURIComponent(timeZone)}`);
+      const res = await fetch("/api/quiz/practice");
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error((body as { message?: string }).message ?? "Failed to load quiz session.");
+        throw new Error((body as { message?: string }).message ?? "Failed to load practice questions.");
       }
-      const data = (await res.json()) as QuizSessionResponse;
-      setSessionData(data);
-
-      // Determine starting phase
-      if (isSessionComplete(data.session.status)) {
-        setPhase("complete");
-      } else {
-        const firstUnanswered = findFirstUnansweredIndex(data.items);
-        if (firstUnanswered === -1) {
-          setPhase("complete");
-        } else {
-          setCurrentIndex(firstUnanswered);
-          setPhase("question");
-        }
-      }
+      const data = (await res.json()) as PracticeSessionResponse;
+      setItems(data.questions);
+      setPhase("question");
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : "Something went wrong.");
       setPhase("error");
@@ -68,123 +59,48 @@ export default function QuizClient({ userName }: Props) {
   }, []);
 
   useEffect(() => {
-    fetchSession();
-  }, [fetchSession]);
+    fetchQuestions();
+  }, [fetchQuestions]);
 
-  // ---------------------------------------------------------------------------
-  // Answer submission
-  // ---------------------------------------------------------------------------
-  const handleSubmit = useCallback(async () => {
-    if (!sessionData || !selectedChoiceId || isSubmitting) return;
+  const handleSubmit = useCallback(() => {
+    if (!selectedChoiceId || phase !== "question") return;
 
-    const item = sessionData.items[currentIndex];
-    if (!item || item.answered) return;
+    const item = items[currentIndex];
+    if (!item) return;
 
-    setIsSubmitting(true);
-    try {
-      const res = await fetch(
-        `/api/quiz/session/${sessionData.session.id}/answer`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ itemId: item.id, answerChoiceId: selectedChoiceId }),
-        },
-      );
+    const isCorrect = selectedChoiceId === item.correctChoiceId;
 
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error((body as { message?: string }).message ?? "Failed to submit answer.");
-      }
+    setSubmittedAnswer({
+      itemId: `practice-${currentIndex}`,
+      selectedChoiceId,
+      isCorrect,
+      correctChoiceId: item.correctChoiceId,
+      correctIndex: item.correctIndex,
+      correctExplanation: item.correctExplanation,
+      wrongExplanations: item.wrongExplanations,
+    });
 
-      const result = await res.json() as {
-        isCorrect: boolean;
-        correctChoiceId: string;
-        correctIndex: number;
-        correctExplanation: string;
-        wrongExplanations: { choiceId: string; explanation: string }[];
-      };
+    setCompletedCount((c) => c + 1);
+    if (isCorrect) setCorrectCount((c) => c + 1);
+    setPhase("feedback");
+  }, [selectedChoiceId, phase, items, currentIndex]);
 
-      setSubmittedAnswer({
-        itemId: item.id,
-        selectedChoiceId,
-        isCorrect: result.isCorrect,
-        correctChoiceId: result.correctChoiceId,
-        correctIndex: result.correctIndex,
-        correctExplanation: result.correctExplanation,
-        wrongExplanations: result.wrongExplanations,
-      });
-
-      // Update local session data: mark item as answered
-      setSessionData((prev) => {
-        if (!prev) return prev;
-        const updatedItems = prev.items.map((i) => {
-          if (i.id !== item.id) return i;
-          return {
-            ...i,
-            answered: true as const,
-            userAnswerChoiceId: selectedChoiceId,
-            isCorrect: result.isCorrect,
-            answeredAt: new Date().toISOString(),
-            correctChoiceIdSnapshot: result.correctChoiceId,
-            correctIndexSnapshot: result.correctIndex,
-            correctExplanationSnapshot: result.correctExplanation,
-            wrongExplanationsSnapshot: result.wrongExplanations,
-          };
-        });
-        const newCompleted = prev.session.completedQuestions + 1;
-        const isNowComplete = newCompleted >= prev.session.totalQuestions;
-        return {
-          session: {
-            ...prev.session,
-            completedQuestions: newCompleted,
-            status: isNowComplete ? "completed" : "in_progress",
-          },
-          items: updatedItems,
-        };
-      });
-
-      setPhase("feedback");
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : "Failed to submit.");
-      setPhase("error");
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [sessionData, selectedChoiceId, isSubmitting, currentIndex]);
-
-  // ---------------------------------------------------------------------------
-  // Next question
-  // ---------------------------------------------------------------------------
   const handleNext = useCallback(() => {
-    if (!sessionData) return;
-
-    const nextUnanswered = sessionData.items.findIndex(
-      (item, idx) => idx > currentIndex && !item.answered,
-    );
-
     setSelectedChoiceId(null);
     setSubmittedAnswer(null);
 
-    if (nextUnanswered === -1) {
+    const nextIndex = currentIndex + 1;
+    if (nextIndex >= items.length) {
       setPhase("complete");
     } else {
-      setCurrentIndex(nextUnanswered);
+      setCurrentIndex(nextIndex);
       setPhase("question");
     }
-  }, [sessionData, currentIndex]);
-
-  // ---------------------------------------------------------------------------
-  // Render helpers
-  // ---------------------------------------------------------------------------
-  const currentItem: QuizItem | undefined = sessionData?.items[currentIndex];
-  const choices: QuizChoice[] = currentItem
-    ? (currentItem.choicesSnapshot as QuizChoice[])
-    : [];
+  }, [currentIndex, items.length]);
 
   function getChoiceState(choiceId: string): "idle" | "selected" | "correct" | "wrong" | "disabled" {
     if (phase === "question") {
-      if (selectedChoiceId === choiceId) return "selected";
-      return "idle";
+      return selectedChoiceId === choiceId ? "selected" : "idle";
     }
     if (phase === "feedback" && submittedAnswer) {
       if (choiceId === submittedAnswer.correctChoiceId) return "correct";
@@ -214,7 +130,7 @@ export default function QuizClient({ userName }: Props) {
         <div className="max-w-sm w-full text-center space-y-4">
           <p className="text-slate-600 dark:text-slate-400">{errorMessage}</p>
           <button
-            onClick={fetchSession}
+            onClick={fetchQuestions}
             className="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
           >
             Try again
@@ -229,18 +145,16 @@ export default function QuizClient({ userName }: Props) {
     );
   }
 
-  const session = sessionData!.session;
-  const items = sessionData!.items;
-  const displayIndex = currentIndex + 1;
-  const totalQuestions = session.totalQuestions;
+  const currentItem = items[currentIndex];
+  const choices: QuizChoice[] = currentItem?.choices ?? [];
+  const totalQuestions = items.length;
 
   // ---------------------------------------------------------------------------
-  // Completed
+  // Complete
   // ---------------------------------------------------------------------------
   if (phase === "complete") {
     return (
       <div className="mx-auto max-w-lg px-4 py-8 space-y-6">
-        {/* Back link */}
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-indigo-500 transition-colors"
@@ -250,11 +164,12 @@ export default function QuizClient({ userName }: Props) {
         </Link>
 
         <QuizCompleteScreen
-          items={items}
+          correctCount={correctCount}
           totalQuestions={totalQuestions}
           onReview={() => setShowReview((v) => !v)}
           showReview={showReview}
-          mode="daily"
+          mode="practice"
+          onRetry={fetchQuestions}
         />
       </div>
     );
@@ -265,7 +180,6 @@ export default function QuizClient({ userName }: Props) {
   // ---------------------------------------------------------------------------
   return (
     <div className="mx-auto max-w-lg px-4 py-8 space-y-6">
-      {/* Back link */}
       <Link
         href="/dashboard"
         className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-indigo-500 transition-colors"
@@ -274,48 +188,43 @@ export default function QuizClient({ userName }: Props) {
         Dashboard
       </Link>
 
-      {/* Header */}
       <div className="space-y-1">
         <div className="flex items-center justify-between">
           <h1 className="text-lg font-bold text-slate-800 dark:text-slate-100">
-            Daily Interview Drill
+            Practice Mode
           </h1>
           {userName && (
             <span className="text-xs text-slate-400 dark:text-slate-500">{userName}</span>
           )}
         </div>
         <p className="text-xs text-slate-400 dark:text-slate-500">
-          Question {displayIndex} of {totalQuestions}
+          Question {currentIndex + 1} of {totalQuestions}
         </p>
       </div>
 
-      {/* Progress bar */}
       <QuizProgressBar
-        completedQuestions={session.completedQuestions}
+        completedQuestions={completedCount}
         totalQuestions={totalQuestions}
       />
 
-      {/* Question card */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={`question-${currentIndex}`}
+          key={`practice-${currentIndex}`}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.22, ease: "easeOut" }}
           className="space-y-5"
         >
-          {/* Question text */}
           <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-5 shadow-sm">
             <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 leading-relaxed">
-              {currentItem?.renderedQuestionSnapshot}
+              {currentItem?.question}
             </p>
             <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
               Choose the best answer
             </p>
           </div>
 
-          {/* Choices */}
           <div className="space-y-2.5" role="radiogroup" aria-label="Answer choices">
             {choices.map((choice, i) => (
               <QuizChoiceButton
@@ -331,7 +240,6 @@ export default function QuizClient({ userName }: Props) {
             ))}
           </div>
 
-          {/* Feedback */}
           {phase === "feedback" && submittedAnswer && (
             <QuizFeedback
               isCorrect={submittedAnswer.isCorrect}
@@ -342,25 +250,17 @@ export default function QuizClient({ userName }: Props) {
             />
           )}
 
-          {/* Action button */}
           <div className="pt-1">
             {phase === "question" && (
               <motion.button
                 type="button"
                 onClick={handleSubmit}
-                disabled={!selectedChoiceId || isSubmitting}
+                disabled={!selectedChoiceId}
                 whileTap={{ scale: 0.97 }}
                 transition={{ duration: 0.1 }}
                 className="w-full rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-3.5 text-sm font-semibold text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
               >
-                {isSubmitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Submitting…
-                  </span>
-                ) : (
-                  "Submit"
-                )}
+                Submit
               </motion.button>
             )}
 

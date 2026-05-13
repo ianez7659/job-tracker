@@ -82,6 +82,24 @@ export type AnswerResponse = {
   wrongExplanations: WrongExplanation[];
 };
 
+// ---------------------------------------------------------------------------
+// Practice Mode types (stateless — no DB session)
+// ---------------------------------------------------------------------------
+
+/** One question returned by GET /api/quiz/practice — includes correct answer data. */
+export type PracticeItem = {
+  question: string;
+  choices: QuizChoice[];
+  correctChoiceId: string;
+  correctIndex: number;
+  correctExplanation: string;
+  wrongExplanations: WrongExplanation[];
+};
+
+export type PracticeSessionResponse = {
+  questions: PracticeItem[];
+};
+
 /** State of a submitted answer — held in client state after submit. */
 export type SubmittedAnswer = {
   itemId: string;
