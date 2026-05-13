@@ -1,0 +1,197 @@
+{
+  "version": 1,
+  "category": "cybersecurity",
+  "categoryGroup": "Tech",
+  "description": "Cybersecurity interview questions for junior or entry-level candidates.",
+  "questions": [
+    {
+      "id": "cybersecurity-phishing-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "easy",
+      "question": "An employee receives an email asking them to click a suspicious link and enter their password. What should they do first?",
+      "choices": [
+        { "id": "a", "text": "Click the link quickly to check if it is real." },
+        {
+          "id": "b",
+          "text": "Report the email through the proper security channel and avoid clicking the link."
+        },
+        { "id": "c", "text": "Forward it to all coworkers without warning." },
+        {
+          "id": "d",
+          "text": "Reply with their password to confirm their identity."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "Suspicious emails should be reported and not interacted with. This reduces the risk of phishing, credential theft, or malware.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Clicking suspicious links can expose credentials or install malware."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Forwarding the email widely may spread the risk."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Passwords should never be shared by email."
+        }
+      ],
+      "tags": ["phishing", "email-security", "security-awareness"]
+    },
+    {
+      "id": "cybersecurity-mfa-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "Why is multi-factor authentication useful?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It adds an extra layer of protection beyond just a password."
+        },
+        {
+          "id": "b",
+          "text": "It makes passwords unnecessary in every situation."
+        },
+        {
+          "id": "c",
+          "text": "It guarantees that accounts can never be compromised."
+        },
+        {
+          "id": "d",
+          "text": "It is only used to make login pages look more complex."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Multi-factor authentication reduces risk by requiring an additional proof of identity, such as a code, device, or biometric factor.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "MFA often works together with passwords rather than replacing them completely."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "MFA greatly reduces risk but cannot guarantee perfect security."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "The purpose of MFA is security, not visual complexity."
+        }
+      ],
+      "tags": ["mfa", "authentication", "account-security"]
+    },
+    {
+      "id": "cybersecurity-least-privilege-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What does the principle of least privilege mean?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Users should receive only the access they need to perform their job."
+        },
+        {
+          "id": "b",
+          "text": "Every employee should have administrator access."
+        },
+        {
+          "id": "c",
+          "text": "Access controls should be removed to improve speed."
+        },
+        { "id": "d", "text": "Passwords should be shared among team members." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Least privilege limits access to what is necessary, reducing damage if an account is misused or compromised.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Giving everyone administrator access increases risk."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Removing access controls may create serious security problems."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Password sharing reduces accountability and increases risk."
+        }
+      ],
+      "tags": ["least-privilege", "access-control", "security-policy"]
+    },
+    {
+      "id": "cybersecurity-incident-response-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A junior analyst notices unusual login activity on a user account. What is the best first response?",
+      "choices": [
+        { "id": "a", "text": "Ignore it unless the user complains." },
+        {
+          "id": "b",
+          "text": "Document the observation, follow the incident response process, and escalate to the appropriate team."
+        },
+        { "id": "c", "text": "Delete all logs to protect privacy." },
+        { "id": "d", "text": "Immediately announce the incident publicly." }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "Security events should be documented and handled through the proper incident response process.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Ignoring unusual activity can allow an incident to grow."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Logs are important evidence and should not be deleted."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Public communication should follow approved incident procedures."
+        }
+      ],
+      "tags": ["incident-response", "monitoring", "escalation"]
+    },
+    {
+      "id": "cybersecurity-patching-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "hard",
+      "question": "Why is patch management important in cybersecurity?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps fix known vulnerabilities before attackers can exploit them."
+        },
+        {
+          "id": "b",
+          "text": "It guarantees that no future vulnerabilities will exist."
+        },
+        {
+          "id": "c",
+          "text": "It is only useful for changing the visual design of software."
+        },
+        { "id": "d", "text": "It should always be skipped to avoid downtime." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Patch management reduces exposure to known security weaknesses, especially when vulnerabilities are actively exploited.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Patching reduces known risk but cannot prevent all future vulnerabilities."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Patches often address security, stability, or functionality, not just visuals."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Downtime should be managed, but skipping patches can leave systems vulnerable."
+        }
+      ],
+      "tags": ["patch-management", "vulnerabilities", "risk-reduction"]
+    }
+  ]
+}

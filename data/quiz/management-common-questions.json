@@ -1,0 +1,371 @@
+{
+  "version": 1,
+  "category": "management-common",
+  "categoryGroup": "Management",
+  "description": "Common interview questions for management, service, business, hospitality, and event-related categories.",
+  "questions": [
+    {
+      "id": "management-common-client-communication-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "easy",
+      "question": "A client or guest is unhappy with the service they received. What should you usually do first?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Listen carefully and acknowledge their concern before offering a solution."
+        },
+        { "id": "b", "text": "Tell them they are wrong immediately." },
+        { "id": "c", "text": "Ignore the complaint unless they ask again." },
+        {
+          "id": "d",
+          "text": "Promise anything they want without checking what is possible."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Listening and acknowledging the concern helps reduce tension and shows professionalism before moving toward a solution.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "This can escalate the situation and make the person feel dismissed."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Ignoring complaints can damage trust and service quality."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Promising too quickly can create unrealistic expectations or operational problems."
+        }
+      ],
+      "tags": ["client-service", "communication", "empathy"]
+    },
+    {
+      "id": "management-common-prioritization-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "You have multiple urgent tasks and limited time. What is the best approach?",
+      "choices": [
+        { "id": "a", "text": "Work on the task that looks easiest first." },
+        {
+          "id": "b",
+          "text": "Assess urgency, impact, deadlines, and communicate if priorities need clarification."
+        },
+        {
+          "id": "c",
+          "text": "Ignore lower-priority tasks without telling anyone."
+        },
+        { "id": "d", "text": "Try to do everything at once without a plan." }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "Good prioritization requires judgment, communication, and awareness of impact and deadlines.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "The easiest task may not be the most important."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Ignoring tasks without communication can create confusion and missed expectations."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Doing everything at once can reduce quality and increase mistakes."
+        }
+      ],
+      "tags": ["prioritization", "time-management", "operations"]
+    },
+    {
+      "id": "management-common-escalation-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "When is it appropriate to escalate an issue to a supervisor or manager?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "When the issue is beyond your authority, involves risk, or cannot be resolved with available options."
+        },
+        { "id": "b", "text": "Every time a customer asks a question." },
+        {
+          "id": "c",
+          "text": "Never, because escalation always shows weakness."
+        },
+        {
+          "id": "d",
+          "text": "Only after ignoring the problem for a long time."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Escalation is appropriate when authority, safety, policy, or complexity requires support.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Many questions can be handled directly without escalation."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Escalation can be a responsible action when used appropriately."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Waiting too long can make the situation worse."
+        }
+      ],
+      "tags": ["escalation", "judgment", "customer-service"]
+    },
+    {
+      "id": "management-common-team-coordination-001",
+      "sourceType": "group_common",
+      "questionType": "behavioral",
+      "difficulty": "easy",
+      "question": "What is an important part of coordinating with a team during a busy shift or project?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Keeping communication clear about tasks, timing, and responsibilities."
+        },
+        { "id": "b", "text": "Assuming everyone already knows what to do." },
+        {
+          "id": "c",
+          "text": "Only focusing on your own task and ignoring the team."
+        },
+        { "id": "d", "text": "Changing plans without telling anyone." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Clear communication helps prevent missed tasks, duplicated work, and confusion.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Assumptions often lead to mistakes during busy work."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Team coordination requires awareness of shared goals."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Changing plans without communication can create operational problems."
+        }
+      ],
+      "tags": ["teamwork", "coordination", "communication"]
+    },
+    {
+      "id": "management-common-service-recovery-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A service mistake has affected a client or guest. What is the best service recovery approach?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Acknowledge the issue, apologize professionally, offer a realistic solution, and follow up if needed."
+        },
+        { "id": "b", "text": "Avoid discussing the mistake." },
+        {
+          "id": "c",
+          "text": "Blame another department in front of the client."
+        },
+        {
+          "id": "d",
+          "text": "Offer an unrealistic solution to end the conversation quickly."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Good service recovery combines accountability, empathy, practical action, and follow-through.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Avoiding the issue can reduce trust."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Blaming others looks unprofessional and does not solve the problem."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Unrealistic promises can create further dissatisfaction."
+        }
+      ],
+      "tags": ["service-recovery", "accountability", "client-experience"]
+    },
+    {
+      "id": "management-common-scheduling-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A schedule changes suddenly and affects several people. What should you do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Update the affected people clearly and confirm the new plan or responsibilities."
+        },
+        { "id": "b", "text": "Assume everyone will find out on their own." },
+        { "id": "c", "text": "Only tell your closest coworker." },
+        { "id": "d", "text": "Hide the change until the last minute." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Schedule changes require clear communication so people can adjust and avoid confusion.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Assuming people will find out can cause missed tasks or frustration."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "All affected people need accurate information."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Delaying communication makes planning harder."
+        }
+      ],
+      "tags": ["scheduling", "communication", "coordination"]
+    },
+    {
+      "id": "management-common-professionalism-001",
+      "sourceType": "group_common",
+      "questionType": "behavioral",
+      "difficulty": "easy",
+      "question": "Which behavior best demonstrates professionalism?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Being reliable, respectful, prepared, and accountable."
+        },
+        { "id": "b", "text": "Only being polite when a manager is watching." },
+        {
+          "id": "c",
+          "text": "Avoiding responsibility when something goes wrong."
+        },
+        {
+          "id": "d",
+          "text": "Ignoring company procedures if they are inconvenient."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Professionalism includes reliability, respect, preparation, and accountability in daily work.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Professionalism should be consistent, not only shown under supervision."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Avoiding responsibility weakens trust."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Procedures often exist for safety, quality, or consistency."
+        }
+      ],
+      "tags": ["professionalism", "accountability", "workplace-behavior"]
+    },
+    {
+      "id": "management-common-conflict-001",
+      "sourceType": "group_common",
+      "questionType": "behavioral",
+      "difficulty": "medium",
+      "question": "What is a strong way to handle conflict with a coworker?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Discuss the issue respectfully, focus on facts, and work toward a shared solution."
+        },
+        { "id": "b", "text": "Complain about them to other coworkers first." },
+        { "id": "c", "text": "Refuse to communicate with them." },
+        { "id": "d", "text": "Try to win the argument at all costs." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A professional conflict response focuses on respectful communication, facts, and shared goals.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Complaining to others can create gossip and make the conflict worse."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Avoiding communication usually prevents resolution."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "The goal should be resolution, not winning."
+        }
+      ],
+      "tags": ["conflict-resolution", "teamwork", "communication"]
+    },
+    {
+      "id": "management-common-policy-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A client asks for something that may go against company policy. What should you do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Check the policy, explain the limits politely, and offer an appropriate alternative if possible."
+        },
+        { "id": "b", "text": "Break the policy to make the client happy." },
+        { "id": "c", "text": "Say no without explanation." },
+        { "id": "d", "text": "Pretend you did not hear the request." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A good answer balances customer care with company rules and responsible judgment.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Breaking policy can create legal, safety, or operational issues."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "A blunt refusal may damage the customer experience."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Ignoring the request is unprofessional and does not solve the issue."
+        }
+      ],
+      "tags": ["policy", "customer-service", "judgment"]
+    },
+    {
+      "id": "management-common-improvement-001",
+      "sourceType": "group_common",
+      "questionType": "behavioral",
+      "difficulty": "hard",
+      "question": "What is a strong example of process improvement in a management-related role?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Noticing a repeated problem, suggesting a practical change, and helping measure whether it improved the workflow."
+        },
+        { "id": "b", "text": "Changing a process without telling anyone." },
+        {
+          "id": "c",
+          "text": "Ignoring repeated problems because they are normal."
+        },
+        {
+          "id": "d",
+          "text": "Only criticizing the existing process without proposing a solution."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A strong improvement example shows observation, initiative, implementation, and evaluation.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Uncommunicated process changes can confuse the team."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Ignoring repeated problems prevents improvement."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Criticism without a solution is less constructive."
+        }
+      ],
+      "tags": ["process-improvement", "initiative", "operations"]
+    }
+  ]
+}

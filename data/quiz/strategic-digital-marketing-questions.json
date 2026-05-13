@@ -1,0 +1,176 @@
+{
+  "version": 1,
+  "category": "strategic-digital-marketing",
+  "categoryGroup": "Marketing",
+  "description": "Strategic Digital Marketing interview questions for junior or entry-level candidates.",
+  "questions": [
+    {
+      "id": "strategic-digital-marketing-objective-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "Why should a digital marketing strategy start with clear objectives?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Objectives guide channel selection, messaging, budget, and performance measurement."
+        },
+        { "id": "b", "text": "Objectives make customer research unnecessary." },
+        { "id": "c", "text": "Objectives guarantee immediate sales." },
+        { "id": "d", "text": "Objectives are only needed after campaigns end." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Clear objectives help align marketing activities with measurable business goals.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Customer research is still important for strategy."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Objectives guide action but do not guarantee immediate sales."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Objectives should be set before execution."
+        }
+      ],
+      "tags": ["marketing-strategy", "objectives", "planning"]
+    },
+    {
+      "id": "strategic-digital-marketing-funnel-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why is the marketing funnel useful when planning campaigns?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps match messaging and tactics to different stages, such as awareness, consideration, and conversion."
+        },
+        { "id": "b", "text": "It means every customer will buy immediately." },
+        { "id": "c", "text": "It removes the need to measure results." },
+        { "id": "d", "text": "It only applies to offline sales." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "The funnel helps marketers design content and campaigns based on where the audience is in the decision process.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "The funnel does not guarantee immediate purchase."
+        },
+        { "choiceId": "c", "explanation": "Measurement is still necessary." },
+        {
+          "choiceId": "d",
+          "explanation": "Funnels are widely used in digital marketing as well."
+        }
+      ],
+      "tags": ["marketing-funnel", "customer-journey", "strategy"]
+    },
+    {
+      "id": "strategic-digital-marketing-budget-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "You have a limited campaign budget. What is the best strategic approach?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Focus budget on the channels and audience segments most likely to support the campaign objective."
+        },
+        { "id": "b", "text": "Spend equally on every possible platform." },
+        { "id": "c", "text": "Avoid setting priorities." },
+        { "id": "d", "text": "Use the budget only on the newest trend." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Limited budgets require prioritization based on audience, objective, expected impact, and measurement.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Spreading budget too widely can reduce effectiveness."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Prioritization is essential when resources are limited."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Trends should be evaluated for strategic fit."
+        }
+      ],
+      "tags": ["budgeting", "channel-strategy", "prioritization"]
+    },
+    {
+      "id": "strategic-digital-marketing-positioning-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "hard",
+      "question": "What is the purpose of brand positioning?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To define how a brand should be perceived compared with competitors in the minds of the target audience."
+        },
+        { "id": "b", "text": "To copy the closest competitor exactly." },
+        { "id": "c", "text": "To avoid understanding the target audience." },
+        { "id": "d", "text": "To choose random colors for social media posts." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Positioning clarifies what makes a brand meaningful and distinct for a target audience.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Copying competitors weakens differentiation."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Audience understanding is central to positioning."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Visual style may support positioning but is not the whole concept."
+        }
+      ],
+      "tags": ["brand-positioning", "differentiation", "strategy"]
+    },
+    {
+      "id": "strategic-digital-marketing-performance-001",
+      "sourceType": "category_specific",
+      "questionType": "behavioral",
+      "difficulty": "hard",
+      "question": "What is a strong way to discuss campaign performance in an interview?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Explain the goal, key metrics, what the data showed, what you changed, and what you learned."
+        },
+        {
+          "id": "b",
+          "text": "Only mention vanity metrics that look positive."
+        },
+        { "id": "c", "text": "Avoid discussing results if they were mixed." },
+        {
+          "id": "d",
+          "text": "Say the campaign worked without giving evidence."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A strong answer shows strategic thinking, analysis, optimization, and learning.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Vanity metrics may not reflect real business outcomes."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Mixed results can still show learning and decision-making."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Claims are stronger when supported by data."
+        }
+      ],
+      "tags": ["campaign-performance", "analytics", "optimization"]
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-const CACHE_NAME = "jobflow-v17";
+const CACHE_NAME = "jobflow-v18";
 
 // Cache only static app shell assets — exclude Next.js internals and API routes
 const PRECACHE_URLS = ["/", "/manifest.json"];
@@ -12,13 +12,15 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key)),
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => key !== CACHE_NAME)
+            .map((key) => caches.delete(key)),
+        ),
       ),
-    ),
   );
   self.clients.claim();
 });
@@ -45,7 +47,9 @@ self.addEventListener("fetch", (event) => {
           fetch(request).then((response) => {
             if (response.ok) {
               const clone = response.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+              caches
+                .open(CACHE_NAME)
+                .then((cache) => cache.put(request, clone));
             }
             return response;
           }),

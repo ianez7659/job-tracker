@@ -1,0 +1,182 @@
+{
+  "version": 1,
+  "category": "data-science",
+  "categoryGroup": "Tech",
+  "description": "Data Science interview questions for junior or entry-level candidates.",
+  "questions": [
+    {
+      "id": "data-science-cleaning-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "Why is data cleaning important before analysis?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Clean data can improve accuracy by reducing errors, missing values, and inconsistencies."
+        },
+        {
+          "id": "b",
+          "text": "Data cleaning is only for making charts look colorful."
+        },
+        { "id": "c", "text": "Dirty data always gives better results." },
+        {
+          "id": "d",
+          "text": "Data cleaning removes the need to understand the business problem."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Data quality strongly affects analysis quality. Cleaning helps make results more reliable.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Data cleaning is about quality and consistency, not chart colors."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Poor-quality data often leads to misleading results."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Understanding the business problem is still necessary."
+        }
+      ],
+      "tags": ["data-cleaning", "data-quality", "analysis"]
+    },
+    {
+      "id": "data-science-mean-median-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "When might the median be more useful than the mean?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "When the data has extreme outliers that can strongly affect the average."
+        },
+        { "id": "b", "text": "When all values are exactly the same." },
+        { "id": "c", "text": "When you want to delete the dataset." },
+        { "id": "d", "text": "When the data has no numbers." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "The median is less sensitive to extreme outliers, so it can better represent the center of skewed data.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "If all values are the same, mean and median will be the same."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Median is a statistical measure, not a deletion method."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Median requires ordered values, usually numerical or ordinal data."
+        }
+      ],
+      "tags": ["statistics", "mean", "median", "outliers"]
+    },
+    {
+      "id": "data-science-correlation-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What does the phrase 'correlation does not imply causation' mean?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Two variables moving together does not prove that one directly causes the other."
+        },
+        { "id": "b", "text": "Correlation is always useless." },
+        { "id": "c", "text": "Causation is easier to prove than correlation." },
+        { "id": "d", "text": "Two correlated variables must be unrelated." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Correlation can reveal a relationship, but more evidence is needed to prove a cause-and-effect relationship.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Correlation is useful, but it must be interpreted carefully."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Causation is often harder to prove."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Correlated variables are related statistically, but the relationship may not be causal."
+        }
+      ],
+      "tags": ["correlation", "causation", "statistics"]
+    },
+    {
+      "id": "data-science-train-test-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why do data scientists split data into training and test sets?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To train a model on one portion and evaluate how well it performs on unseen data."
+        },
+        { "id": "b", "text": "To make the dataset smaller for no reason." },
+        { "id": "c", "text": "To hide bad results." },
+        { "id": "d", "text": "To avoid evaluating the model." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A test set helps estimate how well a model generalizes to data it has not seen during training.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "The split has a purpose: evaluation of generalization."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Splitting data should improve evaluation honesty, not hide results."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "The test set is specifically used for evaluation."
+        }
+      ],
+      "tags": ["machine-learning", "train-test-split", "model-evaluation"]
+    },
+    {
+      "id": "data-science-communication-001",
+      "sourceType": "category_specific",
+      "questionType": "behavioral",
+      "difficulty": "hard",
+      "question": "How should you explain a complex data finding to a non-technical stakeholder?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Use plain language, connect the finding to the business question, and explain the impact or recommendation."
+        },
+        {
+          "id": "b",
+          "text": "Use as many technical terms as possible to sound advanced."
+        },
+        { "id": "c", "text": "Only show raw code." },
+        { "id": "d", "text": "Avoid explaining uncertainty or limitations." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Good data communication focuses on clarity, relevance, and decision-making value.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Too much jargon can confuse non-technical audiences."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Raw code rarely communicates insight clearly to stakeholders."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Limitations and uncertainty are important for responsible interpretation."
+        }
+      ],
+      "tags": ["communication", "stakeholders", "data-storytelling"]
+    }
+  ]
+}

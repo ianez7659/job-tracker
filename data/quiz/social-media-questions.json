@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "category": "social-media",
+  "categoryGroup": "Marketing",
+  "description": "Social Media interview questions for junior or entry-level candidates.",
+  "questions": [
+    {
+      "id": "social-media-engagement-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What does engagement usually mean in social media?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "User actions such as likes, comments, shares, saves, clicks, or replies."
+        },
+        {
+          "id": "b",
+          "text": "Only the number of employees on a marketing team."
+        },
+        { "id": "c", "text": "The cost of office furniture." },
+        { "id": "d", "text": "A private password list." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Engagement measures how users interact with social media content.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Team size is unrelated to social engagement."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Office costs are not engagement metrics."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Passwords are unrelated to engagement."
+        }
+      ],
+      "tags": ["engagement", "social-media-metrics", "content"]
+    },
+    {
+      "id": "social-media-brand-voice-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "Why is brand voice important on social media?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps the brand communicate consistently and be recognizable across posts and platforms."
+        },
+        {
+          "id": "b",
+          "text": "It means every post must use the exact same sentence."
+        },
+        { "id": "c", "text": "It removes the need for audience research." },
+        { "id": "d", "text": "It only matters for printed advertisements." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A consistent brand voice helps build recognition, trust, and a clear personality.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Consistency does not mean repeating the same sentence."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Audience research is still important."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Brand voice matters strongly in digital and social channels."
+        }
+      ],
+      "tags": ["brand-voice", "content-strategy", "social-media"]
+    },
+    {
+      "id": "social-media-negative-comment-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A brand receives a negative comment on a public post. What should you usually do first?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Review the comment, stay professional, respond appropriately, and move sensitive details to a private channel if needed."
+        },
+        { "id": "b", "text": "Reply angrily to defend the brand." },
+        { "id": "c", "text": "Delete every negative comment immediately." },
+        { "id": "d", "text": "Ignore all comments forever." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A professional response protects the brand while showing that the concern is taken seriously.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Angry replies can damage brand reputation."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Deleting comments may be appropriate only if they violate policy, not as a default response."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Ignoring all comments can make the brand seem unresponsive."
+        }
+      ],
+      "tags": ["community-management", "brand-reputation", "negative-feedback"]
+    },
+    {
+      "id": "social-media-content-calendar-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why is a content calendar useful for social media management?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps plan posts, maintain consistency, coordinate campaigns, and avoid last-minute confusion."
+        },
+        { "id": "b", "text": "It guarantees every post will go viral." },
+        { "id": "c", "text": "It removes the need to check performance." },
+        { "id": "d", "text": "It is only useful after a campaign ends." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A content calendar supports planning, consistency, collaboration, and campaign organization.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Planning helps quality but does not guarantee virality."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Performance still needs to be measured."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Content calendars are most useful before and during execution."
+        }
+      ],
+      "tags": ["content-calendar", "planning", "social-media-management"]
+    },
+    {
+      "id": "social-media-trend-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A new social media trend is becoming popular. What should a brand consider before joining it?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Whether the trend fits the brand voice, audience, timing, and campaign goals."
+        },
+        {
+          "id": "b",
+          "text": "Join immediately without understanding the trend."
+        },
+        {
+          "id": "c",
+          "text": "Use the trend even if it conflicts with the brand's values."
+        },
+        { "id": "d", "text": "Avoid all trends permanently." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Trends can create engagement, but they should be evaluated for relevance, tone, and risk.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Using a trend without context can lead to mistakes."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "A trend that conflicts with brand values can damage trust."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Some trends can be useful when they fit the brand."
+        }
+      ],
+      "tags": ["trends", "brand-fit", "social-strategy"]
+    }
+  ]
+}

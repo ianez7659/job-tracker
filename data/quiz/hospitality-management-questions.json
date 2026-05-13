@@ -1,0 +1,539 @@
+{
+  "version": 1,
+  "category": "hospitality-management",
+  "categoryGroup": "Management",
+  "description": "Hospitality Management interview questions for entry-level or junior candidates.",
+  "questions": [
+    {
+      "id": "hospitality-management-guest-complaint-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "easy",
+      "question": "A guest complains that their room is not ready at check-in time. What should you do first?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Apologize, acknowledge the inconvenience, check the room status, and explain the next step clearly."
+        },
+        { "id": "b", "text": "Tell the guest to wait without explanation." },
+        { "id": "c", "text": "Blame housekeeping in front of the guest." },
+        { "id": "d", "text": "Ignore the guest until the room is ready." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Hospitality service should combine empathy, clear communication, and quick problem-solving.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "This can make the guest feel dismissed."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Blaming another team looks unprofessional."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Ignoring the guest worsens the experience."
+        }
+      ],
+      "tags": ["guest-service", "check-in", "service-recovery"]
+    },
+    {
+      "id": "hospitality-management-service-recovery-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What does service recovery mean in hospitality?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Taking action to repair the guest experience after something goes wrong."
+        },
+        { "id": "b", "text": "Avoiding guests after a mistake." },
+        { "id": "c", "text": "Only giving discounts to every guest." },
+        { "id": "d", "text": "Pretending the problem did not happen." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Service recovery is about restoring trust and improving the guest experience after a service failure.",
+      "wrongExplanations": [
+        { "choiceId": "b", "explanation": "Avoiding guests damages trust." },
+        {
+          "choiceId": "c",
+          "explanation": "Discounts may help sometimes, but recovery can include many actions."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Ignoring the problem prevents resolution."
+        }
+      ],
+      "tags": ["service-recovery", "guest-experience", "hospitality"]
+    },
+    {
+      "id": "hospitality-management-busy-shift-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "During a busy shift, several guests need help at once. What should you do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Stay calm, prioritize urgent needs, communicate wait times, and ask teammates for support if needed."
+        },
+        { "id": "b", "text": "Help only the guest who is the loudest." },
+        { "id": "c", "text": "Walk away until the line gets shorter." },
+        { "id": "d", "text": "Stop following procedures because it is busy." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Busy hospitality environments require calm prioritization, teamwork, and clear communication.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "The loudest guest may not have the most urgent need."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Walking away reduces service quality."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Procedures often protect service quality and safety."
+        }
+      ],
+      "tags": ["busy-shift", "prioritization", "teamwork"]
+    },
+    {
+      "id": "hospitality-management-upselling-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What is a professional approach to upselling in hospitality?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Recommend relevant upgrades or services based on the guest's needs and preferences."
+        },
+        {
+          "id": "b",
+          "text": "Pressure every guest to buy the most expensive option."
+        },
+        { "id": "c", "text": "Hide important costs until checkout." },
+        { "id": "d", "text": "Avoid mentioning useful options." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Good upselling should feel helpful and relevant, not pushy or misleading.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "High-pressure selling can damage the guest experience."
+        },
+        { "choiceId": "c", "explanation": "Hidden costs reduce trust." },
+        {
+          "choiceId": "d",
+          "explanation": "Guests may appreciate relevant recommendations."
+        }
+      ],
+      "tags": ["upselling", "guest-needs", "sales"]
+    },
+    {
+      "id": "hospitality-management-cleanliness-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "easy",
+      "question": "A guest reports that an area is not clean. What is the best response?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Thank them for reporting it, apologize, and arrange for the issue to be cleaned or addressed quickly."
+        },
+        { "id": "b", "text": "Tell them it is not your responsibility." },
+        { "id": "c", "text": "Ignore it unless more guests complain." },
+        { "id": "d", "text": "Argue that the area looks clean enough." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Cleanliness is central to hospitality quality and should be handled quickly and professionally.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Even if another team handles cleaning, you should help coordinate the response."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Waiting for more complaints risks service quality and safety."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Arguing dismisses the guest's concern."
+        }
+      ],
+      "tags": ["cleanliness", "guest-service", "quality"]
+    },
+    {
+      "id": "hospitality-management-reservation-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A guest says they have a reservation, but you cannot find it in the system. What should you do first?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Stay calm, verify details such as name, date, confirmation number, and check possible spelling or booking source issues."
+        },
+        {
+          "id": "b",
+          "text": "Tell the guest there is nothing you can do immediately."
+        },
+        { "id": "c", "text": "Accuse the guest of making a mistake." },
+        {
+          "id": "d",
+          "text": "Create a free reservation without checking availability."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A careful verification process helps solve the issue while maintaining professionalism.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "This is unhelpful before checking possible causes."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Accusing the guest can escalate the situation."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Creating a reservation without checking availability can cause operational problems."
+        }
+      ],
+      "tags": ["reservation", "problem-solving", "front-desk"]
+    },
+    {
+      "id": "hospitality-management-teamwork-001",
+      "sourceType": "category_specific",
+      "questionType": "behavioral",
+      "difficulty": "medium",
+      "question": "Why is teamwork especially important in hospitality?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Guest experience often depends on multiple teams working together smoothly."
+        },
+        {
+          "id": "b",
+          "text": "Only one person usually controls the entire guest experience."
+        },
+        {
+          "id": "c",
+          "text": "Teamwork is only needed when managers are present."
+        },
+        { "id": "d", "text": "Teamwork removes the need for communication." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Hospitality often involves front desk, housekeeping, food service, management, and other teams working together.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Guest experience is usually shaped by many touchpoints."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Teamwork is needed consistently, not only under supervision."
+        },
+        { "choiceId": "d", "explanation": "Teamwork requires communication." }
+      ],
+      "tags": ["teamwork", "operations", "guest-experience"]
+    },
+    {
+      "id": "hospitality-management-cultural-awareness-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why is cultural awareness valuable in hospitality?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps staff serve guests respectfully and understand different expectations or communication styles."
+        },
+        {
+          "id": "b",
+          "text": "It means treating every guest exactly the same in every situation."
+        },
+        { "id": "c", "text": "It is only important for international hotels." },
+        { "id": "d", "text": "It replaces service training." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Cultural awareness supports respectful service and helps avoid misunderstandings.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Fair service matters, but guest needs and expectations may differ."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Cultural awareness can matter in many service settings."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "It supports service training but does not replace it."
+        }
+      ],
+      "tags": ["cultural-awareness", "guest-service", "communication"]
+    },
+    {
+      "id": "hospitality-management-safety-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A guest reports a safety hazard in a public area. What should you do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Take it seriously, secure or report the area according to procedure, and notify the appropriate team quickly."
+        },
+        { "id": "b", "text": "Wait until the next shift to mention it." },
+        { "id": "c", "text": "Ignore it unless someone is injured." },
+        { "id": "d", "text": "Tell the guest to fix it themselves." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Safety issues require prompt action and proper procedure to protect guests and staff.",
+      "wrongExplanations": [
+        { "choiceId": "b", "explanation": "Waiting can increase risk." },
+        {
+          "choiceId": "c",
+          "explanation": "Hazards should be addressed before an injury happens."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Guests should not be responsible for fixing safety hazards."
+        }
+      ],
+      "tags": ["safety", "procedure", "risk-management"]
+    },
+    {
+      "id": "hospitality-management-vip-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A VIP guest arrives unexpectedly early. What is the best approach?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Welcome them professionally, check available options, coordinate with the team, and communicate clearly."
+        },
+        {
+          "id": "b",
+          "text": "Tell them to come back later without checking anything."
+        },
+        { "id": "c", "text": "Ignore other guests completely." },
+        {
+          "id": "d",
+          "text": "Promise immediate service even if it may not be possible."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "VIP service still requires professionalism, coordination, and realistic communication.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "This does not show hospitality or effort."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "VIP service should not mean ignoring all other guests."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Unrealistic promises can create dissatisfaction."
+        }
+      ],
+      "tags": ["vip-service", "coordination", "guest-experience"]
+    },
+    {
+      "id": "hospitality-management-review-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A guest leaves a negative online review after their stay. What is a professional response?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Respond politely, acknowledge the concern, avoid defensiveness, and invite follow-up if appropriate."
+        },
+        { "id": "b", "text": "Argue publicly with the guest." },
+        {
+          "id": "c",
+          "text": "Post private guest information to prove your point."
+        },
+        { "id": "d", "text": "Ignore all reviews permanently." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A professional review response protects the brand and shows that guest feedback is taken seriously.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Public arguments can damage the property's reputation."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Sharing private information is inappropriate and may violate privacy rules."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Ignoring all reviews misses an opportunity to learn and respond."
+        }
+      ],
+      "tags": ["online-reviews", "brand-reputation", "guest-feedback"]
+    },
+    {
+      "id": "hospitality-management-shift-handoff-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why is shift handoff important in hospitality operations?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps the next team understand unresolved issues, guest requests, and operational priorities."
+        },
+        {
+          "id": "b",
+          "text": "It allows the previous team to avoid responsibility."
+        },
+        {
+          "id": "c",
+          "text": "It is only useful when nothing happened during the shift."
+        },
+        { "id": "d", "text": "It replaces all guest communication." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A clear handoff supports continuity and prevents important information from being missed.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Handoff is about continuity, not avoiding responsibility."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Handoff is especially important when issues or requests are ongoing."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Internal handoff does not replace communication with guests."
+        }
+      ],
+      "tags": ["shift-handoff", "operations", "communication"]
+    },
+    {
+      "id": "hospitality-management-food-service-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A guest says their food order is incorrect. What should you do first?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Apologize, confirm the correct order, and coordinate with the team to fix it quickly."
+        },
+        { "id": "b", "text": "Tell the guest to eat it anyway." },
+        { "id": "c", "text": "Blame the kitchen immediately." },
+        {
+          "id": "d",
+          "text": "Walk away because food issues are not important."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "The best response is polite, accurate, and focused on correcting the guest experience.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "This dismisses the guest's concern."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Blaming another team is unprofessional."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Food issues can strongly affect guest satisfaction."
+        }
+      ],
+      "tags": ["food-service", "service-recovery", "guest-care"]
+    },
+    {
+      "id": "hospitality-management-privacy-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "hard",
+      "question": "Why is guest privacy important in hospitality?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Guests trust the business to protect personal information and respect confidentiality."
+        },
+        { "id": "b", "text": "Privacy only matters for famous guests." },
+        {
+          "id": "c",
+          "text": "Guest information can be shared freely with anyone who asks."
+        },
+        {
+          "id": "d",
+          "text": "Privacy is less important than speed in every situation."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Protecting guest privacy is essential for trust, professionalism, and often legal compliance.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "All guests deserve privacy, not only public figures."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Guest information should be handled carefully and only shared appropriately."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Speed does not justify careless handling of private information."
+        }
+      ],
+      "tags": ["privacy", "confidentiality", "guest-trust"]
+    },
+    {
+      "id": "hospitality-management-memorable-service-001",
+      "sourceType": "category_specific",
+      "questionType": "behavioral",
+      "difficulty": "medium",
+      "question": "What makes an interview example of excellent hospitality service strong?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It explains the guest need, the action you took, and the positive result."
+        },
+        {
+          "id": "b",
+          "text": "It only says the guest was happy with no details."
+        },
+        { "id": "c", "text": "It focuses only on how busy you were." },
+        {
+          "id": "d",
+          "text": "It describes ignoring procedures to impress the guest."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A strong example shows awareness, action, and impact on the guest experience.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Details make the answer more credible."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Being busy is context, but the answer should show what you did."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Great service should still respect safety, policy, and professionalism."
+        }
+      ],
+      "tags": ["guest-service", "star-method", "service-example"]
+    }
+  ]
+}

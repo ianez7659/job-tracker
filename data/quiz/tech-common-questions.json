@@ -1,0 +1,368 @@
+{
+  "version": 1,
+  "category": "tech-common",
+  "categoryGroup": "Tech",
+  "description": "Common interview questions for technology-related categories.",
+  "questions": [
+    {
+      "id": "tech-common-debugging-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "easy",
+      "question": "When something is not working in a technical project, what is usually the best first step?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Randomly change multiple things until the issue disappears."
+        },
+        {
+          "id": "b",
+          "text": "Reproduce the issue and identify when and where it happens."
+        },
+        { "id": "c", "text": "Delete the feature immediately." },
+        { "id": "d", "text": "Assume the tool or framework is broken." }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "Reproducing the issue helps you understand the problem clearly before making changes.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Random changes can create new bugs and make the root cause harder to find."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Deleting the feature is usually too extreme and does not help you learn the cause."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Framework or tool issues can happen, but application-level mistakes are more common."
+        }
+      ],
+      "tags": ["debugging", "problem-solving", "technical-process"]
+    },
+    {
+      "id": "tech-common-documentation-001",
+      "sourceType": "group_common",
+      "questionType": "behavioral",
+      "difficulty": "easy",
+      "question": "Why is documentation useful in a technical team?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps team members understand decisions, setup steps, and how systems work."
+        },
+        { "id": "b", "text": "It replaces the need to test the product." },
+        { "id": "c", "text": "It makes bugs impossible." },
+        {
+          "id": "d",
+          "text": "It should only be written after a project is abandoned."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Good documentation helps people onboard, maintain systems, and understand past decisions.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Documentation supports testing but does not replace it."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Documentation can reduce confusion, but it cannot make bugs impossible."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Documentation is most useful while a project is active and evolving."
+        }
+      ],
+      "tags": ["documentation", "teamwork", "maintainability"]
+    },
+    {
+      "id": "tech-common-version-control-001",
+      "sourceType": "group_common",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What is one important benefit of using version control such as Git?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It tracks changes and helps teams collaborate safely on the same project."
+        },
+        { "id": "b", "text": "It automatically writes all project code." },
+        { "id": "c", "text": "It removes the need for communication." },
+        { "id": "d", "text": "It only works for design files, not code." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Version control records changes, supports collaboration, and makes it easier to review or revert work.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Git tracks and manages code changes, but it does not automatically write the code."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Teams still need communication even when using version control."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Git is widely used for code and can also track many other file types."
+        }
+      ],
+      "tags": ["git", "version-control", "collaboration"]
+    },
+    {
+      "id": "tech-common-testing-001",
+      "sourceType": "group_common",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What is the main purpose of testing technical work?",
+      "choices": [
+        { "id": "a", "text": "To prove that no future bugs will ever happen." },
+        {
+          "id": "b",
+          "text": "To check that important behavior works as expected and reduce regression risk."
+        },
+        { "id": "c", "text": "To avoid understanding the system." },
+        { "id": "d", "text": "To make the project look more complicated." }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "Tests help confirm expected behavior and reduce the chance of breaking existing functionality during changes.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Tests reduce risk but cannot guarantee that no bugs will ever happen."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Testing supports understanding, but it does not replace understanding."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Good tests should clarify behavior, not add unnecessary complexity."
+        }
+      ],
+      "tags": ["testing", "quality", "regression"]
+    },
+    {
+      "id": "tech-common-requirements-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "You receive unclear technical requirements. What should you do before starting implementation?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Start building immediately and hope your assumptions are correct."
+        },
+        {
+          "id": "b",
+          "text": "Ask clarifying questions and confirm the expected outcome."
+        },
+        {
+          "id": "c",
+          "text": "Ignore the requirements and build what you prefer."
+        },
+        { "id": "d", "text": "Wait silently until someone gives more details." }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "Clarifying requirements helps avoid wasted work and ensures the solution matches the actual goal.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Starting with unclear assumptions can lead to rework."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Building your own preferred solution may not solve the real problem."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Waiting silently delays progress and does not resolve uncertainty."
+        }
+      ],
+      "tags": ["requirements", "communication", "planning"]
+    },
+    {
+      "id": "tech-common-security-001",
+      "sourceType": "group_common",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why should sensitive information such as API keys not be committed to a public repository?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Because exposed secrets can be stolen and used to access systems or create costs."
+        },
+        { "id": "b", "text": "Because API keys make code run slower." },
+        { "id": "c", "text": "Because repositories cannot store text files." },
+        {
+          "id": "d",
+          "text": "Because secrets are only useful in frontend styling."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Secrets can grant access to services, data, or paid APIs, so exposing them can create security and financial risks.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "The main issue is security, not performance."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Repositories can store text files, but sensitive values should not be exposed."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Secrets are usually used for authentication or service access, not styling."
+        }
+      ],
+      "tags": ["security", "secrets", "api-keys"]
+    },
+    {
+      "id": "tech-common-performance-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A user says an app feels slow. What is a good first response from a technical perspective?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Measure where the delay happens before choosing a solution."
+        },
+        { "id": "b", "text": "Rewrite the entire application immediately." },
+        {
+          "id": "c",
+          "text": "Ignore the report because performance is subjective."
+        },
+        { "id": "d", "text": "Add more features to distract users." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Measuring performance helps identify whether the issue is network, rendering, database, client-side code, or another cause.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "A full rewrite is risky and unnecessary before understanding the problem."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "User reports can reveal real performance issues and should be investigated."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Adding features does not solve the performance problem."
+        }
+      ],
+      "tags": ["performance", "measurement", "optimization"]
+    },
+    {
+      "id": "tech-common-troubleshooting-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A technical issue appears only in production, not locally. What is the best approach?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Compare environment differences, logs, data, configuration, and deployment behavior."
+        },
+        { "id": "b", "text": "Assume users are mistaken." },
+        { "id": "c", "text": "Disable production monitoring." },
+        { "id": "d", "text": "Make random production changes until it works." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Production-only issues often come from environment variables, data differences, build settings, network conditions, or deployment configuration.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "User reports should be investigated, especially when production behavior differs."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Monitoring helps diagnose production issues and should not be disabled."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Random production changes are risky and can create new problems."
+        }
+      ],
+      "tags": ["production", "troubleshooting", "deployment", "logs"]
+    },
+    {
+      "id": "tech-common-tradeoffs-001",
+      "sourceType": "group_common",
+      "questionType": "behavioral",
+      "difficulty": "hard",
+      "question": "In a technical interview, what is a strong way to discuss a trade-off you made?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Explain the options, why you chose one, what risk it had, and how you managed that risk."
+        },
+        { "id": "b", "text": "Say your choice had no downside." },
+        {
+          "id": "c",
+          "text": "Avoid discussing trade-offs because they sound negative."
+        },
+        { "id": "d", "text": "Blame the team for any limitation." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Strong technical judgment includes understanding options, constraints, risks, and mitigation strategies.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Most real technical decisions involve trade-offs, so saying there was no downside may sound unrealistic."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Discussing trade-offs can show maturity and problem-solving ability."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Blaming others does not demonstrate ownership or judgment."
+        }
+      ],
+      "tags": ["tradeoffs", "technical-judgment", "decision-making"]
+    },
+    {
+      "id": "tech-common-learning-001",
+      "sourceType": "group_common",
+      "questionType": "behavioral",
+      "difficulty": "easy",
+      "question": "What is a good way to explain how you learned a new technical tool?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Mention the goal, the resources you used, what you built or practiced, and what you learned."
+        },
+        {
+          "id": "b",
+          "text": "Say you learned it instantly without any practice."
+        },
+        {
+          "id": "c",
+          "text": "Say you only copied examples without understanding them."
+        },
+        {
+          "id": "d",
+          "text": "Avoid details because technical learning is too hard to explain."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A strong answer shows learning process, initiative, and practical application.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "This sounds unrealistic and does not show your learning process."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Copying without understanding does not demonstrate skill growth."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Specific details make your answer more credible."
+        }
+      ],
+      "tags": ["learning", "technical-growth", "initiative"]
+    }
+  ]
+}

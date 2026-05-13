@@ -1,0 +1,542 @@
+{
+  "version": 1,
+  "category": "customer-service",
+  "categoryGroup": "Management",
+  "description": "Customer Service interview questions for junior or entry-level candidates.",
+  "questions": [
+    {
+      "id": "customer-service-complaint-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "easy",
+      "question": "A customer is upset about a delayed order. What should you do first?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Listen carefully, acknowledge the frustration, and check the order details."
+        },
+        {
+          "id": "b",
+          "text": "Tell the customer delays are normal and end the conversation."
+        },
+        { "id": "c", "text": "Blame the shipping company immediately." },
+        {
+          "id": "d",
+          "text": "Promise a full refund before checking the policy."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A professional first step is to listen, show empathy, and understand the facts before offering a solution.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "This dismisses the customer's concern."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Blaming others does not solve the issue or build trust."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Promising a refund before checking policy can create problems."
+        }
+      ],
+      "tags": ["complaints", "empathy", "order-issues"]
+    },
+    {
+      "id": "customer-service-active-listening-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What is active listening in customer service?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Paying attention, confirming understanding, and responding to the customer's actual concern."
+        },
+        {
+          "id": "b",
+          "text": "Waiting silently until the customer stops talking."
+        },
+        {
+          "id": "c",
+          "text": "Planning your response without listening to the details."
+        },
+        { "id": "d", "text": "Repeating a script without adjustment." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Active listening means understanding the customer's issue and showing that you heard them accurately.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Silence alone does not prove understanding."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Thinking only about your response can cause you to miss important details."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Scripts can help, but customer service often requires adapting to the situation."
+        }
+      ],
+      "tags": ["active-listening", "communication", "customer-care"]
+    },
+    {
+      "id": "customer-service-escalation-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A customer asks for something outside your authority. What is the best response?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Explain what you can do, then escalate or ask a supervisor when needed."
+        },
+        {
+          "id": "b",
+          "text": "Approve the request even if you are not allowed to."
+        },
+        { "id": "c", "text": "Say no and refuse to explain." },
+        { "id": "d", "text": "Ignore the request until the customer leaves." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "This balances helpfulness, policy, and responsible escalation.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Approving something outside your authority can create policy or operational issues."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "A blunt refusal can feel unhelpful and may escalate frustration."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Ignoring the customer is unprofessional."
+        }
+      ],
+      "tags": ["escalation", "policy", "customer-support"]
+    },
+    {
+      "id": "customer-service-difficult-customer-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A customer becomes rude during a conversation. What should you do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Stay calm, keep your tone professional, and focus on resolving the issue."
+        },
+        { "id": "b", "text": "Respond with the same rude tone." },
+        {
+          "id": "c",
+          "text": "Immediately hang up or walk away without explanation."
+        },
+        { "id": "d", "text": "Argue until the customer apologizes." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Staying calm and professional helps de-escalate the situation and keeps the focus on the solution.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Matching rudeness can make the situation worse."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Ending contact may be necessary in extreme cases, but it should follow policy and usually not be the first response."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Arguing shifts focus away from solving the customer's issue."
+        }
+      ],
+      "tags": ["de-escalation", "professionalism", "difficult-customers"]
+    },
+    {
+      "id": "customer-service-product-knowledge-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "Why is product or service knowledge important in customer service?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps you answer questions accurately and recommend appropriate solutions."
+        },
+        { "id": "b", "text": "It allows you to avoid listening to customers." },
+        { "id": "c", "text": "It replaces company policies." },
+        { "id": "d", "text": "It is only needed by managers." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Good product knowledge helps you solve issues efficiently and build customer trust.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Knowledge is useful, but listening is still essential."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Product knowledge does not replace policies."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Front-line staff also need product knowledge to support customers."
+        }
+      ],
+      "tags": ["product-knowledge", "customer-support", "accuracy"]
+    },
+    {
+      "id": "customer-service-unknown-answer-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "easy",
+      "question": "A customer asks a question you do not know the answer to. What should you do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Be honest, tell them you will check, and follow up with accurate information."
+        },
+        { "id": "b", "text": "Guess an answer to sound confident." },
+        { "id": "c", "text": "Ignore the question." },
+        { "id": "d", "text": "Tell the customer they should already know." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Customers value accuracy. It is better to check than to give incorrect information.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Guessing can create misinformation and reduce trust."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Ignoring the question is unhelpful."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "This response is disrespectful and unprofessional."
+        }
+      ],
+      "tags": ["honesty", "follow-up", "accuracy"]
+    },
+    {
+      "id": "customer-service-multiple-customers-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "Several customers need help at the same time. What is the best approach?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Acknowledge them, prioritize based on urgency, and communicate wait times when possible."
+        },
+        { "id": "b", "text": "Help only the loudest customer." },
+        { "id": "c", "text": "Ignore everyone until the line gets shorter." },
+        {
+          "id": "d",
+          "text": "Randomly choose a customer without considering urgency."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Good service requires prioritization, communication, and awareness of customer needs.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "The loudest customer is not always the most urgent."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Ignoring customers increases frustration."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Random selection may overlook urgent issues."
+        }
+      ],
+      "tags": ["prioritization", "queue-management", "communication"]
+    },
+    {
+      "id": "customer-service-policy-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A customer wants an exception to a return policy. What should you do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Review the policy, explain it clearly, and check whether any approved options or escalation paths exist."
+        },
+        {
+          "id": "b",
+          "text": "Break the policy immediately to avoid conflict."
+        },
+        {
+          "id": "c",
+          "text": "Say no without listening to the customer's situation."
+        },
+        {
+          "id": "d",
+          "text": "Tell the customer to contact a different company."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "This shows fairness, policy awareness, and willingness to help within the proper process.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Breaking policy can create inconsistency and operational risk."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Listening first helps you understand whether an escalation or exception process applies."
+        },
+        { "choiceId": "d", "explanation": "This is dismissive and unhelpful." }
+      ],
+      "tags": ["policy", "returns", "judgment"]
+    },
+    {
+      "id": "customer-service-empathy-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "Which response best shows empathy to a frustrated customer?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "I understand why this is frustrating. Let me check what happened and see how I can help."
+        },
+        { "id": "b", "text": "That is not my problem." },
+        { "id": "c", "text": "You should have read the instructions better." },
+        { "id": "d", "text": "Please stop talking so I can finish my script." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "This response acknowledges the customer's feeling and moves toward a solution.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "This is dismissive and unprofessional."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "This blames the customer and can escalate frustration."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "This prioritizes the script over the customer's concern."
+        }
+      ],
+      "tags": ["empathy", "communication", "service-language"]
+    },
+    {
+      "id": "customer-service-follow-up-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why is follow-up important after a customer issue?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It confirms the issue was resolved and helps maintain trust."
+        },
+        {
+          "id": "b",
+          "text": "It is only useful if the customer complains again."
+        },
+        { "id": "c", "text": "It replaces solving the issue." },
+        { "id": "d", "text": "It should always be avoided to save time." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Follow-up shows reliability and helps ensure the customer is satisfied with the resolution.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Proactive follow-up can prevent repeated frustration."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Follow-up supports resolution but does not replace it."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Avoiding follow-up can make customers feel forgotten."
+        }
+      ],
+      "tags": ["follow-up", "customer-retention", "trust"]
+    },
+    {
+      "id": "customer-service-crm-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why is it important to record customer interactions accurately?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps future support, prevents repeated questions, and keeps the team informed."
+        },
+        {
+          "id": "b",
+          "text": "It is only useful for making the system look busy."
+        },
+        {
+          "id": "c",
+          "text": "It allows employees to ignore the customer next time."
+        },
+        { "id": "d", "text": "It replaces the need for privacy rules." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Accurate records improve continuity, team coordination, and service quality.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Records should support useful service, not just activity tracking."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Records should improve support, not avoid it."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Customer records must still follow privacy and data handling rules."
+        }
+      ],
+      "tags": ["crm", "documentation", "customer-history"]
+    },
+    {
+      "id": "customer-service-tone-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What tone is usually best in customer service communication?",
+      "choices": [
+        { "id": "a", "text": "Clear, respectful, calm, and helpful." },
+        { "id": "b", "text": "Sarcastic and impatient." },
+        { "id": "c", "text": "Cold and dismissive." },
+        { "id": "d", "text": "Aggressive so the customer listens." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A calm and respectful tone helps build trust and keeps the conversation productive.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Sarcasm can offend customers and escalate conflict."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "A dismissive tone can make customers feel ignored."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Aggression is unprofessional and usually makes situations worse."
+        }
+      ],
+      "tags": ["tone", "communication", "professionalism"]
+    },
+    {
+      "id": "customer-service-de-escalation-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A customer is angry and repeating the same complaint. What is the best de-escalation technique?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Summarize their concern, acknowledge the impact, and offer the next clear step."
+        },
+        { "id": "b", "text": "Tell them they are repeating themselves." },
+        { "id": "c", "text": "Raise your voice so they stop talking." },
+        {
+          "id": "d",
+          "text": "End the conversation immediately without explanation."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Summarizing and giving a clear next step helps the customer feel heard and moves the conversation forward.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "This may make the customer feel dismissed."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Raising your voice usually escalates the conflict."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Ending abruptly can worsen the customer experience unless safety or policy requires it."
+        }
+      ],
+      "tags": ["de-escalation", "anger", "communication"]
+    },
+    {
+      "id": "customer-service-teamwork-001",
+      "sourceType": "category_specific",
+      "questionType": "behavioral",
+      "difficulty": "medium",
+      "question": "Why is teamwork important in customer service?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Customers often receive better support when team members share information and help each other."
+        },
+        { "id": "b", "text": "Teamwork means one person does all the work." },
+        { "id": "c", "text": "Teamwork is only important for managers." },
+        { "id": "d", "text": "Teamwork prevents the need to communicate." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Good teamwork improves consistency, speed, and service quality.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "That is not teamwork; it is an unfair workload."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Front-line team members also rely on teamwork."
+        },
+        { "choiceId": "d", "explanation": "Teamwork requires communication." }
+      ],
+      "tags": ["teamwork", "service-quality", "collaboration"]
+    },
+    {
+      "id": "customer-service-success-001",
+      "sourceType": "category_specific",
+      "questionType": "behavioral",
+      "difficulty": "medium",
+      "question": "What is a strong example to give when asked about great customer service?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A situation where you understood the customer's need, took action, and improved the outcome."
+        },
+        {
+          "id": "b",
+          "text": "A time when you avoided helping a difficult customer."
+        },
+        { "id": "c", "text": "A story with no clear result." },
+        {
+          "id": "d",
+          "text": "A time when you followed no rules to make someone happy."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A strong example shows understanding, action, and a positive result.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Avoiding the customer does not demonstrate good service."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "A clear result makes the example stronger."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Good service should still respect policies and boundaries."
+        }
+      ],
+      "tags": ["customer-service-example", "star-method", "results"]
+    }
+  ]
+}

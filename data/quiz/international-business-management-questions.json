@@ -1,0 +1,192 @@
+{
+  "version": 1,
+  "category": "international-business-management",
+  "categoryGroup": "Management",
+  "description": "International Business Management interview questions for junior or entry-level candidates.",
+  "questions": [
+    {
+      "id": "international-business-cross-cultural-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "Why is cross-cultural communication important in international business?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps teams and partners avoid misunderstandings and work more effectively across different cultural expectations."
+        },
+        {
+          "id": "b",
+          "text": "It means everyone must communicate in exactly the same style."
+        },
+        { "id": "c", "text": "It removes the need for business planning." },
+        { "id": "d", "text": "It is only useful for tourism jobs." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "International business often involves different communication styles, norms, and expectations, so cultural awareness supports better collaboration.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "The goal is respectful adaptation, not forcing everyone into one style."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Communication supports planning but does not replace it."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Cross-cultural communication matters across many global business roles."
+        }
+      ],
+      "tags": [
+        "cross-cultural-communication",
+        "global-business",
+        "collaboration"
+      ]
+    },
+    {
+      "id": "international-business-time-zone-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "You are working with an overseas partner in a very different time zone. What is a professional approach?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Set clear timelines, confirm expectations, and use written communication to reduce delays."
+        },
+        {
+          "id": "b",
+          "text": "Expect them to respond immediately at all times."
+        },
+        { "id": "c", "text": "Ignore the time difference." },
+        { "id": "d", "text": "Avoid working with them completely." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Clear timelines and written communication help manage coordination across time zones.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Immediate responses may be unrealistic across time zones."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Ignoring time differences can cause missed expectations."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Avoidance does not solve the coordination challenge."
+        }
+      ],
+      "tags": ["time-zones", "international-coordination", "communication"]
+    },
+    {
+      "id": "international-business-market-entry-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What should a company consider before entering a new international market?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Customer needs, competition, regulations, culture, pricing, and distribution channels."
+        },
+        { "id": "b", "text": "Only the size of the company logo." },
+        {
+          "id": "c",
+          "text": "Nothing, because every market behaves the same."
+        },
+        { "id": "d", "text": "Only the weather in the target country." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "International expansion requires understanding market conditions, customer behavior, regulations, and operational factors.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Branding matters, but market entry requires much broader analysis."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Markets often differ significantly."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Weather may matter in some industries, but it is not enough on its own."
+        }
+      ],
+      "tags": ["market-entry", "international-strategy", "business-analysis"]
+    },
+    {
+      "id": "international-business-stakeholder-001",
+      "sourceType": "category_specific",
+      "questionType": "behavioral",
+      "difficulty": "medium",
+      "question": "What is important when coordinating with multiple stakeholders?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Clarifying goals, responsibilities, timelines, and communication expectations."
+        },
+        {
+          "id": "b",
+          "text": "Only communicating with the stakeholder who agrees with you."
+        },
+        { "id": "c", "text": "Changing priorities without telling anyone." },
+        { "id": "d", "text": "Avoiding documentation." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Stakeholder coordination depends on clear alignment and communication.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "All relevant stakeholders need appropriate communication."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Uncommunicated changes create confusion and risk."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Documentation helps maintain alignment."
+        }
+      ],
+      "tags": ["stakeholders", "coordination", "communication"]
+    },
+    {
+      "id": "international-business-risk-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "hard",
+      "question": "Why is risk assessment important in international business?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps identify potential legal, financial, political, supply chain, or cultural risks before making decisions."
+        },
+        { "id": "b", "text": "It guarantees that no problems will happen." },
+        { "id": "c", "text": "It is only needed after a business fails." },
+        {
+          "id": "d",
+          "text": "It means avoiding every opportunity with any risk."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Risk assessment helps companies make informed decisions and prepare mitigation plans.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Risk assessment reduces uncertainty but cannot guarantee perfect outcomes."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "It is most valuable before decisions are made."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Business often involves risk; the goal is to understand and manage it."
+        }
+      ],
+      "tags": ["risk-assessment", "international-business", "strategy"]
+    }
+  ]
+}

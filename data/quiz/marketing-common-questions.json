@@ -1,0 +1,362 @@
+{
+  "version": 1,
+  "category": "marketing-common",
+  "categoryGroup": "Marketing",
+  "description": "Common interview questions for digital marketing, strategic digital marketing, and social media categories.",
+  "questions": [
+    {
+      "id": "marketing-common-objective-001",
+      "sourceType": "group_common",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "Why is it important to define a marketing objective before creating a campaign?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps decide the message, audience, channel, and success metrics."
+        },
+        {
+          "id": "b",
+          "text": "It removes the need to understand the audience."
+        },
+        { "id": "c", "text": "It guarantees the campaign will go viral." },
+        { "id": "d", "text": "It only matters after the campaign is finished." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A clear objective guides campaign strategy and helps evaluate whether the campaign succeeded.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Understanding the audience is still essential."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "No objective can guarantee virality."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Objectives should be defined before execution, not only afterward."
+        }
+      ],
+      "tags": ["campaigns", "objectives", "strategy"]
+    },
+    {
+      "id": "marketing-common-audience-001",
+      "sourceType": "group_common",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What does target audience mean in marketing?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The specific group of people a campaign is designed to reach."
+        },
+        { "id": "b", "text": "Everyone on the internet." },
+        { "id": "c", "text": "Only the marketing team." },
+        { "id": "d", "text": "A list of random people with no shared traits." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A target audience is the group most relevant to the product, service, or message.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Trying to reach everyone usually makes the message too broad."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "The marketing team creates the campaign; they are not the target audience."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "A useful audience definition is based on meaningful traits or needs."
+        }
+      ],
+      "tags": ["audience", "segmentation", "marketing-basics"]
+    },
+    {
+      "id": "marketing-common-kpi-001",
+      "sourceType": "group_common",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What is the purpose of using KPIs in marketing?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To measure whether campaign activity is meeting the intended goal."
+        },
+        { "id": "b", "text": "To make reports longer." },
+        { "id": "c", "text": "To avoid looking at campaign results." },
+        { "id": "d", "text": "To replace customer research completely." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "KPIs help connect marketing activity to measurable outcomes such as leads, conversions, engagement, or awareness.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "KPIs should clarify performance, not just add length to reports."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "KPIs are used to understand results, not avoid them."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "KPIs and customer research are both useful but serve different purposes."
+        }
+      ],
+      "tags": ["kpi", "metrics", "performance"]
+    },
+    {
+      "id": "marketing-common-channel-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "How should you choose the best marketing channel for a campaign?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Choose the channel that best matches the audience, goal, message, and budget."
+        },
+        { "id": "b", "text": "Always choose the newest platform." },
+        { "id": "c", "text": "Use only the channel you personally like most." },
+        { "id": "d", "text": "Avoid channels that require measurement." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Channel selection should be based on strategic fit, not personal preference or trends alone.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "New platforms are not always the best fit for every audience or goal."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Personal preference is less important than audience behavior and campaign goals."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Measurement is important for learning and optimization."
+        }
+      ],
+      "tags": ["channels", "strategy", "audience"]
+    },
+    {
+      "id": "marketing-common-brand-voice-001",
+      "sourceType": "group_common",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why is brand voice important in marketing content?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps the brand communicate consistently and be recognizable to the audience."
+        },
+        {
+          "id": "b",
+          "text": "It means every post must use the same sentence."
+        },
+        { "id": "c", "text": "It removes the need for visuals." },
+        { "id": "d", "text": "It only matters for large companies." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A consistent brand voice helps build recognition, trust, and a clear identity across channels.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Brand voice is about tone and style, not repeating the same sentence."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Visuals can still be important even with a strong brand voice."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Small and large brands both benefit from consistent communication."
+        }
+      ],
+      "tags": ["brand-voice", "content", "communication"]
+    },
+    {
+      "id": "marketing-common-content-performance-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A social media post gets many likes but very few clicks to the website. What should you consider?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The post may be engaging, but the call to action, audience intent, or link placement may need improvement."
+        },
+        {
+          "id": "b",
+          "text": "Likes always mean the campaign fully succeeded."
+        },
+        { "id": "c", "text": "The website should be deleted." },
+        { "id": "d", "text": "Clicks do not matter in any marketing campaign." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Different metrics measure different behaviors. High engagement does not always mean strong conversion or traffic performance.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Likes are useful but may not match the campaign objective."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Low clicks do not mean the website should be deleted."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Clicks can matter depending on campaign goals."
+        }
+      ],
+      "tags": ["social-media", "metrics", "conversion", "cta"]
+    },
+    {
+      "id": "marketing-common-ab-test-001",
+      "sourceType": "group_common",
+      "questionType": "role_specific",
+      "difficulty": "hard",
+      "question": "What is the purpose of an A/B test in marketing?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To compare two versions of something and see which performs better based on a defined metric."
+        },
+        {
+          "id": "b",
+          "text": "To publish two random campaigns without measuring results."
+        },
+        { "id": "c", "text": "To avoid making decisions." },
+        {
+          "id": "d",
+          "text": "To guarantee that both versions perform equally."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A/B testing helps marketers make data-informed decisions by comparing performance between two controlled variations.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "A/B tests require measurement and a clear comparison."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "The goal is to support better decisions, not avoid them."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "The purpose is to discover which version performs better, not make them equal."
+        }
+      ],
+      "tags": ["ab-testing", "experimentation", "optimization"]
+    },
+    {
+      "id": "marketing-common-persona-001",
+      "sourceType": "group_common",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "How can customer personas help a marketing team?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "They help the team understand audience needs, pain points, and messaging direction."
+        },
+        {
+          "id": "b",
+          "text": "They replace all real customer research forever."
+        },
+        {
+          "id": "c",
+          "text": "They are only useful for graphic design colors."
+        },
+        { "id": "d", "text": "They make every customer exactly the same." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Personas can guide messaging and content by summarizing important audience characteristics and needs.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Personas should be informed and updated by real research."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Personas are about audience understanding, not only visual design."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Personas simplify patterns but should not erase individual differences."
+        }
+      ],
+      "tags": ["personas", "audience", "research", "messaging"]
+    },
+    {
+      "id": "marketing-common-campaign-reporting-001",
+      "sourceType": "group_common",
+      "questionType": "behavioral",
+      "difficulty": "hard",
+      "question": "What should a strong campaign report usually include?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Goal, key metrics, results, insights, and recommended next steps."
+        },
+        { "id": "b", "text": "Only screenshots of the campaign." },
+        {
+          "id": "c",
+          "text": "Only positive results, even if other data matters."
+        },
+        { "id": "d", "text": "A long report with no clear conclusion." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A strong report connects performance to the original goal and gives actionable insights for improvement.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Screenshots can support a report but are not enough on their own."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Ignoring negative or mixed data prevents honest learning."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Reports should be clear and actionable, not just long."
+        }
+      ],
+      "tags": ["reporting", "analytics", "campaign-performance"]
+    },
+    {
+      "id": "marketing-common-negative-feedback-001",
+      "sourceType": "group_common",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A brand receives negative comments on a public social media post. What is a professional first response?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Review the comments, respond calmly where appropriate, and move sensitive details to a private channel if needed."
+        },
+        { "id": "b", "text": "Delete every negative comment immediately." },
+        { "id": "c", "text": "Reply defensively and argue with users." },
+        { "id": "d", "text": "Ignore all comments forever." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A professional response protects the brand while showing that feedback is taken seriously.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Deleting all negative comments can make the brand seem untrustworthy unless comments violate policy."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Defensive replies can escalate the issue."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Ignoring everything can make customers feel unheard."
+        }
+      ],
+      "tags": ["social-media", "brand-reputation", "crisis-response"]
+    }
+  ]
+}

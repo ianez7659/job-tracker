@@ -1,0 +1,566 @@
+{
+  "version": 1,
+  "category": "ui-ux-design",
+  "categoryGroup": "Tech",
+  "description": "UI/UX Design interview questions for junior or entry-level candidates.",
+  "questions": [
+    {
+      "id": "ui-ux-design-user-research-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "Why is user research important in UX design?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps designers understand user needs, behaviors, and pain points before making design decisions."
+        },
+        {
+          "id": "b",
+          "text": "It guarantees that every design will be perfect."
+        },
+        { "id": "c", "text": "It replaces the need for visual design." },
+        {
+          "id": "d",
+          "text": "It is only useful after the product is launched."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "User research helps designers make informed decisions based on real user needs instead of assumptions.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Research improves decisions but does not guarantee perfection."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Research supports design decisions but does not replace visual design work."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Research is useful before, during, and after product development."
+        }
+      ],
+      "tags": ["user-research", "ux", "user-needs"]
+    },
+    {
+      "id": "ui-ux-design-wireframe-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What is the main purpose of a wireframe?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To explore layout, structure, and content hierarchy before focusing on detailed visual design."
+        },
+        {
+          "id": "b",
+          "text": "To create the final production-ready visual style."
+        },
+        { "id": "c", "text": "To write backend code." },
+        { "id": "d", "text": "To replace usability testing." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Wireframes help designers plan structure and user flow before investing time in polished visuals.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Wireframes are usually low or mid fidelity and are not the final visual design."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Wireframes are design artifacts, not backend code."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Wireframes can support testing, but they do not replace usability testing."
+        }
+      ],
+      "tags": ["wireframes", "layout", "information-architecture"]
+    },
+    {
+      "id": "ui-ux-design-usability-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What is the main goal of usability testing?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To observe how users interact with a design and identify problems that affect task completion."
+        },
+        {
+          "id": "b",
+          "text": "To prove that the designer's first idea was correct."
+        },
+        { "id": "c", "text": "To make the interface more colorful." },
+        { "id": "d", "text": "To replace all product analytics." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Usability testing reveals how real users complete tasks and where they struggle.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Testing should be used to learn, not to defend an initial idea."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Color can matter, but usability testing focuses on task success and user experience."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Usability testing and analytics provide different kinds of insights."
+        }
+      ],
+      "tags": ["usability-testing", "ux-research", "task-completion"]
+    },
+    {
+      "id": "ui-ux-design-accessibility-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Which design choice usually improves accessibility?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Using sufficient color contrast between text and background."
+        },
+        {
+          "id": "b",
+          "text": "Using very small text to fit more content on the screen."
+        },
+        {
+          "id": "c",
+          "text": "Relying only on color to communicate important states."
+        },
+        {
+          "id": "d",
+          "text": "Removing labels from form fields to make the UI look cleaner."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Sufficient color contrast helps users read content more easily, including users with low vision.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Very small text can reduce readability."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Color alone may not be accessible to users with color vision differences."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Labels help users understand what information is required."
+        }
+      ],
+      "tags": ["accessibility", "contrast", "inclusive-design"]
+    },
+    {
+      "id": "ui-ux-design-persona-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "How can user personas help a design team?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "They summarize key user goals, behaviors, and needs to guide design decisions."
+        },
+        {
+          "id": "b",
+          "text": "They replace all real user research permanently."
+        },
+        { "id": "c", "text": "They make every user exactly the same." },
+        { "id": "d", "text": "They are only used to choose colors." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Personas help teams stay focused on user needs and design for realistic user scenarios.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Personas should be based on research and updated as new insights appear."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Personas simplify patterns but should not erase user diversity."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Personas guide broader design decisions, not just visual style."
+        }
+      ],
+      "tags": ["personas", "user-goals", "ux-strategy"]
+    },
+    {
+      "id": "ui-ux-design-user-flow-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What does a user flow usually show?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The steps a user takes to complete a task within a product or service."
+        },
+        { "id": "b", "text": "Only the final color palette." },
+        { "id": "c", "text": "The company's financial report." },
+        { "id": "d", "text": "A list of database tables." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A user flow maps the sequence of actions and decisions a user takes to reach a goal.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Color palettes are part of visual design, not user flow mapping."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Financial reports are not user flows."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Database tables may support a product but are not the same as user flows."
+        }
+      ],
+      "tags": ["user-flow", "task-flow", "ux"]
+    },
+    {
+      "id": "ui-ux-design-feedback-001",
+      "sourceType": "category_specific",
+      "questionType": "behavioral",
+      "difficulty": "medium",
+      "question": "What is a strong way to respond to design feedback?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Ask clarifying questions, understand the reason behind the feedback, and decide how to improve the design."
+        },
+        {
+          "id": "b",
+          "text": "Reject all feedback because the designer knows best."
+        },
+        {
+          "id": "c",
+          "text": "Apply every suggestion without thinking about the user or product goal."
+        },
+        {
+          "id": "d",
+          "text": "Take the feedback personally and stop presenting your work."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A good designer listens to feedback, understands the goal, and makes thoughtful decisions.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Rejecting all feedback can make collaboration difficult."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Not every suggestion should be applied; feedback should be evaluated."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Taking feedback personally can limit growth and collaboration."
+        }
+      ],
+      "tags": ["feedback", "collaboration", "design-critique"]
+    },
+    {
+      "id": "ui-ux-design-design-system-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "hard",
+      "question": "What is one major benefit of a design system?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps teams create consistent interfaces using shared components, patterns, and guidelines."
+        },
+        {
+          "id": "b",
+          "text": "It removes the need for designers and developers to communicate."
+        },
+        {
+          "id": "c",
+          "text": "It guarantees that every product decision is correct."
+        },
+        { "id": "d", "text": "It only stores images for marketing campaigns." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Design systems improve consistency, efficiency, and collaboration by documenting reusable UI patterns and components.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "A design system supports communication but does not replace it."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Design systems improve consistency but do not guarantee every decision is correct."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Design systems are broader than image storage."
+        }
+      ],
+      "tags": ["design-system", "ui-components", "consistency"]
+    },
+    {
+      "id": "ui-ux-design-hierarchy-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What is visual hierarchy used for in UI design?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To guide users' attention and help them understand what is most important on the screen."
+        },
+        { "id": "b", "text": "To make every element the same size and color." },
+        { "id": "c", "text": "To hide important actions from users." },
+        { "id": "d", "text": "To replace navigation." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Visual hierarchy uses size, spacing, color, contrast, and placement to guide attention and improve usability.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "If everything looks the same, users may not know what to focus on."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Good hierarchy helps users find important actions."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Hierarchy supports navigation but does not replace it."
+        }
+      ],
+      "tags": ["visual-hierarchy", "ui-design", "layout"]
+    },
+    {
+      "id": "ui-ux-design-prototype-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why might a designer create a prototype before development?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To test interactions, communicate ideas, and validate flows before building the final product."
+        },
+        { "id": "b", "text": "To avoid user testing." },
+        { "id": "c", "text": "To replace all frontend code." },
+        {
+          "id": "d",
+          "text": "To make the design process slower without any benefit."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Prototypes help teams test ideas, gather feedback, and reduce risk before development.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Prototypes often make user testing easier, not unnecessary."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "A prototype is not the same as production code."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Prototypes can save time by catching problems early."
+        }
+      ],
+      "tags": ["prototyping", "interaction-design", "validation"]
+    },
+    {
+      "id": "ui-ux-design-empty-state-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A dashboard has no data yet for a new user. What should a good empty state do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Explain what the user can do next and guide them toward a meaningful first action."
+        },
+        { "id": "b", "text": "Show a blank page with no explanation." },
+        {
+          "id": "c",
+          "text": "Display an error message even though nothing is broken."
+        },
+        { "id": "d", "text": "Hide the entire dashboard permanently." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A good empty state reduces confusion and helps users understand how to get value from the product.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "A blank page can make users feel lost."
+        },
+        { "choiceId": "c", "explanation": "No data is not always an error." },
+        {
+          "choiceId": "d",
+          "explanation": "Hiding the dashboard does not help users begin."
+        }
+      ],
+      "tags": ["empty-state", "onboarding", "ux-writing"]
+    },
+    {
+      "id": "ui-ux-design-mobile-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "What is an important consideration when designing for mobile screens?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Prioritize clear content, readable text, and touch-friendly interactive elements."
+        },
+        {
+          "id": "b",
+          "text": "Use as many tiny buttons as possible to fit more features."
+        },
+        {
+          "id": "c",
+          "text": "Assume hover interactions will work the same as desktop."
+        },
+        {
+          "id": "d",
+          "text": "Hide all navigation because mobile screens are small."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Mobile design requires readable content, clear hierarchy, and interactive elements that are comfortable to tap.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Tiny buttons can be hard to tap and reduce usability."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Hover is not reliable on touch devices."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Navigation should be simplified, not completely hidden."
+        }
+      ],
+      "tags": ["mobile-design", "responsive-design", "touch-targets"]
+    },
+    {
+      "id": "ui-ux-design-portfolio-001",
+      "sourceType": "category_specific",
+      "questionType": "behavioral",
+      "difficulty": "hard",
+      "question": "What makes a design portfolio case study stronger in an interview?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Explaining the problem, process, decisions, trade-offs, and outcome clearly."
+        },
+        {
+          "id": "b",
+          "text": "Showing only final screenshots with no context."
+        },
+        { "id": "c", "text": "Avoiding any mention of constraints." },
+        { "id": "d", "text": "Claiming every decision was perfect." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A strong case study shows how you think, not just what the final design looked like.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Final visuals alone do not show your design reasoning."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Constraints are part of real design work and can show good judgment."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Acknowledging trade-offs and learning is more credible than claiming perfection."
+        }
+      ],
+      "tags": ["portfolio", "case-study", "design-process"]
+    },
+    {
+      "id": "ui-ux-design-metrics-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "hard",
+      "question": "Why might UX designers care about product metrics?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Metrics can help evaluate whether a design change improves user behavior or business outcomes."
+        },
+        {
+          "id": "b",
+          "text": "Metrics always explain exactly why users behave a certain way."
+        },
+        { "id": "c", "text": "Metrics replace all qualitative research." },
+        { "id": "d", "text": "Metrics are only useful for finance teams." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Metrics can help measure impact, but they should often be combined with qualitative insights to understand why behavior happens.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Metrics show what happened, but not always why."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Qualitative research provides context that metrics alone may not show."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Product metrics are useful for design, product, marketing, and engineering teams."
+        }
+      ],
+      "tags": ["metrics", "ux-research", "product-design"]
+    },
+    {
+      "id": "ui-ux-design-dev-handoff-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "What helps make design handoff to developers smoother?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Clear specs, reusable components, interaction notes, and communication about edge cases."
+        },
+        {
+          "id": "b",
+          "text": "Sending only one screenshot without explanation."
+        },
+        {
+          "id": "c",
+          "text": "Changing the design after development without telling anyone."
+        },
+        { "id": "d", "text": "Avoiding questions from developers." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Clear documentation and communication reduce ambiguity and help developers implement the design correctly.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "A screenshot alone often lacks behavior, spacing, states, and edge cases."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Uncommunicated changes can cause confusion and rework."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Developer questions can reveal important implementation details."
+        }
+      ],
+      "tags": ["handoff", "developer-collaboration", "design-systems"]
+    }
+  ]
+}

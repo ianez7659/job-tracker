@@ -1,0 +1,515 @@
+{
+  "version": 1,
+  "category": "digital-marketing",
+  "categoryGroup": "Marketing",
+  "description": "Digital Marketing interview questions for junior or entry-level candidates.",
+  "questions": [
+    {
+      "id": "digital-marketing-campaign-goal-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "Why should a digital marketing campaign have a clear goal?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A clear goal helps choose the right audience, channel, message, and success metrics."
+        },
+        {
+          "id": "b",
+          "text": "A goal guarantees that the campaign will go viral."
+        },
+        { "id": "c", "text": "A goal is only needed after the campaign ends." },
+        { "id": "d", "text": "A goal removes the need to measure results." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Campaign goals guide strategy and help determine whether the campaign succeeded.",
+      "wrongExplanations": [
+        { "choiceId": "b", "explanation": "No goal can guarantee virality." },
+        {
+          "choiceId": "c",
+          "explanation": "Goals should be set before execution."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Goals make measurement more important, not less."
+        }
+      ],
+      "tags": ["campaign-goals", "strategy", "metrics"]
+    },
+    {
+      "id": "digital-marketing-seo-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What is the main purpose of SEO?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To improve a website's visibility in organic search results."
+        },
+        { "id": "b", "text": "To guarantee immediate paid traffic." },
+        { "id": "c", "text": "To replace all website content." },
+        { "id": "d", "text": "To make social media accounts private." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "SEO helps improve how easily users can find a website through unpaid search results.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Paid traffic is usually related to advertising, not organic SEO."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "SEO often improves content, but it does not replace it entirely."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "SEO is not about making social media accounts private."
+        }
+      ],
+      "tags": ["seo", "organic-search", "website-traffic"]
+    },
+    {
+      "id": "digital-marketing-ppc-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What does PPC usually refer to in digital marketing?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Paid advertising where advertisers often pay when users click an ad."
+        },
+        { "id": "b", "text": "A method for writing only long blog posts." },
+        { "id": "c", "text": "A way to avoid tracking campaign performance." },
+        { "id": "d", "text": "A design tool for making logos." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "PPC stands for pay-per-click and is commonly used in paid search and digital advertising campaigns.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Blog content can support marketing, but PPC refers to paid advertising."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "PPC campaigns usually require careful performance tracking."
+        },
+        { "choiceId": "d", "explanation": "PPC is not a logo design tool." }
+      ],
+      "tags": ["ppc", "paid-ads", "digital-advertising"]
+    },
+    {
+      "id": "digital-marketing-ctr-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What does click-through rate usually measure?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The percentage of people who clicked after seeing an ad, email, or link."
+        },
+        {
+          "id": "b",
+          "text": "The total number of employees on a marketing team."
+        },
+        { "id": "c", "text": "The number of colors used in a design." },
+        { "id": "d", "text": "The amount of money spent on office supplies." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "CTR helps measure how effectively a message encourages people to click.",
+      "wrongExplanations": [
+        { "choiceId": "b", "explanation": "Team size is unrelated to CTR." },
+        {
+          "choiceId": "c",
+          "explanation": "Design choices can influence CTR, but CTR does not measure colors."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Office supply spending is not a marketing click metric."
+        }
+      ],
+      "tags": ["ctr", "metrics", "performance"]
+    },
+    {
+      "id": "digital-marketing-conversion-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What is a conversion in digital marketing?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A desired user action, such as signing up, purchasing, booking, or submitting a form."
+        },
+        { "id": "b", "text": "A random website visit with no action." },
+        { "id": "c", "text": "Only the number of social media followers." },
+        { "id": "d", "text": "A design file exported as an image." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A conversion is a meaningful action that supports the campaign or business goal.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "A visit alone is not always a conversion unless defined that way."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Followers can matter, but conversions usually refer to goal actions."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "This is unrelated to marketing conversions."
+        }
+      ],
+      "tags": ["conversion", "goals", "analytics"]
+    },
+    {
+      "id": "digital-marketing-email-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "An email campaign has a high open rate but low click rate. What should you investigate?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Whether the email content, offer, layout, and call to action are compelling enough after opening."
+        },
+        { "id": "b", "text": "Only the office Wi-Fi speed." },
+        {
+          "id": "c",
+          "text": "Nothing, because a high open rate means the campaign is fully successful."
+        },
+        { "id": "d", "text": "Whether the email should have no links at all." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "High opens suggest the subject line worked, but low clicks may indicate issues with content, CTA, relevance, or offer.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Wi-Fi speed is not usually the main factor in click rate."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Campaign success depends on the goal, not just opens."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Removing all links would not help if the campaign goal requires clicks."
+        }
+      ],
+      "tags": ["email-marketing", "open-rate", "click-rate", "cta"]
+    },
+    {
+      "id": "digital-marketing-landing-page-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What is an important purpose of a landing page?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To focus users on a specific message and action related to a campaign."
+        },
+        { "id": "b", "text": "To include every possible company detail." },
+        { "id": "c", "text": "To avoid having a call to action." },
+        { "id": "d", "text": "To replace all other marketing channels." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A landing page is often designed to support a specific campaign goal, such as signups, bookings, or purchases.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Too much information can distract from the campaign goal."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Landing pages usually need a clear call to action."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Landing pages support campaigns but do not replace every channel."
+        }
+      ],
+      "tags": ["landing-page", "conversion", "campaigns"]
+    },
+    {
+      "id": "digital-marketing-audience-segmentation-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "hard",
+      "question": "Why is audience segmentation useful?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps tailor messages and offers to groups with different needs or behaviors."
+        },
+        { "id": "b", "text": "It means sending the same message to everyone." },
+        { "id": "c", "text": "It removes the need for customer research." },
+        { "id": "d", "text": "It only matters for offline events." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Segmentation helps improve relevance by recognizing that different groups may respond to different messages.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Segmentation is the opposite of treating every audience the same."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Good segmentation often depends on customer research and data."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Segmentation is useful across digital and offline marketing."
+        }
+      ],
+      "tags": ["segmentation", "audience", "targeting"]
+    },
+    {
+      "id": "digital-marketing-roas-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "hard",
+      "question": "What does ROAS help marketers understand?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "How much revenue is generated compared with advertising spend."
+        },
+        { "id": "b", "text": "How many colors are used in an ad." },
+        { "id": "c", "text": "How many employees worked on the campaign." },
+        { "id": "d", "text": "How long the company has existed." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "ROAS, or return on ad spend, helps evaluate the revenue efficiency of advertising investment.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Ad colors may affect performance, but ROAS is a financial performance metric."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Team size is not what ROAS measures."
+        },
+        { "choiceId": "d", "explanation": "Company age is unrelated to ROAS." }
+      ],
+      "tags": ["roas", "paid-ads", "performance-marketing"]
+    },
+    {
+      "id": "digital-marketing-content-strategy-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What makes content strategy more effective?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Aligning content with audience needs, business goals, channels, and measurable outcomes."
+        },
+        { "id": "b", "text": "Posting randomly whenever someone has time." },
+        {
+          "id": "c",
+          "text": "Copying competitors without understanding the audience."
+        },
+        { "id": "d", "text": "Using only one format forever." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Effective content strategy connects audience value with business goals and consistent measurement.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Random posting can lead to inconsistent results."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Copying without strategy may not fit the brand or audience."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Different formats may serve different goals."
+        }
+      ],
+      "tags": ["content-strategy", "audience", "business-goals"]
+    },
+    {
+      "id": "digital-marketing-social-engagement-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What does engagement often refer to on social media?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "User interactions such as likes, comments, shares, saves, or replies."
+        },
+        { "id": "b", "text": "Only the number of office meetings." },
+        { "id": "c", "text": "The cost of printing flyers." },
+        { "id": "d", "text": "The number of passwords in an account." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Engagement measures how users interact with content on social platforms.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Office meetings are not social media engagement metrics."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Printing costs are not engagement."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Passwords are unrelated to engagement."
+        }
+      ],
+      "tags": ["social-media", "engagement", "metrics"]
+    },
+    {
+      "id": "digital-marketing-analytics-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A campaign gets many impressions but very few conversions. What should you investigate?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Audience relevance, message clarity, landing page experience, offer strength, and conversion tracking."
+        },
+        { "id": "b", "text": "Only the number of office chairs." },
+        {
+          "id": "c",
+          "text": "Nothing, because impressions are the only metric that matters."
+        },
+        {
+          "id": "d",
+          "text": "Whether the campaign should have no audience targeting."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Low conversions can come from many issues across targeting, messaging, landing page quality, offer, or measurement setup.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Office furniture is unrelated to campaign conversion performance."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Impressions matter, but conversions may be more important depending on the goal."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Removing targeting is unlikely to solve conversion issues."
+        }
+      ],
+      "tags": ["analytics", "conversions", "campaign-optimization"]
+    },
+    {
+      "id": "digital-marketing-utm-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why are UTM parameters useful in digital marketing?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "They help track where traffic comes from and how campaigns perform."
+        },
+        { "id": "b", "text": "They automatically write ad copy." },
+        { "id": "c", "text": "They replace the need for a website." },
+        { "id": "d", "text": "They only change the color of links." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "UTM parameters help marketers identify campaign source, medium, and other tracking details in analytics tools.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "UTMs track campaign data; they do not write copy."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "UTMs help track traffic to websites or pages, but they do not replace them."
+        },
+        { "choiceId": "d", "explanation": "UTMs do not control link colors." }
+      ],
+      "tags": ["utm", "tracking", "analytics"]
+    },
+    {
+      "id": "digital-marketing-brand-consistency-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why is brand consistency important across digital channels?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps audiences recognize and trust the brand across different touchpoints."
+        },
+        { "id": "b", "text": "It means every post must be exactly identical." },
+        { "id": "c", "text": "It removes the need for audience research." },
+        { "id": "d", "text": "It only matters for printed materials." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Consistent messaging, tone, and visuals help build recognition and trust.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Consistency does not mean every piece of content must be identical."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Audience research is still important for relevance."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Brand consistency matters in digital and offline channels."
+        }
+      ],
+      "tags": ["brand-consistency", "brand-voice", "digital-channels"]
+    },
+    {
+      "id": "digital-marketing-optimization-001",
+      "sourceType": "category_specific",
+      "questionType": "behavioral",
+      "difficulty": "hard",
+      "question": "What is a good way to explain campaign optimization in an interview?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Describe the goal, the data you reviewed, the change you made, and the result you measured."
+        },
+        {
+          "id": "b",
+          "text": "Say you changed things randomly until results improved."
+        },
+        {
+          "id": "c",
+          "text": "Say optimization is only about making ads look prettier."
+        },
+        {
+          "id": "d",
+          "text": "Avoid discussing results because they may not be perfect."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A strong answer shows structured thinking, data use, action, and measurable impact.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Random changes do not show strategic optimization."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Visuals can matter, but optimization often includes targeting, messaging, budget, landing pages, and measurement."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Discussing results honestly can show learning and accountability."
+        }
+      ],
+      "tags": ["optimization", "campaign-performance", "interview-answer"]
+    }
+  ]
+}

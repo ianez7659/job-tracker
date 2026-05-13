@@ -1,0 +1,197 @@
+{
+  "version": 1,
+  "category": "event-management",
+  "categoryGroup": "Management",
+  "description": "Event Management interview questions for junior or entry-level candidates.",
+  "questions": [
+    {
+      "id": "event-management-vendor-delay-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "easy",
+      "question": "A vendor is late on the day of an event. What should you do first?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Contact the vendor for an updated timeline, assess the impact, and inform the relevant team members."
+        },
+        { "id": "b", "text": "Ignore the delay until guests arrive." },
+        { "id": "c", "text": "Cancel the entire event immediately." },
+        { "id": "d", "text": "Blame the vendor publicly in front of guests." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Event issues require quick information gathering, impact assessment, and team coordination.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Ignoring the delay can make the problem worse."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Cancellation is extreme before evaluating alternatives."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Public blame is unprofessional and does not solve the issue."
+        }
+      ],
+      "tags": ["vendor-management", "event-day", "problem-solving"]
+    },
+    {
+      "id": "event-management-timeline-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "Why is a detailed event timeline important?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps coordinate tasks, responsibilities, setup times, and deadlines."
+        },
+        { "id": "b", "text": "It makes communication unnecessary." },
+        {
+          "id": "c",
+          "text": "It guarantees that no unexpected changes will happen."
+        },
+        { "id": "d", "text": "It is only useful after the event is over." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A timeline helps teams stay coordinated and reduces the chance of missed tasks.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "A timeline supports communication but does not replace it."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Unexpected changes can still happen."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Timelines are most useful before and during the event."
+        }
+      ],
+      "tags": ["event-timeline", "planning", "coordination"]
+    },
+    {
+      "id": "event-management-client-expectations-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A client requests a major change shortly before the event. What is the best response?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Clarify the request, assess feasibility, explain impacts, and offer realistic options."
+        },
+        {
+          "id": "b",
+          "text": "Promise the change without checking resources or timing."
+        },
+        {
+          "id": "c",
+          "text": "Reject the request immediately without discussion."
+        },
+        {
+          "id": "d",
+          "text": "Make the change secretly without informing the team."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Late changes require clear communication, feasibility checks, and realistic expectation management.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Unrealistic promises can create failure or disappointment."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Some changes may be possible, so discussion is useful."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "The team needs to know changes that affect execution."
+        }
+      ],
+      "tags": ["client-expectations", "change-management", "communication"]
+    },
+    {
+      "id": "event-management-risk-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why should event managers prepare backup plans?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Events can be affected by weather, vendor issues, technical problems, or schedule changes."
+        },
+        {
+          "id": "b",
+          "text": "Backup plans are only useful if the event is cancelled."
+        },
+        {
+          "id": "c",
+          "text": "Backup plans make the original plan unnecessary."
+        },
+        {
+          "id": "d",
+          "text": "Backup plans are only needed for very small events."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Backup plans help teams respond quickly when unexpected issues occur.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Backup plans can help with many issues short of cancellation."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "The original plan is still important; backups support it."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Events of many sizes can benefit from contingency planning."
+        }
+      ],
+      "tags": ["risk-management", "contingency-planning", "events"]
+    },
+    {
+      "id": "event-management-post-event-001",
+      "sourceType": "category_specific",
+      "questionType": "behavioral",
+      "difficulty": "hard",
+      "question": "What should a strong post-event review include?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "What went well, what did not, attendee or client feedback, performance against goals, and next-step improvements."
+        },
+        { "id": "b", "text": "Only photos from the event." },
+        { "id": "c", "text": "Only positive comments." },
+        {
+          "id": "d",
+          "text": "No review, because the event is already finished."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Post-event reviews help teams learn, improve future events, and evaluate success against goals.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Photos may be useful but do not provide a complete review."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Ignoring problems prevents improvement."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Reviewing after the event helps future planning."
+        }
+      ],
+      "tags": ["post-event-review", "feedback", "continuous-improvement"]
+    }
+  ]
+}

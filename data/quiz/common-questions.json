@@ -1,0 +1,890 @@
+{
+  "version": 1,
+  "category": "common",
+  "categoryGroup": "Common",
+  "description": "Common interview questions for all job categories.",
+  "questions": [
+    {
+      "id": "common-teamwork-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "easy",
+      "question": "What is the best way to handle a disagreement with a teammate?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Strongly insist on your own opinion until the team agrees."
+        },
+        {
+          "id": "b",
+          "text": "Avoid the conflict and follow the other person's opinion."
+        },
+        {
+          "id": "c",
+          "text": "Listen to each perspective, compare the reasons, and choose the option that best supports the team goal."
+        },
+        {
+          "id": "d",
+          "text": "Immediately ask a manager to decide without discussing it first."
+        }
+      ],
+      "correctChoiceId": "c",
+      "correctExplanation": "This answer shows collaboration, active listening, and goal-oriented decision-making.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "This can make you seem inflexible and unwilling to collaborate."
+        },
+        {
+          "choiceId": "b",
+          "explanation": "Avoiding the conflict may prevent useful discussion and make you seem passive."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Escalation can be appropriate later, but trying to resolve the issue first is usually better."
+        }
+      ],
+      "tags": ["teamwork", "conflict-resolution", "communication"]
+    },
+    {
+      "id": "common-strength-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "easy",
+      "question": "When answering a question about your strengths, what should you usually include?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A general positive word without any example."
+        },
+        {
+          "id": "b",
+          "text": "A strength, a short example, and how it helps you perform well in the role."
+        },
+        {
+          "id": "c",
+          "text": "A list of as many strengths as possible."
+        },
+        {
+          "id": "d",
+          "text": "A strength that sounds impressive even if it is not related to the role."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "A strong answer connects your strength to evidence and shows how it is useful for the job.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "A general answer is weak because it does not prove the strength with evidence."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Listing too many strengths can sound unfocused and less credible."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "A strength should be relevant to the role, not just impressive."
+        }
+      ],
+      "tags": ["strengths", "self-introduction", "interview-basics"]
+    },
+    {
+      "id": "common-weakness-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "easy",
+      "question": "What is the best approach when talking about a weakness in an interview?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Say that you do not have any weaknesses."
+        },
+        {
+          "id": "b",
+          "text": "Choose a real but manageable weakness and explain how you are improving it."
+        },
+        {
+          "id": "c",
+          "text": "Choose a weakness that is completely unrelated to work and stop there."
+        },
+        {
+          "id": "d",
+          "text": "Talk only about a personal problem in detail."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "This shows self-awareness, honesty, and a growth mindset without making the interviewer worry about your ability to do the job.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Saying you have no weaknesses can sound unrealistic and lacking in self-awareness."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "If the weakness is unrelated and you do not explain improvement, the answer may feel evasive."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Overly personal details can distract from your professional readiness."
+        }
+      ],
+      "tags": ["weaknesses", "self-awareness", "growth-mindset"]
+    },
+    {
+      "id": "common-prioritization-001",
+      "sourceType": "common",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "You have several tasks due at the same time. What is the most professional first step?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Start with the easiest task so you can finish something quickly."
+        },
+        {
+          "id": "b",
+          "text": "Ignore some tasks and hope the deadline changes."
+        },
+        {
+          "id": "c",
+          "text": "Review urgency, impact, and deadlines, then communicate if priorities or timelines need clarification."
+        },
+        {
+          "id": "d",
+          "text": "Work on all tasks at the same time without a plan."
+        }
+      ],
+      "correctChoiceId": "c",
+      "correctExplanation": "A good prioritization answer shows judgment, planning, and communication when expectations are unclear.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "The easiest task is not always the most important or urgent."
+        },
+        {
+          "choiceId": "b",
+          "explanation": "Ignoring tasks is unprofessional and can create bigger problems."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Trying to do everything at once without a plan can reduce quality and efficiency."
+        }
+      ],
+      "tags": ["prioritization", "time-management", "communication"]
+    },
+    {
+      "id": "common-feedback-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "easy",
+      "question": "What is a good way to respond when you receive constructive feedback?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Listen carefully, ask clarifying questions, and apply the feedback to improve."
+        },
+        {
+          "id": "b",
+          "text": "Defend every decision you made immediately."
+        },
+        {
+          "id": "c",
+          "text": "Ignore the feedback if you disagree with it."
+        },
+        {
+          "id": "d",
+          "text": "Take it personally and avoid working with that person again."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "This answer shows professionalism, coachability, and a willingness to improve.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Defending yourself immediately can make you seem resistant to feedback."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Ignoring feedback prevents learning and improvement."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Taking feedback personally can damage collaboration and professional growth."
+        }
+      ],
+      "tags": ["feedback", "coachability", "professionalism"]
+    },
+    {
+      "id": "common-mistake-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "medium",
+      "question": "If you make a mistake at work, what should you do first?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hide it and fix it quietly without telling anyone."
+        },
+        {
+          "id": "b",
+          "text": "Blame another person if they were involved."
+        },
+        {
+          "id": "c",
+          "text": "Acknowledge the mistake, assess the impact, and communicate with the appropriate person."
+        },
+        {
+          "id": "d",
+          "text": "Wait until someone notices the issue."
+        }
+      ],
+      "correctChoiceId": "c",
+      "correctExplanation": "This answer shows accountability, judgment, and a focus on solving the problem responsibly.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Hiding a mistake can create trust issues and make the problem worse."
+        },
+        {
+          "choiceId": "b",
+          "explanation": "Blaming others shows poor accountability and teamwork."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Waiting can increase the impact of the mistake and make you seem passive."
+        }
+      ],
+      "tags": ["accountability", "problem-solving", "professionalism"]
+    },
+    {
+      "id": "common-why-company-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "medium",
+      "question": "What makes an answer to 'Why do you want to work here?' stronger?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Mentioning only that you need a job."
+        },
+        {
+          "id": "b",
+          "text": "Giving a very general answer that could apply to any company."
+        },
+        {
+          "id": "c",
+          "text": "Connecting the company's work, values, or role requirements to your skills and goals."
+        },
+        {
+          "id": "d",
+          "text": "Saying the company looks popular online."
+        }
+      ],
+      "correctChoiceId": "c",
+      "correctExplanation": "A strong answer shows that you researched the company and can connect your background to the role.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Needing a job is honest, but it does not show interest in this specific company."
+        },
+        {
+          "choiceId": "b",
+          "explanation": "A generic answer makes it seem like you have not researched the company."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Popularity alone is not a strong reason to join a company."
+        }
+      ],
+      "tags": ["company-research", "motivation", "interview-basics"]
+    },
+    {
+      "id": "common-communication-001",
+      "sourceType": "common",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A colleague misunderstands your message and the work is delayed. What is the best response?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Tell them they should have understood your message better."
+        },
+        {
+          "id": "b",
+          "text": "Clarify the message, confirm the next steps, and improve communication for the future."
+        },
+        {
+          "id": "c",
+          "text": "Stop communicating with them and work alone."
+        },
+        {
+          "id": "d",
+          "text": "Ignore the delay because misunderstandings happen."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "This answer focuses on solving the immediate issue and improving future communication.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Blaming the colleague does not help resolve the delay or improve communication."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Avoiding communication can make teamwork harder."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Ignoring the delay does not address the problem or prevent it from happening again."
+        }
+      ],
+      "tags": ["communication", "teamwork", "problem-solving"]
+    },
+    {
+      "id": "common-pressure-001",
+      "sourceType": "common",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "What is the best way to answer a question about working under pressure?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Say that you never feel pressure."
+        },
+        {
+          "id": "b",
+          "text": "Explain how you stay organized, focus on priorities, and give a specific example."
+        },
+        {
+          "id": "c",
+          "text": "Say that pressure usually makes you avoid difficult tasks."
+        },
+        {
+          "id": "d",
+          "text": "Talk only about how stressful the situation was."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "A strong answer shows a practical method and supports it with evidence.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Saying you never feel pressure can sound unrealistic."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "This suggests difficulty handling responsibility."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Focusing only on stress does not show how you handled the situation."
+        }
+      ],
+      "tags": ["pressure", "time-management", "behavioral"]
+    },
+    {
+      "id": "common-learning-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "easy",
+      "question": "What is a strong way to describe learning a new skill?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Say you learned it quickly without explaining how."
+        },
+        {
+          "id": "b",
+          "text": "Explain the goal, the steps you took, the challenges, and how you applied the skill."
+        },
+        {
+          "id": "c",
+          "text": "Say you only learn when someone tells you exactly what to do."
+        },
+        {
+          "id": "d",
+          "text": "Avoid examples because learning is hard to explain."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "This answer shows initiative, process, persistence, and practical application.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Without details, the answer is hard to evaluate."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "This can make you seem dependent and less proactive."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Examples are important because they make your answer credible."
+        }
+      ],
+      "tags": ["learning", "growth-mindset", "initiative"]
+    },
+    {
+      "id": "common-customer-001",
+      "sourceType": "common",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A customer or client is upset. What should you usually do first?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Interrupt them and explain why they are wrong."
+        },
+        {
+          "id": "b",
+          "text": "Listen carefully, acknowledge their concern, and clarify the issue before offering a solution."
+        },
+        {
+          "id": "c",
+          "text": "Promise anything they ask for immediately."
+        },
+        {
+          "id": "d",
+          "text": "Avoid the conversation until they calm down."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "Listening and acknowledging the concern helps reduce tension and shows professionalism before moving to a solution.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Interrupting can escalate the situation and make the person feel ignored."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Promising too much too quickly can create unrealistic expectations."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Avoiding the issue may make the customer feel dismissed."
+        }
+      ],
+      "tags": ["customer-service", "communication", "empathy"]
+    },
+    {
+      "id": "common-star-method-001",
+      "sourceType": "common",
+      "questionType": "interview_basics",
+      "difficulty": "easy",
+      "question": "What is the main purpose of the STAR method in an interview?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To make your answer sound longer."
+        },
+        {
+          "id": "b",
+          "text": "To structure an example by explaining the Situation, Task, Action, and Result."
+        },
+        {
+          "id": "c",
+          "text": "To avoid giving specific examples."
+        },
+        {
+          "id": "d",
+          "text": "To memorize the same answer for every question."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "The STAR method helps you organize behavioral answers clearly and show evidence of your skills.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "The goal is clarity, not length."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "STAR is specifically used to give concrete examples."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "STAR is a structure, not a script for every answer."
+        }
+      ],
+      "tags": ["star-method", "interview-basics", "behavioral"]
+    },
+    {
+      "id": "common-initiative-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "medium",
+      "question": "Which example best shows initiative?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Waiting for someone to assign every small task."
+        },
+        {
+          "id": "b",
+          "text": "Noticing a repeated problem, suggesting an improvement, and helping implement it."
+        },
+        {
+          "id": "c",
+          "text": "Doing only the minimum required work."
+        },
+        {
+          "id": "d",
+          "text": "Avoiding new tasks because they may be difficult."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "Initiative means seeing an opportunity or problem and taking responsible action without waiting to be pushed.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "This shows dependency rather than initiative."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Doing only the minimum does not show proactive effort."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Avoiding difficulty does not demonstrate ownership or growth."
+        }
+      ],
+      "tags": ["initiative", "ownership", "problem-solving"]
+    },
+    {
+      "id": "common-adaptability-001",
+      "sourceType": "common",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "Your manager changes the priority of a task at the last minute. What is the best response?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Refuse because you already planned your day."
+        },
+        {
+          "id": "b",
+          "text": "Ask for clarification, adjust your plan, and communicate any impact on other deadlines."
+        },
+        {
+          "id": "c",
+          "text": "Ignore the new priority and continue with your original plan."
+        },
+        {
+          "id": "d",
+          "text": "Complain to your coworkers before doing anything."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "This answer shows adaptability, communication, and awareness of deadlines.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Refusing immediately can make you seem inflexible."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Ignoring a priority change can cause misalignment with the team."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Complaining does not solve the issue or clarify expectations."
+        }
+      ],
+      "tags": ["adaptability", "prioritization", "communication"]
+    },
+    {
+      "id": "common-integrity-001",
+      "sourceType": "common",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "You notice a small error in a report after it has already been sent to a client. What is the best response?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Ignore it because the error is small."
+        },
+        {
+          "id": "b",
+          "text": "Delete your copy and hope nobody notices."
+        },
+        {
+          "id": "c",
+          "text": "Inform the appropriate person, explain the correction clearly, and help send an updated version if needed."
+        },
+        {
+          "id": "d",
+          "text": "Blame the person who reviewed the report."
+        }
+      ],
+      "correctChoiceId": "c",
+      "correctExplanation": "This shows integrity, accountability, and a focus on correcting the issue professionally.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Even small errors can matter, especially in client-facing work."
+        },
+        {
+          "choiceId": "b",
+          "explanation": "Hiding the issue is dishonest and can damage trust."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Blaming others avoids responsibility and does not fix the problem."
+        }
+      ],
+      "tags": ["integrity", "accountability", "client-communication"]
+    },
+    {
+      "id": "common-motivation-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "medium",
+      "question": "What makes an answer about career motivation more convincing?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Explaining what interests you about the work and connecting it to your past experience or goals."
+        },
+        {
+          "id": "b",
+          "text": "Saying only that the salary is good."
+        },
+        {
+          "id": "c",
+          "text": "Saying you applied because the job was easy to find."
+        },
+        {
+          "id": "d",
+          "text": "Saying you are not sure but want to try anything."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "A convincing motivation answer connects the role to your interests, experience, and direction.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Salary can matter, but focusing only on it does not show interest in the role."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "This sounds random and does not show thoughtful motivation."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Being too uncertain may make the interviewer question your fit."
+        }
+      ],
+      "tags": ["motivation", "career-goals", "interview-basics"]
+    },
+    {
+      "id": "common-ownership-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "hard",
+      "question": "Which answer best demonstrates ownership of a project or task?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "I completed my assigned part and did not check anything else."
+        },
+        {
+          "id": "b",
+          "text": "I tracked progress, communicated blockers early, and made sure the final result met the goal."
+        },
+        {
+          "id": "c",
+          "text": "I waited until the deadline to see if anyone needed help."
+        },
+        {
+          "id": "d",
+          "text": "I focused only on tasks that were easy for me."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "Ownership means being responsible for the outcome, not just completing a small assigned piece.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "This may show task completion, but not broader responsibility for the result."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Waiting until the deadline is reactive and may not support the team."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Avoiding difficult work does not show ownership."
+        }
+      ],
+      "tags": ["ownership", "project-management", "responsibility"]
+    },
+    {
+      "id": "common-time-management-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "medium",
+      "question": "What is a strong interview answer about time management likely to include?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A claim that you are always perfectly organized."
+        },
+        {
+          "id": "b",
+          "text": "A specific method you use to plan, prioritize, and track your work."
+        },
+        {
+          "id": "c",
+          "text": "A statement that you work better only when deadlines are urgent."
+        },
+        {
+          "id": "d",
+          "text": "An explanation that you usually remember tasks without writing them down."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "A specific method makes your answer credible and shows that you manage time intentionally.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Saying you are always perfect sounds unrealistic and unsupported."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Relying only on urgency can sound risky and inconsistent."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Depending only on memory may not sound reliable in a professional setting."
+        }
+      ],
+      "tags": ["time-management", "organization", "planning"]
+    },
+    {
+      "id": "common-culture-fit-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "hard",
+      "question": "When asked what kind of work environment you prefer, what is the best strategy?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Describe a work environment that helps you perform well and connect it to the company's likely environment."
+        },
+        {
+          "id": "b",
+          "text": "Say you can only work in one very specific environment."
+        },
+        {
+          "id": "c",
+          "text": "Say you do not care about work environment at all."
+        },
+        {
+          "id": "d",
+          "text": "Criticize previous workplaces in detail."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "This answer shows self-awareness and helps the interviewer understand your fit without sounding rigid.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Being too rigid can make you seem less adaptable."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "This may sound careless and not thoughtful."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Criticizing previous workplaces can sound negative and unprofessional."
+        }
+      ],
+      "tags": ["culture-fit", "self-awareness", "adaptability"]
+    },
+    {
+      "id": "common-follow-up-001",
+      "sourceType": "common",
+      "questionType": "interview_basics",
+      "difficulty": "easy",
+      "question": "At the end of an interview, what kind of question is usually appropriate to ask the interviewer?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A question about the team, role expectations, or next steps in the process."
+        },
+        {
+          "id": "b",
+          "text": "A question that was already clearly answered earlier."
+        },
+        {
+          "id": "c",
+          "text": "A question that shows you did not read the job description."
+        },
+        {
+          "id": "d",
+          "text": "No question at all, because asking questions is always risky."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Thoughtful questions show interest, preparation, and professionalism.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Repeating an answered question may make it seem like you were not listening."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "This can make you seem unprepared."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Having no questions can sometimes make you seem less interested."
+        }
+      ],
+      "tags": ["interview-basics", "follow-up", "professionalism"]
+    },
+    {
+      "id": "common-failure-001",
+      "sourceType": "common",
+      "questionType": "behavioral",
+      "difficulty": "hard",
+      "question": "When discussing a past failure in an interview, what should your answer focus on?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Only the negative details of what went wrong."
+        },
+        {
+          "id": "b",
+          "text": "Who was responsible for the failure."
+        },
+        {
+          "id": "c",
+          "text": "What happened, what you learned, and what you changed afterward."
+        },
+        {
+          "id": "d",
+          "text": "Avoiding the question by saying you cannot think of any failure."
+        }
+      ],
+      "correctChoiceId": "c",
+      "correctExplanation": "A strong failure answer shows accountability, reflection, and improvement.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Focusing only on the negative does not show learning or growth."
+        },
+        {
+          "choiceId": "b",
+          "explanation": "Blaming others reduces accountability and weakens the answer."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Avoiding the question can make you seem less reflective or less honest."
+        }
+      ],
+      "tags": ["failure", "learning", "accountability"]
+    }
+  ]
+}

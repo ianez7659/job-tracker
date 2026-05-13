@@ -1,0 +1,947 @@
+{
+  "version": 1,
+  "category": "web-development",
+  "categoryGroup": "Tech",
+  "description": "Web Development interview questions for junior or entry-level candidates.",
+  "questions": [
+    {
+      "id": "web-dev-html-semantic-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "Why is semantic HTML important in web development?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It makes every website load without JavaScript."
+        },
+        {
+          "id": "b",
+          "text": "It helps browsers, assistive technologies, and search engines understand the structure and meaning of the page."
+        },
+        {
+          "id": "c",
+          "text": "It automatically makes a website responsive on all devices."
+        },
+        {
+          "id": "d",
+          "text": "It removes the need to write CSS."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "Semantic HTML uses meaningful elements like header, nav, main, section, and button. This improves accessibility, readability, and SEO because the page structure is easier to understand.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Semantic HTML does not remove the need for JavaScript. It mainly improves structure and meaning."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Responsive design usually requires CSS techniques such as media queries, flexbox, or grid."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Semantic HTML and CSS solve different problems. CSS is still needed for styling."
+        }
+      ],
+      "tags": ["html", "accessibility", "seo", "semantic-html"]
+    },
+    {
+      "id": "web-dev-css-flexbox-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "When is Flexbox usually a good choice in CSS layout?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "When arranging items in one direction, such as a row or a column."
+        },
+        {
+          "id": "b",
+          "text": "Only when building database tables."
+        },
+        {
+          "id": "c",
+          "text": "When replacing all JavaScript logic."
+        },
+        {
+          "id": "d",
+          "text": "Only when creating animations."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Flexbox is especially useful for one-dimensional layouts, such as aligning items in a row or column and controlling spacing and alignment.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Flexbox is a CSS layout tool, not something specifically for database tables."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Flexbox handles layout, not application logic."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Flexbox can be used with animated elements, but animation is not its main purpose."
+        }
+      ],
+      "tags": ["css", "flexbox", "layout", "responsive-design"]
+    },
+    {
+      "id": "web-dev-css-grid-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What is a common reason to choose CSS Grid instead of Flexbox?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "CSS Grid is better for two-dimensional layouts with both rows and columns."
+        },
+        {
+          "id": "b",
+          "text": "CSS Grid automatically connects the frontend to the backend."
+        },
+        {
+          "id": "c",
+          "text": "CSS Grid only works for mobile screens."
+        },
+        {
+          "id": "d",
+          "text": "CSS Grid replaces HTML elements."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "CSS Grid is strong for two-dimensional layouts where you need to control both rows and columns, such as dashboards, galleries, or complex page sections.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "CSS Grid is only a layout system. It does not handle backend connections."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "CSS Grid works across many screen sizes, not only mobile."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "CSS Grid styles HTML elements; it does not replace them."
+        }
+      ],
+      "tags": ["css", "grid", "layout", "dashboard-ui"]
+    },
+    {
+      "id": "web-dev-js-dom-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What is the DOM in web development?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A database used by JavaScript."
+        },
+        {
+          "id": "b",
+          "text": "A programming language for backend servers."
+        },
+        {
+          "id": "c",
+          "text": "A browser representation of the HTML document that JavaScript can read and modify."
+        },
+        {
+          "id": "d",
+          "text": "A CSS framework for responsive layouts."
+        }
+      ],
+      "correctChoiceId": "c",
+      "correctExplanation": "The DOM, or Document Object Model, represents the page structure in the browser. JavaScript can use it to read, update, add, or remove elements.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "The DOM is not a database. It is the browser's representation of the document."
+        },
+        {
+          "choiceId": "b",
+          "explanation": "The DOM is not a programming language."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "The DOM is not a CSS framework."
+        }
+      ],
+      "tags": ["javascript", "dom", "browser", "frontend"]
+    },
+    {
+      "id": "web-dev-js-async-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why are async and await commonly used in JavaScript?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To write asynchronous code in a more readable way, especially when working with promises."
+        },
+        {
+          "id": "b",
+          "text": "To make CSS load faster."
+        },
+        {
+          "id": "c",
+          "text": "To prevent all runtime errors automatically."
+        },
+        {
+          "id": "d",
+          "text": "To convert JavaScript into HTML."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "async and await help developers write asynchronous code that looks more like synchronous code, making API calls and promise-based logic easier to read and maintain.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "async and await are JavaScript features and do not directly optimize CSS loading."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "They do not prevent all errors. You still need error handling such as try/catch."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "They do not convert JavaScript into HTML."
+        }
+      ],
+      "tags": ["javascript", "async-await", "promises", "api"]
+    },
+    {
+      "id": "web-dev-api-fetch-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A frontend page needs to load data from a server. What should you usually handle when using fetch?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Only the successful response, because failed requests are impossible."
+        },
+        {
+          "id": "b",
+          "text": "Loading state, successful response, error handling, and possibly empty data."
+        },
+        {
+          "id": "c",
+          "text": "Only CSS styling for the response."
+        },
+        {
+          "id": "d",
+          "text": "Only database schema changes."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "A good frontend implementation should handle the full request lifecycle: loading, success, error, and empty states. This improves reliability and user experience.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Network requests can fail, so ignoring errors creates poor UX."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Styling is only one part of the UI. Data fetching also requires state and error handling."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Database schema changes are backend concerns and are not the main task when using fetch on the frontend."
+        }
+      ],
+      "tags": ["api", "fetch", "error-handling", "frontend"]
+    },
+    {
+      "id": "web-dev-react-state-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What is a common reason to use state in React?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To store values that can change and cause the UI to update."
+        },
+        {
+          "id": "b",
+          "text": "To permanently store data in a database."
+        },
+        {
+          "id": "c",
+          "text": "To write CSS without class names."
+        },
+        {
+          "id": "d",
+          "text": "To make every component global automatically."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "React state is used for values that change over time and should affect what the user sees, such as form input, filters, loading state, or selected items.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "React state is stored in the UI layer, not permanently in a database."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "State is not a CSS replacement."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "React state is local by default unless you explicitly lift it or use a global state solution."
+        }
+      ],
+      "tags": ["react", "state", "frontend", "ui"]
+    },
+    {
+      "id": "web-dev-react-props-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What are props in React?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Values passed from a parent component to a child component."
+        },
+        {
+          "id": "b",
+          "text": "A way to directly modify the database."
+        },
+        {
+          "id": "c",
+          "text": "A replacement for all HTML elements."
+        },
+        {
+          "id": "d",
+          "text": "A browser API for storing cookies."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Props allow parent components to pass data or callbacks to child components, making components reusable and configurable.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Props are part of React component communication, not database modification."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Props configure components; they do not replace HTML."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Props are not a browser storage API."
+        }
+      ],
+      "tags": ["react", "props", "components", "frontend"]
+    },
+    {
+      "id": "web-dev-react-effect-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What is a common use case for useEffect in React?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To run side effects such as fetching data, subscribing to events, or syncing with external systems."
+        },
+        {
+          "id": "b",
+          "text": "To define the HTML structure of the entire application."
+        },
+        {
+          "id": "c",
+          "text": "To create database tables."
+        },
+        {
+          "id": "d",
+          "text": "To replace all component props."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "useEffect is used for side effects that happen outside the normal rendering process, such as data fetching, subscriptions, timers, or interacting with browser APIs.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "HTML structure is usually returned from the component's render output, not from useEffect."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Creating database tables is not a React useEffect responsibility."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "useEffect does not replace props. Props and effects serve different purposes."
+        }
+      ],
+      "tags": ["react", "useeffect", "side-effects", "data-fetching"]
+    },
+    {
+      "id": "web-dev-next-routing-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "In a Next.js App Router project, what is the purpose of the app directory?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It defines routes, layouts, pages, and route handlers using a file-system based structure."
+        },
+        {
+          "id": "b",
+          "text": "It stores only image files."
+        },
+        {
+          "id": "c",
+          "text": "It replaces the need for React components."
+        },
+        {
+          "id": "d",
+          "text": "It is used only for writing database migrations."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "The app directory in Next.js App Router organizes routes, pages, layouts, loading states, error boundaries, and route handlers based on the file system.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Images may be stored elsewhere, such as public, but the app directory is for routing and app structure."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Next.js still uses React components."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Database migrations are not the purpose of the app directory."
+        }
+      ],
+      "tags": ["nextjs", "app-router", "routing", "react"]
+    },
+    {
+      "id": "web-dev-next-server-client-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "hard",
+      "question": "In Next.js App Router, when should you usually use a Client Component?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "When the component needs browser-only APIs, local state, event handlers, or interactive behavior."
+        },
+        {
+          "id": "b",
+          "text": "For every component, even when no interactivity is needed."
+        },
+        {
+          "id": "c",
+          "text": "Only for database queries."
+        },
+        {
+          "id": "d",
+          "text": "Only for static text that never changes."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Client Components are needed when a component uses hooks like useState, handles user events, accesses browser APIs, or requires interactivity.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Using Client Components everywhere can increase client-side JavaScript unnecessarily."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Database queries should usually happen on the server, not inside Client Components."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Static text usually does not require a Client Component."
+        }
+      ],
+      "tags": [
+        "nextjs",
+        "server-components",
+        "client-components",
+        "performance"
+      ]
+    },
+    {
+      "id": "web-dev-typescript-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What is a main benefit of using TypeScript in a web project?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It can catch many type-related errors before runtime."
+        },
+        {
+          "id": "b",
+          "text": "It automatically designs the user interface."
+        },
+        {
+          "id": "c",
+          "text": "It removes the need for testing."
+        },
+        {
+          "id": "d",
+          "text": "It makes all code run only on the server."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "TypeScript adds static typing, which helps catch type errors earlier and improves code maintainability, especially in larger projects.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "TypeScript does not design UI automatically."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "TypeScript helps reduce some bugs, but testing is still necessary."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "TypeScript does not decide whether code runs on the client or server."
+        }
+      ],
+      "tags": ["typescript", "types", "maintainability", "frontend"]
+    },
+    {
+      "id": "web-dev-form-validation-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A user submits a form with missing required fields. What should a good web application do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Silently ignore the submission."
+        },
+        {
+          "id": "b",
+          "text": "Show clear validation messages and help the user correct the input."
+        },
+        {
+          "id": "c",
+          "text": "Crash the page so the user knows something is wrong."
+        },
+        {
+          "id": "d",
+          "text": "Save the incomplete data without warning."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "Good form UX clearly explains what needs to be fixed and helps the user complete the form successfully.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Ignoring the submission creates confusion and poor user experience."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Crashing the page is not a professional way to handle validation."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Saving incomplete data can create data quality and workflow problems."
+        }
+      ],
+      "tags": ["forms", "validation", "ux", "frontend"]
+    },
+    {
+      "id": "web-dev-accessibility-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Which practice improves accessibility for users who navigate with a keyboard?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Removing all focus outlines because they look distracting."
+        },
+        {
+          "id": "b",
+          "text": "Making interactive elements focusable and ensuring visible focus states."
+        },
+        {
+          "id": "c",
+          "text": "Using only images instead of text."
+        },
+        {
+          "id": "d",
+          "text": "Making buttons work only on mouse hover."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "Keyboard users need to move through interactive elements and see where focus is. Visible focus states and proper focus behavior are essential for accessibility.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Removing focus outlines can make navigation difficult or impossible for keyboard users."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Images without text alternatives can reduce accessibility."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Hover-only interactions do not work well for keyboard or touch users."
+        }
+      ],
+      "tags": [
+        "accessibility",
+        "keyboard-navigation",
+        "focus-state",
+        "frontend"
+      ]
+    },
+    {
+      "id": "web-dev-performance-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "hard",
+      "question": "A web page feels slow because it loads too much JavaScript on the client. What is one reasonable improvement?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Move appropriate work to the server and avoid making every component a Client Component."
+        },
+        {
+          "id": "b",
+          "text": "Add more client-side libraries to handle the slowness."
+        },
+        {
+          "id": "c",
+          "text": "Remove all CSS from the project."
+        },
+        {
+          "id": "d",
+          "text": "Ignore performance unless users complain directly."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Reducing unnecessary client-side JavaScript can improve performance. In frameworks like Next.js, using Server Components where appropriate can help keep the client bundle smaller.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Adding more client-side libraries may increase JavaScript size and make the problem worse."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Removing CSS is not a meaningful solution to excessive JavaScript."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Performance should be considered proactively because it affects user experience."
+        }
+      ],
+      "tags": ["performance", "nextjs", "client-bundle", "server-components"]
+    },
+    {
+      "id": "web-dev-security-input-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "hard",
+      "question": "Why should user input be validated on the server even if it is already validated on the client?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Because client-side validation can be bypassed."
+        },
+        {
+          "id": "b",
+          "text": "Because server-side validation makes CSS easier."
+        },
+        {
+          "id": "c",
+          "text": "Because browsers cannot display form errors."
+        },
+        {
+          "id": "d",
+          "text": "Because validation is only useful for animations."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Client-side validation improves UX, but it can be bypassed. Server-side validation is necessary to protect data integrity and security.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Server-side validation is not related to making CSS easier."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Browsers can display form errors, but that does not replace server-side validation."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Validation is about correctness, safety, and data quality, not animations."
+        }
+      ],
+      "tags": ["security", "validation", "server-side", "forms"]
+    },
+    {
+      "id": "web-dev-auth-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What is authentication in a web application?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Checking who the user is, such as by login credentials or OAuth."
+        },
+        {
+          "id": "b",
+          "text": "Deciding the color theme of the app."
+        },
+        {
+          "id": "c",
+          "text": "Compressing images for performance."
+        },
+        {
+          "id": "d",
+          "text": "Sorting database records alphabetically."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Authentication verifies a user's identity. It answers the question: who is this user?",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Color theme is a UI concern, not authentication."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Image compression is a performance optimization, not authentication."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Sorting records is a data operation, not authentication."
+        }
+      ],
+      "tags": ["authentication", "security", "login", "oauth"]
+    },
+    {
+      "id": "web-dev-authz-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What is the difference between authentication and authorization?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Authentication checks who the user is, while authorization checks what the user is allowed to do."
+        },
+        {
+          "id": "b",
+          "text": "They are exactly the same thing."
+        },
+        {
+          "id": "c",
+          "text": "Authorization only means logging out."
+        },
+        {
+          "id": "d",
+          "text": "Authentication only applies to CSS files."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Authentication verifies identity. Authorization determines permissions, such as whether a user can access or modify a resource.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "They are related but not the same."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Authorization is about permissions, not logging out."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Authentication is a security concept and is not limited to CSS."
+        }
+      ],
+      "tags": ["authentication", "authorization", "security", "permissions"]
+    },
+    {
+      "id": "web-dev-rest-api-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "In a REST API, what is a common purpose of the GET method?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To retrieve data from the server."
+        },
+        {
+          "id": "b",
+          "text": "To permanently delete all records."
+        },
+        {
+          "id": "c",
+          "text": "To style a page."
+        },
+        {
+          "id": "d",
+          "text": "To compile TypeScript."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "GET is commonly used to request or retrieve data from a server without changing it.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "DELETE is commonly used for deleting resources, not GET."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Styling is handled by CSS, not REST methods."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Compiling TypeScript is unrelated to REST API methods."
+        }
+      ],
+      "tags": ["rest-api", "http", "get", "backend"]
+    },
+    {
+      "id": "web-dev-database-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "Why is it important to design database relationships carefully in a full-stack application?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Because relationships affect how data is stored, queried, and kept consistent."
+        },
+        {
+          "id": "b",
+          "text": "Because relationships only change the font size."
+        },
+        {
+          "id": "c",
+          "text": "Because databases do not support related data."
+        },
+        {
+          "id": "d",
+          "text": "Because frontend components cannot render without database relationships."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Good relationship design helps keep data consistent and makes queries easier to reason about. Poor design can lead to duplication, missing data, or complex queries.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Database relationships do not control font size."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Many databases support related data through tables, keys, or document references."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Frontend components can render many kinds of data, but database relationships affect data modeling, not rendering itself."
+        }
+      ],
+      "tags": ["database", "data-modeling", "full-stack", "relationships"]
+    },
+    {
+      "id": "web-dev-debugging-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A feature is not working as expected. What is a good debugging approach?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Randomly change code until the problem disappears."
+        },
+        {
+          "id": "b",
+          "text": "Reproduce the issue, isolate the likely cause, inspect logs or state, and test a targeted fix."
+        },
+        {
+          "id": "c",
+          "text": "Delete the feature immediately."
+        },
+        {
+          "id": "d",
+          "text": "Assume the framework is broken."
+        }
+      ],
+      "correctChoiceId": "b",
+      "correctExplanation": "A structured debugging approach saves time and helps avoid introducing new bugs. Reproduction, isolation, inspection, and verification are key steps.",
+      "wrongExplanations": [
+        {
+          "choiceId": "a",
+          "explanation": "Random changes can create new bugs and make the issue harder to understand."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Deleting the feature is usually not an appropriate first step."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Framework bugs are possible but less common than application-level issues."
+        }
+      ],
+      "tags": [
+        "debugging",
+        "problem-solving",
+        "testing",
+        "development-workflow"
+      ]
+    },
+    {
+      "id": "web-dev-testing-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "hard",
+      "question": "Why is it useful to write tests for important application logic?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Tests help confirm expected behavior and reduce the risk of breaking features during future changes."
+        },
+        {
+          "id": "b",
+          "text": "Tests guarantee that the application has no bugs."
+        },
+        {
+          "id": "c",
+          "text": "Tests replace the need to understand the code."
+        },
+        {
+          "id": "d",
+          "text": "Tests are only useful for CSS colors."
+        }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Tests are valuable because they document expected behavior and help catch regressions when code changes.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Tests reduce risk but cannot guarantee a completely bug-free application."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Tests support understanding, but developers still need to understand the code."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Tests can cover many types of logic, not only visual styles."
+        }
+      ],
+      "tags": ["testing", "regression", "quality", "application-logic"]
+    }
+  ]
+}

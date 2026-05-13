@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "category": "network-systems-solutions",
+  "categoryGroup": "Tech",
+  "description": "Network Systems Solutions interview questions for junior or entry-level candidates.",
+  "questions": [
+    {
+      "id": "network-systems-ip-address-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What is the basic purpose of an IP address?",
+      "choices": [
+        { "id": "a", "text": "To identify a device or host on a network." },
+        { "id": "b", "text": "To design a website's color palette." },
+        { "id": "c", "text": "To replace all network cables." },
+        { "id": "d", "text": "To store user passwords in plain text." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "An IP address helps identify and route traffic to devices on a network.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Color palettes are a design concern, not a networking function."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "IP addresses do not replace physical or wireless network connections."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Storing passwords in plain text is insecure and unrelated to IP addressing."
+        }
+      ],
+      "tags": ["ip-address", "networking-basics", "routing"]
+    },
+    {
+      "id": "network-systems-dns-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "easy",
+      "question": "What does DNS commonly do?",
+      "choices": [
+        { "id": "a", "text": "It translates domain names into IP addresses." },
+        { "id": "b", "text": "It makes all websites load without servers." },
+        { "id": "c", "text": "It replaces cybersecurity policies." },
+        { "id": "d", "text": "It is only used for graphic design." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "DNS helps users access services by resolving human-readable domain names to IP addresses.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "DNS helps locate servers, but servers are still needed."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "DNS does not replace security policies."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "DNS is a networking system, not a design tool."
+        }
+      ],
+      "tags": ["dns", "domain-name", "networking"]
+    },
+    {
+      "id": "network-systems-troubleshooting-001",
+      "sourceType": "category_specific",
+      "questionType": "situational",
+      "difficulty": "medium",
+      "question": "A user reports they cannot access a website. What is a reasonable troubleshooting step?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Check connectivity, DNS resolution, browser behavior, and whether the issue affects other users."
+        },
+        { "id": "b", "text": "Immediately replace every network device." },
+        { "id": "c", "text": "Ignore the report unless many people complain." },
+        { "id": "d", "text": "Assume the user is wrong without checking." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Network troubleshooting should isolate whether the issue is local, DNS-related, service-related, or broader.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Replacing all devices is excessive before diagnosis."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Even a single-user issue should be investigated appropriately."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Assumptions can delay problem resolution."
+        }
+      ],
+      "tags": ["troubleshooting", "connectivity", "dns"]
+    },
+    {
+      "id": "network-systems-firewall-001",
+      "sourceType": "category_specific",
+      "questionType": "role_specific",
+      "difficulty": "medium",
+      "question": "What is a common purpose of a firewall?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To control network traffic based on security rules."
+        },
+        { "id": "b", "text": "To make monitors brighter." },
+        { "id": "c", "text": "To remove the need for backups." },
+        { "id": "d", "text": "To automatically write software documentation." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Firewalls help allow or block traffic based on configured rules, supporting network security.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Monitor brightness is unrelated to firewalls."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Backups are still needed even with a firewall."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "Firewalls do not write documentation."
+        }
+      ],
+      "tags": ["firewall", "network-security", "traffic-control"]
+    },
+    {
+      "id": "network-systems-documentation-001",
+      "sourceType": "category_specific",
+      "questionType": "behavioral",
+      "difficulty": "hard",
+      "question": "Why is network documentation important?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It helps teams understand topology, configurations, dependencies, and troubleshooting history."
+        },
+        { "id": "b", "text": "It replaces all monitoring tools." },
+        { "id": "c", "text": "It is only useful after a system is retired." },
+        { "id": "d", "text": "It should be kept secret from the IT team." }
+      ],
+      "correctChoiceId": "a",
+      "correctExplanation": "Good documentation helps teams troubleshoot faster, onboard staff, and manage changes safely.",
+      "wrongExplanations": [
+        {
+          "choiceId": "b",
+          "explanation": "Documentation supports monitoring but does not replace it."
+        },
+        {
+          "choiceId": "c",
+          "explanation": "Documentation is most useful while systems are active."
+        },
+        {
+          "choiceId": "d",
+          "explanation": "The IT team needs appropriate access to documentation."
+        }
+      ],
+      "tags": ["documentation", "network-operations", "troubleshooting"]
+    }
+  ]
+}
