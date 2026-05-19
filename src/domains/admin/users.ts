@@ -27,7 +27,7 @@ export async function getActiveJobSeekerRanking(limit = 20): Promise<RankedUser[
 
   // Fetch non-STAFF users with XP and jobs
   const users = await prisma.user.findMany({
-    where: { hubStatus: { not: "STAFF" } },
+    where: { OR: [{ hubStatus: null }, { hubStatus: { not: "STAFF" } }] },
     select: {
       id: true,
       name: true,
@@ -97,7 +97,7 @@ export async function getSupportUsers(): Promise<SupportUser[]> {
   const now = new Date();
 
   const users = await prisma.user.findMany({
-    where: { hubStatus: { not: "STAFF" } },
+    where: { OR: [{ hubStatus: null }, { hubStatus: { not: "STAFF" } }] },
     select: {
       id: true,
       name: true,

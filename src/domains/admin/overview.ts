@@ -26,7 +26,7 @@ export async function getAdminOverview(): Promise<AdminOverview> {
   // 1. All non-STAFF users
   const students = await prisma.user.findMany({
     where: {
-      hubStatus: { not: "STAFF" },
+      OR: [{ hubStatus: null }, { hubStatus: { not: "STAFF" } }],
     },
     select: {
       id: true,

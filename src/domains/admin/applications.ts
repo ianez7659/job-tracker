@@ -33,7 +33,7 @@ export async function getStuckApplications(): Promise<StuckApplication[]> {
       appliedAt: { lt: stuckThreshold },
       deletedAt: null,
       userId: { notIn: [...hiredUserIds] },
-      user: { hubStatus: { not: "STAFF" } },
+      user: { OR: [{ hubStatus: null }, { hubStatus: { not: "STAFF" } }] },
     },
     select: {
       id: true,
@@ -73,7 +73,7 @@ export async function getPipelineDistribution(): Promise<
     by: ["status"],
     where: {
       deletedAt: null,
-      user: { hubStatus: { not: "STAFF" } },
+      user: { OR: [{ hubStatus: null }, { hubStatus: { not: "STAFF" } }] },
     },
     _count: { _all: true },
   });
