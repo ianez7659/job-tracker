@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BarChart, Trash2, User, Archive, Search, Settings } from "lucide-react";
+import { Home, BarChart, Trash2, User, Archive, Settings } from "lucide-react";
 
 export default function MobileNav() {
   const pathname = usePathname();

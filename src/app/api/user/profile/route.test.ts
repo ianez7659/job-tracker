@@ -18,7 +18,7 @@ jest.mock("@/lib/prisma", () => ({
   },
 }));
 
-const { getServerSession } = require("next-auth");
+import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { GET, PATCH } from "./route";
 

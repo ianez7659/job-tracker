@@ -22,7 +22,7 @@ jest.mock("openai", () => ({
   },
 }));
 
-const { getServerSession } = require("next-auth");
+import { getServerSession } from "next-auth";
 import { POST } from "./route";
 
 describe("POST /api/jobs/extract-business-card", () => {

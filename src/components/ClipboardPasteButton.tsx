@@ -9,7 +9,7 @@ type Props = {
 };
 
 function describeClipboardError(err: unknown): string {
-  const name = err && typeof err === "object" && "name" in err ? String((err as any).name) : "";
+  const name = err && typeof err === "object" && "name" in err ? String((err as { name: unknown }).name) : "";
   if (name === "NotAllowedError") return "Clipboard access was blocked. Tap in the browser and allow paste access, or paste manually.";
   if (name === "NotFoundError") return "Clipboard is empty.";
   return "Could not read from clipboard. Please paste manually.";

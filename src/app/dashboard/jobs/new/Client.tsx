@@ -26,7 +26,6 @@ export default function NewJobClient() {
   // const buttonBase =
   //   "bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-sm";
 
-  const [url, setUrl] = useState("");
   const [fetchJdError, setFetchJdError] = useState<string | null>(null);
   const [fetchJdLoading, setFetchJdLoading] = useState(false);
   const [form, setForm] = useState({

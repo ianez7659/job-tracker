@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       description,
       url,
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Failed to parse URL" }, { status: 500 });
   }
 }

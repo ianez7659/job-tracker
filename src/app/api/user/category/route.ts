@@ -21,7 +21,7 @@ export async function PATCH(req: Request) {
       );
     }
 
-    if (!USER_CATEGORY_VALUES.includes(category as any)) {
+    if (!USER_CATEGORY_VALUES.includes(category as (typeof USER_CATEGORY_VALUES)[number])) {
       return NextResponse.json(
         { message: "Invalid category value" },
         { status: 400 }

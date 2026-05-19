@@ -2,8 +2,6 @@
 
 import type { Job } from "@/generated/prisma";
 
-type Status = Job["status"];
-
 export const isFinal = (j: Job) =>
   j.status === "offer" || j.status === "rejected";
 /** Treat missing `deletedAt` (e.g. from JSON) as active, same as null */
@@ -39,7 +37,7 @@ export function startEndOfToday(now: Date = new Date()) {
 export function toDate(val: unknown): Date | null {
   if (!val) return null;
   if (val instanceof Date) return val;
-  const d = new Date(val as any);
+  const d = new Date(val as string | number);
   return isNaN(d.getTime()) ? null : d;
 }
 
@@ -50,7 +48,7 @@ export function countToday(all: Job[]) {
   }
   const { start, end } = startEndOfToday();
   return all.filter((j) => {
-    const d = toDate((j as any).createdAt);
+    const d = toDate((j as Job & { createdAt?: unknown }).createdAt);
     return d !== null && d >= start && d <= end;
   }).length;
 }

@@ -14,8 +14,7 @@ jest.mock("@vercel/blob", () => ({
   del: jest.fn(),
 }));
 
-const { getServerSession } = require("next-auth");
-
+import { getServerSession } from "next-auth";
 import { POST } from "./route";
 
 describe("POST /api/user/image", () => {
