@@ -41,19 +41,18 @@ self.addEventListener("fetch", (event) => {
   // Cache-first for same-origin navigation and static assets
   if (url.origin === self.location.origin) {
     event.respondWith(
-      caches.match(request).then(
-        (cached) =>
-          cached ||
-          fetch(request).then((response) => {
+      caches.match(request).then((cached) => {
+        if (cached) return cached;
+        return fetch(request)
+          .then((response) => {
             if (response.ok) {
               const clone = response.clone();
-              caches
-                .open(CACHE_NAME)
-                .then((cache) => cache.put(request, clone));
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
             }
             return response;
-          }),
-      ),
+          })
+          .catch(() => new Response(null, { status: 503, statusText: "Service Unavailable" }));
+      }),
     );
   }
 });

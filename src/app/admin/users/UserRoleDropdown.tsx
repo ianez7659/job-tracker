@@ -22,11 +22,14 @@ export default function UserRoleDropdown({
   isSelf,
 }: UserRoleDropdownProps) {
   const router = useRouter();
+  const [selected, setSelected] = useState<string>(current ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const hubStatus = e.target.value as NonNullable<HubStatus>;
+    const prev = selected;
+    setSelected(hubStatus);
     setLoading(true);
     setError(null);
 
@@ -39,6 +42,7 @@ export default function UserRoleDropdown({
     setLoading(false);
 
     if (!res.ok) {
+      setSelected(prev);
       const data = await res.json().catch(() => ({}));
       setError((data as { error?: string }).error ?? "Failed to update role");
       return;
@@ -56,7 +60,7 @@ export default function UserRoleDropdown({
   return (
     <div className="flex flex-col gap-1">
       <select
-        defaultValue={current ?? ""}
+        value={selected}
         onChange={handleChange}
         disabled={loading}
         className="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
