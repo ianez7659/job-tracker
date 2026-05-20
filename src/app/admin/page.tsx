@@ -2,6 +2,7 @@ import { getAdminOverview } from "@/domains/admin/overview";
 import { getActiveJobSeekerRanking } from "@/domains/admin/users";
 import AdminMetricCard from "@/components/admin/AdminMetricCard";
 import AdminHeader from "@/components/admin/AdminHeader";
+import TrackDistributionCard from "@/components/admin/TrackDistributionCard";
 import { getCategoryLabel } from "@/lib/constants/categories";
 
 export const dynamic = "force-dynamic";
@@ -57,33 +58,7 @@ export default async function AdminOverviewPage() {
         </div>
 
         {/* Card 3 — Users by Target Track */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
-          <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-            Users by Target Track
-          </p>
-          <p className="mt-1 text-xs text-gray-400 dark:text-gray-600">sorted by enrollment</p>
-          {overview.categoryDistribution.length === 0 ? (
-            <p className="mt-3 text-sm text-gray-400 dark:text-gray-500">No data yet</p>
-          ) : (
-            <ol className="mt-3 space-y-2">
-              {overview.categoryDistribution.slice(0, 5).map((cat, i) => (
-                <li key={cat.category} className="flex items-center gap-2">
-                  <span className="w-5 text-center text-xs font-bold text-gray-400 dark:text-gray-500">
-                    {i + 1}
-                  </span>
-                  <div className="min-w-0 flex-1 flex items-center justify-between gap-2">
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {cat.label}
-                    </p>
-                    <span className="shrink-0 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
-                      {cat.count}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          )}
-        </div>
+        <TrackDistributionCard data={overview.categoryDistribution} />
 
         {/* Card 4 — Users Who May Need Support */}
         <AdminMetricCard
