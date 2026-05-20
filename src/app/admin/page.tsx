@@ -1,9 +1,9 @@
 import { getAdminOverview } from "@/domains/admin/overview";
 import { getActiveJobSeekerRanking } from "@/domains/admin/users";
+import Link from "next/link";
 import AdminMetricCard from "@/components/admin/AdminMetricCard";
 import AdminHeader from "@/components/admin/AdminHeader";
 import TrackDistributionCard from "@/components/admin/TrackDistributionCard";
-import { getCategoryLabel } from "@/lib/constants/categories";
 
 export const dynamic = "force-dynamic";
 
@@ -30,31 +30,65 @@ export default async function AdminOverviewPage() {
 
         {/* Card 2 — Active Job Seeker Ranking */}
         <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
-          <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-            Active Job Seeker Ranking
-          </p>
-          <p className="mt-1 text-xs text-gray-400 dark:text-gray-600">XP leaders · hired excluded</p>
+          {/* Header */}
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-900/40">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-600 dark:text-indigo-400">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+              </svg>
+            </div>
+            <p className="text-sm font-medium leading-snug text-gray-700 dark:text-gray-300">
+              Students ranked by their total XP (activity level).
+            </p>
+          </div>
+
+          {/* List */}
           {ranking.length === 0 ? (
-            <p className="mt-3 text-sm text-gray-400 dark:text-gray-500">No data yet</p>
-          ) : (
-            <ol className="mt-3 space-y-2">
-              {ranking.map((user, i) => (
-                <li key={user.id} className="flex items-center gap-2">
-                  <span className="w-5 text-center text-xs font-bold text-gray-400 dark:text-gray-500">
-                    {i + 1}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {user.name ?? user.email}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {getCategoryLabel(user.category)} · Lv {user.currentLevel} · {user.totalXp} XP
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          )}
+            <p className="mt-4 text-sm text-gray-400 dark:text-gray-500">No data yet</p>
+          ) : (() => {
+            const maxXp = ranking[0]?.totalXp ?? 1;
+            return (
+              <ol className="mt-4 space-y-3">
+                {ranking.map((user, i) => {
+                  const barPct = Math.round((user.totalXp / maxXp) * 100);
+                  return (
+                    <li key={user.id} className="flex items-center gap-2">
+                      <span className="w-4 shrink-0 text-xs text-gray-400 dark:text-gray-500">
+                        {i + 1}
+                      </span>
+                      <span className="w-20 shrink-0 truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        {user.name ?? user.email}
+                      </span>
+                      <span className="shrink-0 rounded-md bg-emerald-50 px-1.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
+                        Lv.{user.currentLevel}
+                      </span>
+                      <div className="flex-1">
+                        <div className="h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+                          <div
+                            className="h-full rounded-full bg-indigo-500"
+                            style={{ width: `${barPct}%` }}
+                          />
+                        </div>
+                      </div>
+                      <span className="w-14 shrink-0 text-right text-xs text-gray-500 dark:text-gray-400">
+                        {user.totalXp.toLocaleString()} XP
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
+            );
+          })()}
+
+          {/* Footer link */}
+          <div className="mt-4 text-right">
+            <Link
+              href="/admin/rankings"
+              className="text-xs font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+            >
+              View all students →
+            </Link>
+          </div>
         </div>
 
         {/* Card 3 — Users by Target Track */}
