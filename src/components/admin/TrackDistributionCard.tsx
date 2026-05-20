@@ -32,14 +32,23 @@ export default function TrackDistributionCard({ data }: Props) {
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
-      <p className="text-sm font-medium uppercase tracking-wider text-gray-600 dark:text-gray-200">
-        Users by Target Track
-      </p>
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+          </svg>
+        </div>
+        <div>
+          <p className="text-sm font-medium uppercase tracking-wider text-gray-600 dark:text-gray-200">
+            Users by Target Track
+          </p>
+        </div>
+      </div>
 
       {total === 0 ? (
-        <p className="mt-3 text-sm text-gray-400 dark:text-gray-500">No data yet</p>
+        <p className="mt-4 text-sm text-gray-400 dark:text-gray-500">No data yet</p>
       ) : (
-        <div className="mt-3 flex items-center gap-4">
+        <div className="mt-4 flex items-center gap-4">
           {/* Donut chart */}
           <div className="h-24 w-24 shrink-0">
             <ResponsiveContainer width="100%" height="100%">
