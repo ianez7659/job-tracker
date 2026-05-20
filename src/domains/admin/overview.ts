@@ -3,6 +3,7 @@ import { getCategoryLabel } from "@/lib/constants/categories";
 import type {
   AdminOverview,
   CategoryCount,
+  ActiveUserPreview,
   SupportUserPreview,
   StuckUserPreview,
   HiredUserPreview,
@@ -115,11 +116,15 @@ export async function getAdminOverview(): Promise<AdminOverview> {
     }))
     .sort((a, b) => b.count - a.count);
 
-  const STUCK_APPLY_STATUSES = ["applying", "resume"];
-  const ADVANCED_STATUSES = ["interview1", "interview2", "interview3", "offer"];
   const PREVIEW_LIMIT = 3;
 
-  // Preview: top support users (no_jobs first, then inactive)
+  // Preview: currently active users (within 3 days)
+  const topActiveUsers: ActiveUserPreview[] = students
+    .filter((u) => activeUserIds.has(u.id))
+    .slice(0, PREVIEW_LIMIT)
+    .map((u) => ({ id: u.id, name: u.name, email: u.email, category: u.category }));
+
+  // Preview: support users (no_jobs first, then inactive)
   const topSupportUsers: SupportUserPreview[] = [];
   for (const u of students) {
     if (hiredUserIds.has(u.id)) continue;
@@ -135,17 +140,24 @@ export async function getAdminOverview(): Promise<AdminOverview> {
       });
     }
   }
-  topSupportUsers.sort((a, b) => (a.reason === "no_jobs" ? -1 : 1) - (b.reason === "no_jobs" ? -1 : 1));
+  topSupportUsers.sort((a, b) =>
+    (a.reason === "no_jobs" ? -1 : 1) - (b.reason === "no_jobs" ? -1 : 1)
+  );
   const topSupportUsersPreview = topSupportUsers.slice(0, PREVIEW_LIMIT);
 
-  // Preview: stuck users (3+ applying/resume, no interview/offer)
+  // Preview: stuck users — same definition as stuckApplicationsCount
+  // (applying/resume, appliedAt older than 14 days, not hired)
+  // sorted by number of stuck jobs desc
   const stuckUsers: StuckUserPreview[] = [];
   for (const u of students) {
     if (hiredUserIds.has(u.id)) continue;
-    const applyCount = u.jobs.filter((j) => STUCK_APPLY_STATUSES.includes(j.status)).length;
-    const hasAdvanced = u.jobs.some((j) => ADVANCED_STATUSES.includes(j.status));
-    if (applyCount >= 3 && !hasAdvanced) {
-      stuckUsers.push({ id: u.id, name: u.name, email: u.email, applicationCount: applyCount });
+    const stuckJobCount = u.jobs.filter(
+      (j) =>
+        STUCK_STATUSES.includes(j.status as (typeof STUCK_STATUSES)[number]) &&
+        j.appliedAt < stuckThreshold
+    ).length;
+    if (stuckJobCount > 0) {
+      stuckUsers.push({ id: u.id, name: u.name, email: u.email, applicationCount: stuckJobCount });
     }
   }
   stuckUsers.sort((a, b) => b.applicationCount - a.applicationCount);
@@ -170,6 +182,7 @@ export async function getAdminOverview(): Promise<AdminOverview> {
     stuckUsersCount,
     needsSupportCount,
     categoryDistribution,
+    topActiveUsers,
     topSupportUsers: topSupportUsersPreview,
     topStuckUsers,
     topHiredUsers,

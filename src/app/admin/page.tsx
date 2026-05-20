@@ -119,6 +119,24 @@ export default async function AdminOverviewPage() {
               <p className="text-xs text-gray-500">of total students</p>
             </div>
           </div>
+          {overview.topActiveUsers.length === 0 ? (
+            <p className="mt-4 text-sm text-gray-400 dark:text-gray-500">No active users in the last 3 days</p>
+          ) : (
+            <ul className="mt-4 divide-y divide-gray-100 dark:divide-gray-800">
+              {overview.topActiveUsers.map((u) => (
+                <li key={u.id} className="flex items-center gap-2 py-2">
+                  <UserAvatar name={u.name} email={u.email} />
+                  <span className="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-300">
+                    {u.name ?? u.email}
+                  </span>
+                  <span className="shrink-0 rounded-md bg-emerald-50 px-1.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
+                    Active
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <ViewAllLink href="/admin/users" />
         </div>
 
         {/* ── Card 2 — Active Job Seeker Ranking ── */}
@@ -194,7 +212,9 @@ export default async function AdminOverviewPage() {
               </ul>
             </div>
           </div>
-          {overview.topSupportUsers.length > 0 && (
+          {overview.topSupportUsers.length === 0 ? (
+            <p className="mt-4 text-sm text-gray-400 dark:text-gray-500">No users need support</p>
+          ) : (
             <ul className="mt-4 divide-y divide-gray-100 dark:divide-gray-800">
               {overview.topSupportUsers.map((u) => (
                 <li key={u.id} className="flex items-center gap-2 py-2">
@@ -233,12 +253,14 @@ export default async function AdminOverviewPage() {
             <div>
               <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Criteria</p>
               <ul className="mt-1 space-y-0.5 text-xs text-gray-500">
-                <li>• 3+ applications</li>
-                <li>• No interview or offer</li>
+                <li>• Applying / waiting 14+ days</li>
+                <li>• No status update</li>
               </ul>
             </div>
           </div>
-          {overview.topStuckUsers.length > 0 && (
+          {overview.topStuckUsers.length === 0 ? (
+            <p className="mt-4 text-sm text-gray-400 dark:text-gray-500">No stuck applications</p>
+          ) : (
             <ul className="mt-4 divide-y divide-gray-100 dark:divide-gray-800">
               {overview.topStuckUsers.map((u) => (
                 <li key={u.id} className="flex items-center gap-2 py-2">
@@ -247,7 +269,7 @@ export default async function AdminOverviewPage() {
                     {u.name ?? u.email}
                   </span>
                   <span className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
-                    Applications: {u.applicationCount}
+                    {u.applicationCount} stuck
                   </span>
                   <span className="shrink-0 rounded-md bg-orange-50 px-1.5 py-0.5 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
                     No Progress

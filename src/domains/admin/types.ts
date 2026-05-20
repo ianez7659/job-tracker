@@ -2,6 +2,13 @@
 
 export type UserStatus = "active" | "at_risk" | "hired";
 
+export interface ActiveUserPreview {
+  id: string;
+  name: string | null;
+  email: string;
+  category: string | null;
+}
+
 export interface SupportUserPreview {
   id: string;
   name: string | null;
@@ -32,6 +39,7 @@ export interface AdminOverview {
   stuckUsersCount: number;          // users with 3+ applying/resume jobs, no interview/offer
   needsSupportCount: number;        // 14+ days no activity OR 0 jobs
   categoryDistribution: CategoryCount[];
+  topActiveUsers: ActiveUserPreview[];
   topSupportUsers: SupportUserPreview[];
   topStuckUsers: StuckUserPreview[];
   topHiredUsers: HiredUserPreview[];
