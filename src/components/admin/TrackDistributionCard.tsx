@@ -32,7 +32,7 @@ export default function TrackDistributionCard({ data }: Props) {
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
-      <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
+      <p className="text-sm font-medium uppercase tracking-wider text-gray-600 dark:text-gray-200">
         Users by Target Track
       </p>
 

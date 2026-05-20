@@ -108,8 +108,8 @@ export default async function AdminOverviewPage() {
               </svg>
             </CardIconBox>
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-gray-500">Currently Active Users</p>
-              <p className="text-xs text-gray-400 dark:text-gray-600">Logged in within the last 3 days</p>
+              <p className="text-sm font-medium uppercase tracking-wider text-gray-600 dark:text-gray-200">Currently Active Users</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Logged in within the last 3 days</p>
             </div>
           </div>
           <div className="mt-4 flex items-end justify-between">
@@ -148,8 +148,8 @@ export default async function AdminOverviewPage() {
               </svg>
             </CardIconBox>
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-gray-500">Active Job Seeker Ranking</p>
-              <p className="text-xs text-gray-400 dark:text-gray-600">XP leaders · hired excluded</p>
+              <p className="text-sm font-medium uppercase tracking-wider text-gray-600 dark:text-gray-200">Active Job Seeker Ranking</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">XP leaders · hired excluded</p>
             </div>
           </div>
           {ranking.length === 0 ? (
@@ -163,7 +163,7 @@ export default async function AdminOverviewPage() {
                   return (
                     <li key={user.id} className="flex items-center gap-2">
                       <span className="w-4 shrink-0 text-xs text-gray-400 dark:text-gray-500">{i + 1}</span>
-                      <span className="w-20 shrink-0 truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      <span className="w-20 shrink-0 truncate text-sm font-medium text-gray-700 dark:text-gray-300">
                         {user.name ?? user.email}
                       </span>
                       <span className="shrink-0 rounded-md bg-emerald-50 px-1.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
@@ -198,8 +198,8 @@ export default async function AdminOverviewPage() {
               </svg>
             </CardIconBox>
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-gray-500">Users Who May Need Support</p>
-              <p className="text-xs text-gray-400 dark:text-gray-600">No jobs added or 14+ days inactive</p>
+              <p className="text-sm font-medium uppercase tracking-wider text-gray-600 dark:text-gray-200">Users Who May Need Support</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">No jobs added or 14+ days inactive</p>
             </div>
           </div>
           <div className="mt-4 flex items-start gap-6">
@@ -244,8 +244,8 @@ export default async function AdminOverviewPage() {
               </svg>
             </CardIconBox>
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-gray-500">Stuck Applications</p>
-              <p className="text-xs text-gray-400 dark:text-gray-600">Applying / Applied with no progress for 14+ days</p>
+              <p className="text-sm font-medium uppercase tracking-wider text-gray-600 dark:text-gray-200">Stuck Applications</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Applying / Applied with no progress for 14+ days</p>
             </div>
           </div>
           <div className="mt-4 flex items-start gap-6">
@@ -290,8 +290,8 @@ export default async function AdminOverviewPage() {
               </svg>
             </CardIconBox>
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-gray-500">Hired Rate</p>
-              <p className="text-xs text-gray-400 dark:text-gray-600">offer status job card</p>
+              <p className="text-sm font-medium uppercase tracking-wider text-gray-600 dark:text-gray-200">Hired Rate</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">offer status job card</p>
             </div>
           </div>
           <div className="mt-4 flex items-center gap-4">
