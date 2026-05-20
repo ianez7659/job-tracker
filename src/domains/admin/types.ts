@@ -2,14 +2,39 @@
 
 export type UserStatus = "active" | "at_risk" | "hired";
 
+export interface SupportUserPreview {
+  id: string;
+  name: string | null;
+  email: string;
+  reason: "no_jobs" | "inactive";
+}
+
+export interface StuckUserPreview {
+  id: string;
+  name: string | null;
+  email: string;
+  applicationCount: number;
+}
+
+export interface HiredUserPreview {
+  id: string;
+  name: string | null;
+  email: string;
+  category: string | null;
+}
+
 export interface AdminOverview {
   currentlyActiveUsers: number;     // last 3 days DAILY_ACTIVITY
   totalStudents: number;            // hubStatus STUDENT or ALUMNI (non-STAFF, non-null category)
   hiredCount: number;               // users with at least one offer job
   hiredRate: number;                // hiredCount / totalStudents (0–1)
   stuckApplicationsCount: number;   // jobs stuck in applying/resume 14+ days
+  stuckUsersCount: number;          // users with 3+ applying/resume jobs, no interview/offer
   needsSupportCount: number;        // 14+ days no activity OR 0 jobs
   categoryDistribution: CategoryCount[];
+  topSupportUsers: SupportUserPreview[];
+  topStuckUsers: StuckUserPreview[];
+  topHiredUsers: HiredUserPreview[];
 }
 
 export interface CategoryCount {

@@ -1,6 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { getCategoryLabel } from "@/lib/constants/categories";
-import type { AdminOverview, CategoryCount } from "./types";
+import type {
+  AdminOverview,
+  CategoryCount,
+  SupportUserPreview,
+  StuckUserPreview,
+  HiredUserPreview,
+} from "./types";
 
 const OFFER_STATUS = "offer";
 const STUCK_STATUSES = ["applying", "resume"] as const;
@@ -30,6 +36,8 @@ export async function getAdminOverview(): Promise<AdminOverview> {
     },
     select: {
       id: true,
+      name: true,
+      email: true,
       category: true,
       jobs: {
         where: { deletedAt: null },
@@ -107,6 +115,49 @@ export async function getAdminOverview(): Promise<AdminOverview> {
     }))
     .sort((a, b) => b.count - a.count);
 
+  const STUCK_APPLY_STATUSES = ["applying", "resume"];
+  const ADVANCED_STATUSES = ["interview1", "interview2", "interview3", "offer"];
+  const PREVIEW_LIMIT = 3;
+
+  // Preview: top support users (no_jobs first, then inactive)
+  const topSupportUsers: SupportUserPreview[] = [];
+  for (const u of students) {
+    if (hiredUserIds.has(u.id)) continue;
+    const hasJobs = u.jobs.length > 0;
+    const lastEvent = u.xp?.events[0];
+    const isInactive = !lastEvent || lastEvent.createdAt < inactiveThreshold;
+    if (!hasJobs || isInactive) {
+      topSupportUsers.push({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        reason: !hasJobs ? "no_jobs" : "inactive",
+      });
+    }
+  }
+  topSupportUsers.sort((a, b) => (a.reason === "no_jobs" ? -1 : 1) - (b.reason === "no_jobs" ? -1 : 1));
+  const topSupportUsersPreview = topSupportUsers.slice(0, PREVIEW_LIMIT);
+
+  // Preview: stuck users (3+ applying/resume, no interview/offer)
+  const stuckUsers: StuckUserPreview[] = [];
+  for (const u of students) {
+    if (hiredUserIds.has(u.id)) continue;
+    const applyCount = u.jobs.filter((j) => STUCK_APPLY_STATUSES.includes(j.status)).length;
+    const hasAdvanced = u.jobs.some((j) => ADVANCED_STATUSES.includes(j.status));
+    if (applyCount >= 3 && !hasAdvanced) {
+      stuckUsers.push({ id: u.id, name: u.name, email: u.email, applicationCount: applyCount });
+    }
+  }
+  stuckUsers.sort((a, b) => b.applicationCount - a.applicationCount);
+  const stuckUsersCount = stuckUsers.length;
+  const topStuckUsers: StuckUserPreview[] = stuckUsers.slice(0, PREVIEW_LIMIT);
+
+  // Preview: top hired users
+  const topHiredUsers: HiredUserPreview[] = students
+    .filter((u) => hiredUserIds.has(u.id))
+    .slice(0, PREVIEW_LIMIT)
+    .map((u) => ({ id: u.id, name: u.name, email: u.email, category: u.category }));
+
   const totalStudents = students.length;
   const hiredCount = hiredUserIds.size;
 
@@ -116,7 +167,11 @@ export async function getAdminOverview(): Promise<AdminOverview> {
     hiredCount,
     hiredRate: totalStudents > 0 ? hiredCount / totalStudents : 0,
     stuckApplicationsCount: stuckCount,
+    stuckUsersCount,
     needsSupportCount,
     categoryDistribution,
+    topSupportUsers: topSupportUsersPreview,
+    topStuckUsers,
+    topHiredUsers,
   };
 }
