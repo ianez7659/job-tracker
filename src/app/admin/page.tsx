@@ -31,15 +31,18 @@ export default async function AdminOverviewPage() {
         {/* Card 2 — Active Job Seeker Ranking */}
         <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
           {/* Header */}
-          <div className="flex items-start gap-3">
+          <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-900/40">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-600 dark:text-indigo-400">
                 <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
               </svg>
             </div>
-            <p className="text-sm font-medium leading-snug text-gray-700 dark:text-gray-300">
-              Students ranked by their total XP (activity level).
-            </p>
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                Active Job Seeker Ranking
+              </p>
+              <p className="text-xs text-gray-400 dark:text-gray-600">XP leaders · hired excluded</p>
+            </div>
           </div>
 
           {/* List */}
