@@ -59,7 +59,7 @@ export default function UserRoleDropdown({
         defaultValue={current ?? ""}
         onChange={handleChange}
         disabled={loading}
-        className="rounded-md border border-gray-700 bg-gray-800 px-2 py-1 text-xs text-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-50"
+        className="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
       >
         {!current && (
           <option value="" disabled>

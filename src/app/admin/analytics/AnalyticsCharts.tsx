@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -36,11 +37,40 @@ const STATUS_LABELS: Record<string, string> = {
 
 const SEGMENT_COLORS = ["#6366f1", "#10b981", "#6b7280"];
 
+// Tooltip style presets
+const TOOLTIP_DARK = {
+  content: { background: "#111827", border: "1px solid #374151", borderRadius: 8 },
+  label: { color: "#f3f4f6" },
+  item: { color: "#d1d5db" },
+};
+const TOOLTIP_LIGHT = {
+  content: { background: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 8 },
+  label: { color: "#111827" },
+  item: { color: "#374151" },
+};
+
 interface Props {
   analytics: AdminAnalytics;
 }
 
 export default function AnalyticsCharts({ analytics }: Props) {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const check = () =>
+      setIsDark(document.documentElement.classList.contains("dark"));
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const tt = isDark ? TOOLTIP_DARK : TOOLTIP_LIGHT;
+  const tickColor = isDark ? "#9ca3af" : "#6b7280";
+
   const hiredPct = (analytics.hiredRate * 100).toFixed(1);
   const interviewPct = (analytics.interviewRate * 100).toFixed(1);
 
@@ -90,17 +120,17 @@ export default function AnalyticsCharts({ analytics }: Props) {
               layout="vertical"
               margin={{ left: 8, right: 24 }}
             >
-              <XAxis type="number" tick={{ fill: "#9ca3af", fontSize: 11 }} />
+              <XAxis type="number" tick={{ fill: tickColor, fontSize: 11 }} />
               <YAxis
                 type="category"
                 dataKey="label"
                 width={140}
-                tick={{ fill: "#9ca3af", fontSize: 11 }}
+                tick={{ fill: tickColor, fontSize: 11 }}
               />
               <Tooltip
-                contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: 8 }}
-                labelStyle={{ color: "#f3f4f6" }}
-                itemStyle={{ color: "#d1d5db" }}
+                contentStyle={tt.content}
+                labelStyle={tt.label}
+                itemStyle={tt.item}
               />
               <Bar dataKey="count" fill="#6366f1" radius={[0, 4, 4, 0]} />
             </BarChart>
@@ -111,12 +141,12 @@ export default function AnalyticsCharts({ analytics }: Props) {
         <ChartCard title="Applications by Status">
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={statusData} margin={{ left: 8, right: 24 }}>
-              <XAxis dataKey="name" tick={{ fill: "#9ca3af", fontSize: 10 }} />
-              <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} />
+              <XAxis dataKey="name" tick={{ fill: tickColor, fontSize: 10 }} />
+              <YAxis tick={{ fill: tickColor, fontSize: 11 }} />
               <Tooltip
-                contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: 8 }}
-                labelStyle={{ color: "#f3f4f6" }}
-                itemStyle={{ color: "#d1d5db" }}
+                contentStyle={tt.content}
+                labelStyle={tt.label}
+                itemStyle={tt.item}
               />
               <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                 {statusData.map((entry, i) => (
@@ -149,12 +179,12 @@ export default function AnalyticsCharts({ analytics }: Props) {
               </Pie>
               <Legend
                 formatter={(value) => (
-                  <span style={{ color: "#9ca3af", fontSize: 12 }}>{value}</span>
+                  <span style={{ color: tickColor, fontSize: 12 }}>{value}</span>
                 )}
               />
               <Tooltip
-                contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: 8 }}
-                itemStyle={{ color: "#d1d5db" }}
+                contentStyle={tt.content}
+                itemStyle={tt.item}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -169,9 +199,9 @@ export default function AnalyticsCharts({ analytics }: Props) {
 type Accent = "default" | "green" | "yellow";
 
 const ACCENT_CLASS: Record<Accent, string> = {
-  default: "text-gray-100",
-  green: "text-emerald-400",
-  yellow: "text-yellow-400",
+  default: "text-gray-900 dark:text-gray-100",
+  green: "text-emerald-600 dark:text-emerald-400",
+  yellow: "text-yellow-600 dark:text-yellow-400",
 };
 
 function KpiCard({
@@ -186,7 +216,7 @@ function KpiCard({
   accent?: Accent;
 }) {
   return (
-    <div className="rounded-xl border border-gray-800 bg-gray-900 p-5">
+    <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
       <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{label}</p>
       <p className={`mt-2 text-3xl font-bold ${ACCENT_CLASS[accent]}`}>{value}</p>
       {sub && <p className="mt-1 text-xs text-gray-500">{sub}</p>}
@@ -196,8 +226,8 @@ function KpiCard({
 
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-gray-800 bg-gray-900 p-5">
-      <p className="mb-4 text-sm font-medium text-gray-300">{title}</p>
+    <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+      <p className="mb-4 text-sm font-medium text-gray-700 dark:text-gray-300">{title}</p>
       {children}
     </div>
   );
