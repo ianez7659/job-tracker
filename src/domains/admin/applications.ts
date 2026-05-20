@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { StuckApplication } from "./types";
+import type { AdminApplication, StuckApplication } from "./types";
 
 const OFFER_STATUS = "offer";
 const STUCK_STATUSES = ["applying", "resume"] as const;
@@ -87,4 +87,47 @@ export async function getPipelineDistribution(): Promise<
       const bi = ORDER.indexOf(b.status);
       return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
     });
+}
+
+/**
+ * All non-deleted job cards for /admin/applications monitor.
+ * Excludes STAFF users. Sorted by appliedAt desc.
+ */
+export async function getAllApplicationsForAdmin(): Promise<AdminApplication[]> {
+  const jobs = await prisma.job.findMany({
+    where: {
+      deletedAt: null,
+      user: { OR: [{ hubStatus: null }, { hubStatus: { not: "STAFF" } }] },
+    },
+    select: {
+      id: true,
+      title: true,
+      company: true,
+      status: true,
+      appliedAt: true,
+      createdAt: true,
+      url: true,
+      jd: true,
+      tags: true,
+      userId: true,
+      user: { select: { name: true, email: true, category: true } },
+    },
+    orderBy: { appliedAt: "desc" },
+  });
+
+  return jobs.map((j) => ({
+    jobId: j.id,
+    title: j.title,
+    company: j.company,
+    status: j.status,
+    userId: j.userId,
+    userName: j.user.name,
+    userEmail: j.user.email,
+    userCategory: j.user.category,
+    appliedAt: j.appliedAt,
+    updatedAt: j.createdAt,
+    hasUrl: !!j.url,
+    hasJd: !!j.jd,
+    hasNotes: !!j.tags,
+  }));
 }

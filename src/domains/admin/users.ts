@@ -4,7 +4,7 @@ import {
   normalizePeriodKey,
 } from "@/lib/xp/dailyPeriod";
 import { computeLoginStreak } from "@/lib/xp/streakDisplayCore";
-import type { AdminUser, RankedUser, SupportUser } from "./types";
+import type { AdminUser, DetailedAdminUser, EmploymentStatus, RankedUser, SupportUser } from "./types";
 
 const OFFER_STATUS = "offer";
 const INACTIVE_THRESHOLD_DAYS = 14;
@@ -187,5 +187,94 @@ export async function getSupportUsers(): Promise<SupportUser[]> {
     // no_jobs first, then by days since active desc
     if (a.reason !== b.reason) return a.reason === "no_jobs" ? -1 : 1;
     return (b.daysSinceActive ?? 999) - (a.daysSinceActive ?? 999);
+  });
+}
+
+const INTERVIEW_STATUSES = ["interview1", "interview2", "interview3"] as const;
+const ACTIVE_WINDOW_DAYS = 3;
+
+/**
+ * Full user table for /admin/users — includes employment status (derived),
+ * per-status job counts, XP, level, and login streak.
+ * Sorted by createdAt desc.
+ */
+export async function getDetailedUsersForAdmin(): Promise<DetailedAdminUser[]> {
+  const now = new Date();
+  const since = daysAgo(STREAK_LOOKBACK_DAYS);
+  const activeWindowStart = daysAgo(ACTIVE_WINDOW_DAYS);
+
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      hubStatus: true,
+      category: true,
+      createdAt: true,
+      jobs: {
+        where: { deletedAt: null },
+        select: { status: true },
+      },
+      xp: {
+        select: {
+          totalXp: true,
+          currentLevel: true,
+          dailyTimeZone: true,
+          events: {
+            where: { reason: "DAILY_ACTIVITY", createdAt: { gte: since } },
+            select: { createdAt: true },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return users.map((u) => {
+    const jobs = u.jobs;
+    const isHired = jobs.some((j) => j.status === OFFER_STATUS);
+
+    const xp = u.xp;
+    const tz = xp?.dailyTimeZone ?? "UTC";
+    const events = xp?.events ?? [];
+    const claimedKeys = new Set<string>(
+      events.map((e) => normalizePeriodKey(getDailyPeriodKey(e.createdAt, tz)))
+    );
+    const loginStreak = computeLoginStreak(now, tz, claimedKeys);
+    const lastActiveAt = events.reduce<Date | null>(
+      (latest, e) => (!latest || e.createdAt > latest ? e.createdAt : latest),
+      null
+    );
+    const isActive = lastActiveAt !== null && lastActiveAt >= activeWindowStart;
+
+    const employmentStatus: EmploymentStatus = isHired
+      ? "hired"
+      : isActive
+      ? "active"
+      : "inactive";
+
+    return {
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      hubStatus: u.hubStatus as DetailedAdminUser["hubStatus"],
+      category: u.category,
+      createdAt: u.createdAt,
+      employmentStatus,
+      jobCounts: {
+        total: jobs.length,
+        applying: jobs.filter((j) => j.status === "applying").length,
+        waiting: jobs.filter((j) => j.status === "resume").length,
+        interview: jobs.filter((j) =>
+          (INTERVIEW_STATUSES as readonly string[]).includes(j.status)
+        ).length,
+        rejected: jobs.filter((j) => j.status === "rejected").length,
+        offered: jobs.filter((j) => j.status === OFFER_STATUS).length,
+      },
+      totalXp: xp?.totalXp ?? 0,
+      currentLevel: xp?.currentLevel ?? 1,
+      loginStreak,
+      lastActiveAt,
+    };
   });
 }

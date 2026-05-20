@@ -63,3 +63,72 @@ export interface AdminUser {
   createdAt: Date;
   jobCount: number;
 }
+
+// ── Detailed user for /admin/users expanded table ────────────────────────────
+
+export type EmploymentStatus = "hired" | "active" | "inactive";
+
+export interface DetailedAdminUser {
+  id: string;
+  name: string | null;
+  email: string;
+  hubStatus: HubStatus;
+  category: string | null;
+  createdAt: Date;
+  employmentStatus: EmploymentStatus;
+  // job counts by status
+  jobCounts: {
+    total: number;
+    applying: number;
+    waiting: number;       // resume status
+    interview: number;     // interview1/2/3 combined
+    rejected: number;
+    offered: number;
+  };
+  // XP / engagement
+  totalXp: number;
+  currentLevel: number;
+  loginStreak: number;
+  lastActiveAt: Date | null;
+}
+
+// ── Application for /admin/applications table ─────────────────────────────────
+
+export interface AdminApplication {
+  jobId: string;
+  title: string;
+  company: string;
+  status: string;
+  userId: string;
+  userName: string | null;
+  userEmail: string;
+  userCategory: string | null;
+  appliedAt: Date;
+  updatedAt: Date;
+  hasUrl: boolean;
+  hasJd: boolean;
+  hasNotes: boolean;
+}
+
+// ── Analytics for /admin/analytics ───────────────────────────────────────────
+
+export interface AdminAnalytics {
+  usersByTrack: { label: string; count: number }[];
+  applicationsByStatus: { status: string; count: number }[];
+  hiredRate: number;
+  hiredCount: number;
+  totalStudents: number;
+  userSegments: {
+    active: number;
+    hired: number;
+    inactive: number;
+  };
+  interviewRate: number; // users who reached interview / total non-hired
+}
+
+// ── Rankings for /admin/rankings ──────────────────────────────────────────────
+
+export interface AdminRankings {
+  topXp: RankedUser[];
+  topStreak: RankedUser[];
+}
