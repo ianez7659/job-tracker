@@ -4,6 +4,7 @@ import {
   normalizePeriodKey,
 } from "@/lib/xp/dailyPeriod";
 import { computeLoginStreak } from "@/lib/xp/streakDisplayCore";
+import { computeLevel } from "@/lib/xp/levels";
 import type { AdminRankings, RankedUser } from "./types";
 
 const OFFER_STATUS = "offer";
@@ -74,7 +75,7 @@ export async function getAdminRankings(): Promise<AdminRankings> {
       email: u.email,
       category: u.category,
       totalXp: xp?.totalXp ?? 0,
-      currentLevel: xp?.currentLevel ?? 1,
+      currentLevel: computeLevel(xp?.totalXp ?? 0).level,
       lastActiveAt,
       loginStreak,
     };

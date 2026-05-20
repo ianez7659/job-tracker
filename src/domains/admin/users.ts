@@ -4,6 +4,7 @@ import {
   normalizePeriodKey,
 } from "@/lib/xp/dailyPeriod";
 import { computeLoginStreak } from "@/lib/xp/streakDisplayCore";
+import { computeLevel } from "@/lib/xp/levels";
 import type { AdminUser, DetailedAdminUser, EmploymentStatus, RankedUser, SupportUser } from "./types";
 
 const OFFER_STATUS = "offer";
@@ -109,7 +110,7 @@ export async function getActiveJobSeekerRanking(limit = 20): Promise<RankedUser[
         email: u.email,
         category: u.category,
         totalXp: xp?.totalXp ?? 0,
-        currentLevel: xp?.currentLevel ?? 1,
+        currentLevel: computeLevel(xp?.totalXp ?? 0).level,
         lastActiveAt: lastEvent,
         loginStreak,
       };
@@ -272,7 +273,7 @@ export async function getDetailedUsersForAdmin(): Promise<DetailedAdminUser[]> {
         offered: jobs.filter((j) => j.status === OFFER_STATUS).length,
       },
       totalXp: xp?.totalXp ?? 0,
-      currentLevel: xp?.currentLevel ?? 1,
+      currentLevel: computeLevel(xp?.totalXp ?? 0).level,
       loginStreak,
       lastActiveAt,
     };
