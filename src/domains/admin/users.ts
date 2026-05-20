@@ -4,7 +4,7 @@ import {
   normalizePeriodKey,
 } from "@/lib/xp/dailyPeriod";
 import { computeLoginStreak } from "@/lib/xp/streakDisplayCore";
-import type { RankedUser, SupportUser } from "./types";
+import type { AdminUser, RankedUser, SupportUser } from "./types";
 
 const OFFER_STATUS = "offer";
 const INACTIVE_THRESHOLD_DAYS = 14;
@@ -14,6 +14,38 @@ function daysAgo(days: number): Date {
   const d = new Date();
   d.setDate(d.getDate() - days);
   return d;
+}
+
+/**
+ * Returns all users for the admin user management table.
+ * Sorted by createdAt desc (newest first).
+ */
+export async function getAllUsersForAdmin(): Promise<AdminUser[]> {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      hubStatus: true,
+      category: true,
+      createdAt: true,
+      jobs: {
+        where: { deletedAt: null },
+        select: { id: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return users.map((u) => ({
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    hubStatus: u.hubStatus as AdminUser["hubStatus"],
+    category: u.category,
+    createdAt: u.createdAt,
+    jobCount: u.jobs.length,
+  }));
 }
 
 /**

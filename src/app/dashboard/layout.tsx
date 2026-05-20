@@ -24,6 +24,10 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
+  if (session.user.hubStatus === "STAFF") {
+    redirect("/admin");
+  }
+
   return (
     <>
       <NavBar />

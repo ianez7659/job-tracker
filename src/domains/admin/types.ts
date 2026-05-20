@@ -51,3 +51,15 @@ export interface SupportUser {
   daysSinceActive: number | null;
   reason: "no_jobs" | "inactive";
 }
+
+export type HubStatus = "STUDENT" | "ALUMNI" | "STAFF" | null;
+
+export interface AdminUser {
+  id: string;
+  name: string | null;
+  email: string;
+  hubStatus: HubStatus;
+  category: string | null;
+  createdAt: Date;
+  jobCount: number;
+}
