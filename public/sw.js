@@ -1,4 +1,4 @@
-const CACHE_NAME = "jobflow-v18";
+const CACHE_NAME = "jobflow-v19";
 
 // Cache only static app shell assets — exclude Next.js internals and API routes
 const PRECACHE_URLS = ["/", "/manifest.json"];
@@ -29,9 +29,10 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Do not intercept: Next.js internals, API routes, non-GET requests
+  // Do not intercept: navigation (HTML pages), Next.js internals, API routes, non-GET requests
   if (
     request.method !== "GET" ||
+    request.mode === "navigate" ||
     url.pathname.startsWith("/_next/") ||
     url.pathname.startsWith("/api/")
   ) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Cropper from "react-easy-crop";
@@ -23,6 +24,7 @@ interface Props {
 
 export default function ProfileClient({ session, initialProfile }: Props) {
   const router = useRouter();
+  const { update: updateSession } = useSession();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [category, setCategory] = useState(initialProfile.category ?? "");
@@ -140,6 +142,7 @@ export default function ProfileClient({ session, initialProfile }: Props) {
         return;
       }
       setProfileMessage("Saved.");
+      await updateSession();
       router.refresh();
     } catch {
       setProfileMessage("Network error");
