@@ -5,7 +5,7 @@ import {
 } from "@/lib/xp/dailyPeriod";
 import { computeLoginStreak } from "@/lib/xp/streakDisplayCore";
 import { computeLevel } from "@/lib/xp/levels";
-import type { AdminUser, DetailedAdminUser, EmploymentStatus, RankedUser, SupportUser } from "./types";
+import type { AdminUser, AdminUserDetail, AdminUserDetailJob, DetailedAdminUser, EmploymentStatus, RankedUser, SupportUser } from "./types";
 
 const OFFER_STATUS = "offer";
 const INACTIVE_THRESHOLD_DAYS = 14;
@@ -278,4 +278,127 @@ export async function getDetailedUsersForAdmin(): Promise<DetailedAdminUser[]> {
       lastActiveAt,
     };
   });
+}
+
+const STUCK_STATUSES = ["applying", "resume"] as const;
+const STUCK_THRESHOLD_DAYS = 14;
+
+/**
+ * Full detail for a single user — used on /admin/users/[id].
+ * Returns null if user not found.
+ */
+export async function getAdminUserDetail(userId: string): Promise<AdminUserDetail | null> {
+  const now = new Date();
+  const since = daysAgo(STREAK_LOOKBACK_DAYS);
+  const inactiveThreshold = daysAgo(INACTIVE_THRESHOLD_DAYS);
+  const stuckThreshold = daysAgo(STUCK_THRESHOLD_DAYS);
+
+  const u = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      hubStatus: true,
+      category: true,
+      createdAt: true,
+      jobs: {
+        where: { deletedAt: null },
+        select: {
+          id: true,
+          title: true,
+          company: true,
+          status: true,
+          appliedAt: true,
+          createdAt: true,
+          url: true,
+          jd: true,
+          tags: true,
+        },
+        orderBy: { appliedAt: "desc" },
+      },
+      xp: {
+        select: {
+          totalXp: true,
+          currentLevel: true,
+          dailyTimeZone: true,
+          events: {
+            where: { reason: "DAILY_ACTIVITY", createdAt: { gte: since } },
+            select: { createdAt: true },
+          },
+        },
+      },
+    },
+  });
+
+  if (!u) return null;
+
+  const jobs = u.jobs;
+  const isHired = jobs.some((j) => j.status === OFFER_STATUS);
+
+  const xp = u.xp;
+  const tz = xp?.dailyTimeZone ?? "UTC";
+  const events = xp?.events ?? [];
+  const claimedKeys = new Set<string>(
+    events.map((e) => normalizePeriodKey(getDailyPeriodKey(e.createdAt, tz)))
+  );
+  const loginStreak = computeLoginStreak(now, tz, claimedKeys);
+  const lastActiveAt = events.reduce<Date | null>(
+    (latest, e) => (!latest || e.createdAt > latest ? e.createdAt : latest),
+    null
+  );
+  const isActive = lastActiveAt !== null && lastActiveAt >= daysAgo(ACTIVE_WINDOW_DAYS);
+
+  const employmentStatus: EmploymentStatus = isHired ? "hired" : isActive ? "active" : "inactive";
+
+  const hasInterview = jobs.some((j) =>
+    (INTERVIEW_STATUSES as readonly string[]).includes(j.status) || j.status === OFFER_STATUS
+  );
+
+  const detailJobs: AdminUserDetailJob[] = jobs.map((j) => ({
+    id: j.id,
+    title: j.title,
+    company: j.company,
+    status: j.status,
+    appliedAt: j.appliedAt,
+    updatedAt: j.createdAt,
+    hasUrl: !!j.url,
+    hasJd: !!j.jd,
+    hasNotes: !!j.tags,
+  }));
+
+  return {
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    hubStatus: u.hubStatus as AdminUserDetail["hubStatus"],
+    category: u.category,
+    createdAt: u.createdAt,
+    employmentStatus,
+    jobCounts: {
+      total: jobs.length,
+      applying: jobs.filter((j) => j.status === "applying").length,
+      waiting: jobs.filter((j) => j.status === "resume").length,
+      interview: jobs.filter((j) =>
+        (INTERVIEW_STATUSES as readonly string[]).includes(j.status)
+      ).length,
+      rejected: jobs.filter((j) => j.status === "rejected").length,
+      offered: jobs.filter((j) => j.status === OFFER_STATUS).length,
+    },
+    totalXp: xp?.totalXp ?? 0,
+    currentLevel: computeLevel(xp?.totalXp ?? 0).level,
+    loginStreak,
+    lastActiveAt,
+    jobs: detailJobs,
+    signals: {
+      noInterview: jobs.length >= 3 && !hasInterview,
+      longStuck: jobs.some(
+        (j) =>
+          (STUCK_STATUSES as readonly string[]).includes(j.status) &&
+          j.appliedAt < stuckThreshold
+      ),
+      lowActivity: !lastActiveAt || lastActiveAt < inactiveThreshold,
+      missingJobInfo: jobs.filter((j) => !j.url || !j.jd).length,
+    },
+  };
 }

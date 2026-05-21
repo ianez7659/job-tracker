@@ -43,6 +43,19 @@ export async function PATCH(
     );
   }
 
+  // Prevent removing the last STAFF account
+  if (hubStatus !== "STAFF") {
+    const staffCount = await prisma.user.count({
+      where: { hubStatus: "STAFF" },
+    });
+    if (staffCount <= 1) {
+      return NextResponse.json(
+        { error: "Cannot remove the last STAFF account" },
+        { status: 403 }
+      );
+    }
+  }
+
   const updated = await prisma.user.update({
     where: { id: targetId },
     data: { hubStatus: hubStatus as ValidStatus },

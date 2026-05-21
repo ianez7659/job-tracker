@@ -13,6 +13,7 @@ jest.mock("@/lib/prisma", () => ({
   prisma: {
     user: {
       update: jest.fn(),
+      count: jest.fn(),
     },
   },
 }));
@@ -77,6 +78,7 @@ describe("PATCH /api/admin/users/[id]/role", () => {
 
   it("updates hubStatus and returns updated user on success", async () => {
     (getServerSession as jest.Mock).mockResolvedValue(STAFF_SESSION);
+    (prisma.user.count as jest.Mock).mockResolvedValue(3);
     (prisma.user.update as jest.Mock).mockResolvedValue({
       id: TARGET_ID,
       email: "user@test.com",
@@ -94,5 +96,14 @@ describe("PATCH /api/admin/users/[id]/role", () => {
         data: { hubStatus: "ALUMNI" },
       })
     );
+  });
+
+  it("returns 403 when removing the last STAFF account", async () => {
+    (getServerSession as jest.Mock).mockResolvedValue(STAFF_SESSION);
+    (prisma.user.count as jest.Mock).mockResolvedValue(1);
+
+    const res = await PATCH(makeRequest({ hubStatus: "STUDENT" }), { params });
+    expect(res.status).toBe(403);
+    expect(prisma.user.update).not.toHaveBeenCalled();
   });
 });
