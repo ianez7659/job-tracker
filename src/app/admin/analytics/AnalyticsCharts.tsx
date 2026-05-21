@@ -114,17 +114,22 @@ export default function AnalyticsCharts({ analytics }: Props) {
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         {/* Users by Target Track */}
         <ChartCard title="Users by Target Track">
-          <ResponsiveContainer width="100%" height={220}>
+          <ResponsiveContainer width="100%" height={Math.max(220, analytics.usersByTrack.length * 40)}>
             <BarChart
               data={analytics.usersByTrack}
               layout="vertical"
               margin={{ left: 8, right: 24 }}
             >
-              <XAxis type="number" tick={{ fill: tickColor, fontSize: 11 }} />
+              <XAxis
+                type="number"
+                allowDecimals={false}
+                tick={{ fill: tickColor, fontSize: 11 }}
+              />
               <YAxis
                 type="category"
                 dataKey="label"
                 width={140}
+                interval={0}
                 tick={{ fill: tickColor, fontSize: 11 }}
               />
               <Tooltip
