@@ -125,6 +125,50 @@ export interface DetailedAdminUser {
   lastActiveAt: Date | null;
 }
 
+// ── User detail for /admin/users/[id] ────────────────────────────────────────
+
+export interface AdminUserDetailJob {
+  id: string;
+  title: string;
+  company: string;
+  status: string;
+  appliedAt: Date;
+  updatedAt: Date;
+  hasUrl: boolean;
+  hasJd: boolean;
+  hasNotes: boolean;
+}
+
+export interface AdminUserDetail {
+  id: string;
+  name: string | null;
+  email: string;
+  hubStatus: HubStatus;
+  category: string | null;
+  createdAt: Date;
+  employmentStatus: EmploymentStatus;
+  jobCounts: {
+    total: number;
+    applying: number;
+    waiting: number;
+    interview: number;
+    rejected: number;
+    offered: number;
+  };
+  totalXp: number;
+  currentLevel: number;
+  loginStreak: number;
+  lastActiveAt: Date | null;
+  jobs: AdminUserDetailJob[];
+  // support signals
+  signals: {
+    noInterview: boolean;        // 3+ jobs but no interview/offer
+    longStuck: boolean;          // any job stuck 14+ days in applying/resume
+    lowActivity: boolean;        // no DAILY_ACTIVITY in last 14 days
+    missingJobInfo: number;      // jobs missing url or jd
+  };
+}
+
 // ── Application for /admin/applications table ─────────────────────────────────
 
 export interface AdminApplication {
