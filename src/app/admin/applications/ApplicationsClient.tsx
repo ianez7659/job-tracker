@@ -241,9 +241,18 @@ export default function ApplicationsClient({ applications, total, perPage }: Pro
         <select value={trackFilter} onChange={(e) => pushParams({ track: e.target.value })} className={SELECT_CLS}>
           {TRACK_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
-        <span className="ml-auto shrink-0 text-xs text-gray-500 dark:text-gray-400">
+        <span className="shrink-0 text-xs text-gray-500 dark:text-gray-400">
           {total} application{total !== 1 ? "s" : ""}
         </span>
+        <a
+          href={`/api/admin/export/applications?${searchParams.toString()}`}
+          className="ml-auto shrink-0 inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-xs text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          CSV
+        </a>
       </div>
 
       {/* Table */}
