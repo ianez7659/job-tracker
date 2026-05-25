@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { getCategoryLabel, USER_CATEGORIES } from "@/lib/constants/categories";
 import type { AdminApplication } from "@/domains/admin/types";
@@ -24,10 +24,6 @@ const STATUS_LABELS: Record<string, string> = {
   interview3: "Interview 3",
   offer: "Offered",
   rejected: "Rejected",
-};
-
-const STATUS_ORDER: Record<string, number> = {
-  applying: 0, resume: 1, interview1: 2, interview2: 3, interview3: 4, offer: 5, rejected: 6,
 };
 
 function StatusBadge({ status }: { status: string }) {
@@ -114,10 +110,11 @@ const TRACK_OPTIONS = [
 
 interface Props {
   applications: AdminApplication[];
+  total: number;
+  perPage: number;
 }
 
 const SELECT_CLS = "rounded-md border border-gray-300 bg-white px-2 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300";
-const PER_PAGE = 20;
 
 function Pagination({
   page,
@@ -162,7 +159,7 @@ function Pagination({
   );
 }
 
-export default function ApplicationsClient({ applications }: Props) {
+export default function ApplicationsClient({ applications, total, perPage }: Props) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -173,6 +170,29 @@ export default function ApplicationsClient({ applications }: Props) {
   const sortKey = (searchParams.get("sort") as SortKey | null) ?? null;
   const sortDir = (searchParams.get("dir") as SortDir) || "desc";
   const page = Math.max(1, Number(searchParams.get("page") ?? "1"));
+
+  // Local state for search input — debounced before pushing to URL
+  const [inputValue, setInputValue] = useState(query);
+
+  // Sync local input when URL changes externally (back/forward, clear filters)
+  useEffect(() => {
+    setInputValue(searchParams.get("q") ?? "");
+  }, [searchParams]);
+
+  // Push search query to URL 300ms after typing stops
+  useEffect(() => {
+    const current = searchParams.get("q") ?? "";
+    if (inputValue === current) return;
+    const t = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (inputValue) params.set("q", inputValue);
+      else params.delete("q");
+      params.delete("page");
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [inputValue, pathname, router, searchParams]);
 
   function pushParams(updates: Record<string, string | null>, resetPage = true) {
     const params = new URLSearchParams(searchParams.toString());
@@ -197,51 +217,7 @@ export default function ApplicationsClient({ applications }: Props) {
     pushParams({ page: p === 1 ? null : String(p) }, false);
   }
 
-  const filtered = useMemo(() => {
-    const q = query.toLowerCase();
-    return applications.filter((a) => {
-      if (q) {
-        const company = a.company.toLowerCase();
-        const title = a.title.toLowerCase();
-        const user = (a.userName ?? "").toLowerCase();
-        const email = a.userEmail.toLowerCase();
-        if (!company.includes(q) && !title.includes(q) && !user.includes(q) && !email.includes(q)) return false;
-      }
-      if (statusFilter && a.status !== statusFilter) return false;
-      if (trackFilter) {
-        if (trackFilter === "__not_set__") {
-          if (a.userCategory) return false;
-        } else {
-          if (a.userCategory !== trackFilter) return false;
-        }
-      }
-      return true;
-    });
-  }, [applications, query, statusFilter, trackFilter]);
-
-  const sorted = useMemo(() => {
-    if (!sortKey) return filtered;
-    return [...filtered].sort((a, b) => {
-      if (sortKey === "applied") {
-        const diff = a.appliedAt.getTime() - b.appliedAt.getTime();
-        return sortDir === "desc" ? -diff : diff;
-      }
-      if (sortKey === "updated") {
-        const diff = a.updatedAt.getTime() - b.updatedAt.getTime();
-        return sortDir === "desc" ? -diff : diff;
-      }
-      if (sortKey === "status") {
-        const diff = (STATUS_ORDER[a.status] ?? 99) - (STATUS_ORDER[b.status] ?? 99);
-        return sortDir === "desc" ? -diff : diff;
-      }
-      return 0;
-    });
-  }, [filtered, sortKey, sortDir]);
-
-  const paginated = useMemo(
-    () => sorted.slice((page - 1) * PER_PAGE, page * PER_PAGE),
-    [sorted, page],
-  );
+  const hasFilters = !!(query || statusFilter || trackFilter);
 
   return (
     <div className="space-y-4">
@@ -254,8 +230,8 @@ export default function ApplicationsClient({ applications }: Props) {
           <input
             type="text"
             placeholder="Search by company, title, or user..."
-            value={query}
-            onChange={(e) => pushParams({ q: e.target.value })}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
             className="w-full rounded-md border border-gray-300 bg-white py-1.5 pl-8 pr-3 text-xs text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:placeholder-gray-500"
           />
         </div>
@@ -266,18 +242,18 @@ export default function ApplicationsClient({ applications }: Props) {
           {TRACK_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
         <span className="ml-auto shrink-0 text-xs text-gray-500 dark:text-gray-400">
-          {filtered.length} of {applications.length} applications
+          {total} application{total !== 1 ? "s" : ""}
         </span>
       </div>
 
       {/* Table */}
-      {sorted.length === 0 ? (
+      {applications.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white px-5 py-10 text-center dark:border-gray-800 dark:bg-gray-900">
           <svg className="mx-auto mb-3 text-gray-300 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
           </svg>
           <p className="text-sm text-gray-400 dark:text-gray-500">No applications match the current filters.</p>
-          {(query || statusFilter || trackFilter) && (
+          {hasFilters && (
             <button
               onClick={() => router.replace(pathname)}
               className="mt-2 text-xs text-indigo-500 hover:text-indigo-400"
@@ -304,7 +280,7 @@ export default function ApplicationsClient({ applications }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white dark:divide-gray-800 dark:bg-gray-950">
-              {paginated.map((app) => (
+              {applications.map((app) => (
                 <tr key={app.jobId} className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-900/60">
                   <td className="px-4 py-3">
                     <Link href={`/admin/users/${app.userId}`} className="whitespace-nowrap font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
@@ -342,7 +318,7 @@ export default function ApplicationsClient({ applications }: Props) {
             </tbody>
           </table>
         </div>
-        <Pagination page={page} total={sorted.length} perPage={PER_PAGE} onPage={setPage} />
+        <Pagination page={page} total={total} perPage={perPage} onPage={setPage} />
         </div>
       )}
     </div>

@@ -86,6 +86,116 @@ export async function getPipelineDistribution(): Promise<
     });
 }
 
+// ── getApplicationsPageForAdmin ───────────────────────────────────────────────
+
+export interface ApplicationsPageParams {
+  q?: string;
+  status?: string;
+  track?: string;
+  sort?: "applied" | "updated" | "status";
+  dir?: "asc" | "desc";
+  page?: number;
+  perPage?: number;
+}
+
+export interface ApplicationsPage {
+  applications: AdminApplication[];
+  total: number;
+}
+
+/**
+ * Paginated, filtered, sorted applications for /admin/applications.
+ * All filtering/sorting happens at DB level. Returns only the current page slice.
+ */
+export async function getApplicationsPageForAdmin(
+  params: ApplicationsPageParams = {}
+): Promise<ApplicationsPage> {
+  const {
+    q,
+    status,
+    track,
+    sort = "applied",
+    dir = "desc",
+    page = 1,
+    perPage = 20,
+  } = params;
+
+  const categoryFilter =
+    track === "__not_set__"
+      ? { category: null as null }
+      : track
+      ? { category: track }
+      : {};
+
+  const jobWhere = {
+    deletedAt: null,
+    user: {
+      OR: [{ hubStatus: null }, { hubStatus: { not: "STAFF" as const } }],
+      ...categoryFilter,
+    },
+    ...(status ? { status } : {}),
+    ...(q
+      ? {
+          OR: [
+            { company: { contains: q, mode: "insensitive" as const } },
+            { title: { contains: q, mode: "insensitive" as const } },
+            { user: { name: { contains: q, mode: "insensitive" as const } } },
+            { user: { email: { contains: q, mode: "insensitive" as const } } },
+          ],
+        }
+      : {}),
+  };
+
+  const orderBy =
+    sort === "updated"
+      ? { createdAt: dir }
+      : sort === "status"
+      ? { status: dir }
+      : { appliedAt: dir };
+
+  const [jobs, total] = await Promise.all([
+    prisma.job.findMany({
+      where: jobWhere,
+      select: {
+        id: true,
+        title: true,
+        company: true,
+        status: true,
+        appliedAt: true,
+        createdAt: true,
+        url: true,
+        jd: true,
+        tags: true,
+        userId: true,
+        user: { select: { name: true, email: true, category: true } },
+      },
+      orderBy,
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+    prisma.job.count({ where: jobWhere }),
+  ]);
+
+  return {
+    applications: jobs.map((j) => ({
+      jobId: j.id,
+      title: j.title,
+      company: j.company,
+      status: j.status,
+      userId: j.userId,
+      userName: j.user.name,
+      userEmail: j.user.email,
+      userCategory: j.user.category,
+      appliedAt: j.appliedAt,
+      updatedAt: j.createdAt,
+      hasUrl: !!j.url,
+      hasJd: !!j.jd,
+      hasNotes: !!j.tags,
+    })),
+    total,
+  };
+}
+
 /**
  * All non-deleted job cards for /admin/applications monitor.
  * Excludes STAFF users. Sorted by appliedAt desc.
