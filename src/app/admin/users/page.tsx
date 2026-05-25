@@ -12,6 +12,7 @@ export default async function AdminUsersPage() {
   ]);
 
   const currentUserId = session?.user.id ?? null;
+  const isSuperAdmin = session?.isSuperAdmin ?? false;
 
   return (
     <div className="space-y-6">
@@ -19,7 +20,7 @@ export default async function AdminUsersPage() {
         title="Users"
         subtitle={`${users.length} registered user${users.length !== 1 ? "s" : ""}`}
       />
-      <UsersClient users={users} currentUserId={currentUserId} />
+      <UsersClient users={users} currentUserId={currentUserId} isSuperAdmin={isSuperAdmin} />
     </div>
   );
 }
