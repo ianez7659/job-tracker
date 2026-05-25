@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import {
   getDailyPeriodKey,
@@ -5,11 +6,24 @@ import {
 } from "@/lib/xp/dailyPeriod";
 import { computeLoginStreak } from "@/lib/xp/streakDisplayCore";
 import { computeLevel } from "@/lib/xp/levels";
-import type { AdminUser, AdminUserDetail, AdminUserDetailJob, DetailedAdminUser, EmploymentStatus, RankedUser, SupportUser } from "./types";
-
-const OFFER_STATUS = "offer";
-const INACTIVE_THRESHOLD_DAYS = 14;
-const STREAK_LOOKBACK_DAYS = 140;
+import {
+  ACTIVE_WINDOW_DAYS,
+  INACTIVE_THRESHOLD_DAYS,
+  STREAK_LOOKBACK_DAYS,
+  OFFER_STATUS,
+  INTERVIEW_STATUSES,
+  STUCK_STATUSES,
+  STUCK_THRESHOLD_DAYS,
+} from "./config";
+import type {
+  AdminUser,
+  AdminUserDetail,
+  AdminUserDetailJob,
+  DetailedAdminUser,
+  EmploymentStatus,
+  RankedUser,
+  SupportUser,
+} from "./types";
 
 function daysAgo(days: number): Date {
   const d = new Date();
@@ -58,7 +72,6 @@ export async function getActiveJobSeekerRanking(limit = 20): Promise<RankedUser[
   const now = new Date();
   const since = daysAgo(STREAK_LOOKBACK_DAYS);
 
-  // Fetch non-STAFF users with XP and jobs
   const users = await prisma.user.findMany({
     where: { OR: [{ hubStatus: null }, { hubStatus: { not: "STAFF" } }] },
     select: {
@@ -85,7 +98,6 @@ export async function getActiveJobSeekerRanking(limit = 20): Promise<RankedUser[
     },
   });
 
-  // Exclude hired users
   const nonHired = users.filter(
     (u) => !u.jobs.some((j) => j.status === OFFER_STATUS)
   );
@@ -185,21 +197,14 @@ export async function getSupportUsers(): Promise<SupportUser[]> {
   }
 
   return result.sort((a, b) => {
-    // no_jobs first, then by days since active desc
     if (a.reason !== b.reason) return a.reason === "no_jobs" ? -1 : 1;
     return (b.daysSinceActive ?? 999) - (a.daysSinceActive ?? 999);
   });
 }
 
-const INTERVIEW_STATUSES = ["interview1", "interview2", "interview3"] as const;
-const ACTIVE_WINDOW_DAYS = 3;
+// ── getDetailedUsersForAdmin (cached) ─────────────────────────────────────────
 
-/**
- * Full user table for /admin/users — includes employment status (derived),
- * per-status job counts, XP, level, and login streak.
- * Sorted by createdAt desc.
- */
-export async function getDetailedUsersForAdmin(): Promise<DetailedAdminUser[]> {
+async function getDetailedUsersRaw(): Promise<DetailedAdminUser[]> {
   const now = new Date();
   const since = daysAgo(STREAK_LOOKBACK_DAYS);
   const activeWindowStart = daysAgo(ACTIVE_WINDOW_DAYS);
@@ -280,14 +285,33 @@ export async function getDetailedUsersForAdmin(): Promise<DetailedAdminUser[]> {
   });
 }
 
-const STUCK_STATUSES = ["applying", "resume"] as const;
-const STUCK_THRESHOLD_DAYS = 14;
+/**
+ * unstable_cache wraps return values with JSON serialization, converting Date
+ * objects to ISO strings. Re-hydrate Date fields after retrieval so callers
+ * always receive proper Date instances regardless of cache state.
+ */
+const _cachedDetailedUsers = unstable_cache(
+  getDetailedUsersRaw,
+  ["admin-users-detailed"],
+  { revalidate: 60, tags: ["admin-users-detailed"] }
+);
 
 /**
- * Full detail for a single user — used on /admin/users/[id].
- * Returns null if user not found.
+ * Full user table for /admin/users — cached for 60 seconds.
+ * On cache hit: zero DB queries.
  */
-export async function getAdminUserDetail(userId: string): Promise<AdminUserDetail | null> {
+export async function getDetailedUsersForAdmin(): Promise<DetailedAdminUser[]> {
+  const data = await _cachedDetailedUsers();
+  return data.map((u) => ({
+    ...u,
+    createdAt: new Date(u.createdAt),
+    lastActiveAt: u.lastActiveAt ? new Date(u.lastActiveAt) : null,
+  }));
+}
+
+// ── getAdminUserDetail (cached) ───────────────────────────────────────────────
+
+async function getAdminUserDetailRaw(userId: string): Promise<AdminUserDetail | null> {
   const now = new Date();
   const since = daysAgo(STREAK_LOOKBACK_DAYS);
   const inactiveThreshold = daysAgo(INACTIVE_THRESHOLD_DAYS);
@@ -400,5 +424,34 @@ export async function getAdminUserDetail(userId: string): Promise<AdminUserDetai
       lowActivity: !lastActiveAt || lastActiveAt < inactiveThreshold,
       missingJobInfo: jobs.filter((j) => !j.url || !j.jd).length,
     },
+  };
+}
+
+/**
+ * unstable_cache serializes Date fields to ISO strings. Re-hydrate all Date
+ * fields so callers always receive proper Date instances.
+ */
+const _cachedUserDetail = unstable_cache(
+  getAdminUserDetailRaw,
+  ["admin-user-detail"],
+  { revalidate: 30, tags: ["admin-user-detail"] }
+);
+
+/**
+ * Full detail for a single user — used on /admin/users/[id].
+ * Cached for 30 seconds per userId. Returns null if user not found.
+ */
+export async function getAdminUserDetail(userId: string): Promise<AdminUserDetail | null> {
+  const data = await _cachedUserDetail(userId);
+  if (!data) return null;
+  return {
+    ...data,
+    createdAt: new Date(data.createdAt),
+    lastActiveAt: data.lastActiveAt ? new Date(data.lastActiveAt) : null,
+    jobs: data.jobs.map((j) => ({
+      ...j,
+      appliedAt: new Date(j.appliedAt),
+      updatedAt: new Date(j.updatedAt),
+    })),
   };
 }

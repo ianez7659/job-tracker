@@ -1,7 +1,5 @@
 // Admin domain types — no DB schema dependency, derived from query results
 
-export type UserStatus = "active" | "at_risk" | "hired";
-
 export interface ActiveUserPreview {
   id: string;
   name: string | null;
