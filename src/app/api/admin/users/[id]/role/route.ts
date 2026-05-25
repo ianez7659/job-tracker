@@ -15,6 +15,11 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Only super admins may change roles
+  if (!session.isSuperAdmin) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const { id: targetId } = await params;
 
   // Prevent self-demotion to avoid admin lock-out
@@ -66,6 +71,19 @@ export async function PATCH(
   // Invalidate admin user caches so the next page load reflects the change
   revalidateTag("admin-users-detailed");
   revalidateTag("admin-user-detail");
+
+  // Audit log — searchable in server logs (Vercel, CloudWatch, etc.)
+  console.log(
+    JSON.stringify({
+      event: "admin.role_change",
+      actorId: session.user.id,
+      actorEmail: session.user.email,
+      targetId,
+      targetEmail: updated.email,
+      to: updated.hubStatus,
+      at: new Date().toISOString(),
+    })
+  );
 
   return NextResponse.json(updated);
 }

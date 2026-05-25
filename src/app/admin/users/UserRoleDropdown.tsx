@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { HubStatus } from "@/domains/admin/types";
 
 const OPTIONS: { value: NonNullable<HubStatus>; label: string }[] = [
@@ -25,6 +25,13 @@ export default function UserRoleDropdown({
   const [selected, setSelected] = useState<string>(current ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Auto-dismiss error after 3 seconds
+  useEffect(() => {
+    if (!error) return;
+    const t = setTimeout(() => setError(null), 3000);
+    return () => clearTimeout(t);
+  }, [error]);
 
   async function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const hubStatus = e.target.value as NonNullable<HubStatus>;

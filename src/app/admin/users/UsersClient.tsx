@@ -131,6 +131,7 @@ const HUB_OPTIONS: { value: string; label: string }[] = [
 interface Props {
   users: DetailedAdminUser[];
   currentUserId: string | null;
+  isSuperAdmin: boolean;
 }
 
 const SELECT_CLS = "rounded-md border border-gray-300 bg-white px-2 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300";
@@ -179,7 +180,7 @@ function Pagination({
   );
 }
 
-export default function UsersClient({ users, currentUserId }: Props) {
+export default function UsersClient({ users, currentUserId, isSuperAdmin }: Props) {
   const [query, setQuery] = useState("");
   const [trackFilter, setTrackFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -310,7 +311,7 @@ export default function UsersClient({ users, currentUserId }: Props) {
                 <SortableTh label="Streak" sortKey="streak" current={sortKey} dir={sortDir} onSort={handleSort} className="text-center" />
                 <SortableTh label="Last Active" sortKey="lastActive" current={sortKey} dir={sortDir} onSort={handleSort} className="" />
                 <th className="px-4 py-3">Hub Role</th>
-                <th className="px-4 py-3">Change Role</th>
+                {isSuperAdmin && <th className="px-4 py-3">Change Role</th>}
                 <th className="px-4 py-3">Detail</th>
               </tr>
             </thead>
@@ -352,13 +353,15 @@ export default function UsersClient({ users, currentUserId }: Props) {
                   <td className="px-4 py-3">
                     <HubBadge status={user.hubStatus} />
                   </td>
-                  <td className="px-4 py-3">
-                    <UserRoleDropdown
-                      userId={user.id}
-                      current={user.hubStatus}
-                      isSelf={user.id === currentUserId}
-                    />
-                  </td>
+                  {isSuperAdmin && (
+                    <td className="px-4 py-3">
+                      <UserRoleDropdown
+                        userId={user.id}
+                        current={user.hubStatus}
+                        isSelf={user.id === currentUserId}
+                      />
+                    </td>
+                  )}
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/users/${user.id}`}

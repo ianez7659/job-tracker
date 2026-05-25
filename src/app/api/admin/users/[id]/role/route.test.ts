@@ -45,6 +45,12 @@ const params = Promise.resolve({ id: TARGET_ID });
 describe("PATCH /api/admin/users/[id]/role", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Make the default STAFF_SESSION email a super admin
+    process.env.SUPER_ADMIN_EMAILS = "admin@test.com";
+  });
+
+  afterEach(() => {
+    delete process.env.SUPER_ADMIN_EMAILS;
   });
 
   it("returns 401 when not authenticated", async () => {
@@ -61,9 +67,18 @@ describe("PATCH /api/admin/users/[id]/role", () => {
     expect(res.status).toBe(401);
   });
 
-  it("returns 403 when trying to change own role", async () => {
+  it("returns 403 when STAFF is not a super admin", async () => {
     (getServerSession as jest.Mock).mockResolvedValue({
-      user: { id: TARGET_ID, hubStatus: "STAFF" },
+      user: { id: "admin-2", email: "other-staff@test.com", hubStatus: "STAFF" },
+    });
+    const res = await PATCH(makeRequest({ hubStatus: "ALUMNI" }), { params });
+    expect(res.status).toBe(403);
+    expect(prisma.user.update).not.toHaveBeenCalled();
+  });
+
+  it("returns 403 when super admin tries to change own role", async () => {
+    (getServerSession as jest.Mock).mockResolvedValue({
+      user: { id: TARGET_ID, email: "admin@test.com", hubStatus: "STAFF" },
     });
     const res = await PATCH(makeRequest({ hubStatus: "STUDENT" }), { params });
     expect(res.status).toBe(403);
