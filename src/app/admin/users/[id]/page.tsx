@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminUserDetail } from "@/domains/admin/users";
 import { getAdminSession } from "@/domains/admin/require-admin";
-import { getCategoryLabel } from "@/lib/constants/categories";
 import UserRoleDropdown from "../UserRoleDropdown";
+import CategoryEditCell from "./CategoryEditCell";
 import type { EmploymentStatus } from "@/domains/admin/types";
 
 export const dynamic = "force-dynamic";
@@ -119,8 +119,8 @@ export default async function AdminUserDetailPage({
         <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4 text-sm">
           <div>
             <dt className="text-xs text-gray-500 dark:text-gray-400">Track</dt>
-            <dd className="mt-0.5 font-medium text-gray-900 dark:text-gray-100">
-              {user.category ? getCategoryLabel(user.category) : <span className="text-gray-400">Not set</span>}
+            <dd className="mt-0.5">
+              <CategoryEditCell userId={user.id} current={user.category} />
             </dd>
           </div>
           <div>
