@@ -25,6 +25,10 @@ const STATUS_LABELS: Record<string, string> = {
   rejected: "Rejected",
 };
 
+const STATUS_ORDER: Record<string, number> = {
+  applying: 0, resume: 1, interview1: 2, interview2: 3, interview3: 4, offer: 5, rejected: 6,
+};
+
 function StatusBadge({ status }: { status: string }) {
   const cls = STATUS_STYLES[status] ?? "bg-gray-100 text-gray-500 ring-gray-500/20 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700";
   return (
@@ -33,6 +37,62 @@ function StatusBadge({ status }: { status: string }) {
     </span>
   );
 }
+
+// ── Sort ──────────────────────────────────────────────────────────────────────
+
+type SortKey = "applied" | "updated" | "status";
+type SortDir = "asc" | "desc";
+
+function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`ml-1 inline-block transition-opacity ${active ? "opacity-100" : "opacity-30"}`}
+    >
+      {active && dir === "asc" ? (
+        <path d="M12 19V5M5 12l7-7 7 7" />
+      ) : (
+        <path d="M12 5v14M5 12l7 7 7-7" />
+      )}
+    </svg>
+  );
+}
+
+function SortableTh({
+  label,
+  sortKey,
+  current,
+  dir,
+  onSort,
+  className,
+}: {
+  label: string;
+  sortKey: SortKey;
+  current: SortKey | null;
+  dir: SortDir;
+  onSort: (k: SortKey) => void;
+  className?: string;
+}) {
+  return (
+    <th
+      className={`cursor-pointer select-none px-4 py-3 hover:text-gray-700 dark:hover:text-gray-300 ${className ?? ""}`}
+      onClick={() => onSort(sortKey)}
+    >
+      {label}
+      <SortIcon active={current === sortKey} dir={dir} />
+    </th>
+  );
+}
+
+// ── Filter options ────────────────────────────────────────────────────────────
 
 const STATUS_OPTIONS = [
   { value: "", label: "All Statuses" },
@@ -61,6 +121,17 @@ export default function ApplicationsClient({ applications }: Props) {
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [trackFilter, setTrackFilter] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+
+  function handleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+    } else {
+      setSortKey(key);
+      setSortDir("desc");
+    }
+  }
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase();
@@ -83,6 +154,25 @@ export default function ApplicationsClient({ applications }: Props) {
       return true;
     });
   }, [applications, query, statusFilter, trackFilter]);
+
+  const sorted = useMemo(() => {
+    if (!sortKey) return filtered;
+    return [...filtered].sort((a, b) => {
+      if (sortKey === "applied") {
+        const diff = a.appliedAt.getTime() - b.appliedAt.getTime();
+        return sortDir === "desc" ? -diff : diff;
+      }
+      if (sortKey === "updated") {
+        const diff = a.updatedAt.getTime() - b.updatedAt.getTime();
+        return sortDir === "desc" ? -diff : diff;
+      }
+      if (sortKey === "status") {
+        const diff = (STATUS_ORDER[a.status] ?? 99) - (STATUS_ORDER[b.status] ?? 99);
+        return sortDir === "desc" ? -diff : diff;
+      }
+      return 0;
+    });
+  }, [filtered, sortKey, sortDir]);
 
   return (
     <div className="space-y-4">
@@ -112,9 +202,20 @@ export default function ApplicationsClient({ applications }: Props) {
       </div>
 
       {/* Table */}
-      {filtered.length === 0 ? (
+      {sorted.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white px-5 py-10 text-center dark:border-gray-800 dark:bg-gray-900">
+          <svg className="mx-auto mb-3 text-gray-300 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+          </svg>
           <p className="text-sm text-gray-400 dark:text-gray-500">No applications match the current filters.</p>
+          {(query || statusFilter || trackFilter) && (
+            <button
+              onClick={() => { setQuery(""); setStatusFilter(""); setTrackFilter(""); }}
+              className="mt-2 text-xs text-indigo-500 hover:text-indigo-400"
+            >
+              Clear filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800">
@@ -124,16 +225,16 @@ export default function ApplicationsClient({ applications }: Props) {
                 <th className="px-4 py-3">User</th>
                 <th className="px-4 py-3">Company / Title</th>
                 <th className="px-4 py-3">Track</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Applied</th>
-                <th className="px-4 py-3">Updated</th>
+                <SortableTh label="Status" sortKey="status" current={sortKey} dir={sortDir} onSort={handleSort} />
+                <SortableTh label="Applied" sortKey="applied" current={sortKey} dir={sortDir} onSort={handleSort} />
+                <SortableTh label="Updated" sortKey="updated" current={sortKey} dir={sortDir} onSort={handleSort} />
                 <th className="px-4 py-3 text-center">URL</th>
                 <th className="px-4 py-3 text-center">JD</th>
                 <th className="px-4 py-3 text-center">Notes</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white dark:divide-gray-800 dark:bg-gray-950">
-              {filtered.map((app) => (
+              {sorted.map((app) => (
                 <tr key={app.jobId} className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-900/60">
                   <td className="px-4 py-3">
                     <Link href={`/admin/users/${app.userId}`} className="whitespace-nowrap font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">

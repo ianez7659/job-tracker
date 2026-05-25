@@ -126,9 +126,9 @@ export default async function AdminOverviewPage() {
               {overview.topActiveUsers.map((u) => (
                 <li key={u.id} className="flex items-center gap-2 py-2">
                   <UserAvatar name={u.name} email={u.email} />
-                  <span className="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-300">
+                  <Link href={`/admin/users/${u.id}`} className="min-w-0 flex-1 truncate text-sm text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">
                     {u.name ?? u.email}
-                  </span>
+                  </Link>
                   <span className="shrink-0 rounded-md bg-emerald-50 px-1.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
                     Active
                   </span>
@@ -219,9 +219,9 @@ export default async function AdminOverviewPage() {
               {overview.topSupportUsers.map((u) => (
                 <li key={u.id} className="flex items-center gap-2 py-2">
                   <UserAvatar name={u.name} email={u.email} />
-                  <span className="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-300">
+                  <Link href={`/admin/users/${u.id}`} className="min-w-0 flex-1 truncate text-sm text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">
                     {u.name ?? u.email}
-                  </span>
+                  </Link>
                   <span className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
                     {u.reason === "no_jobs" ? "No jobs yet" : "14+ days ago"}
                   </span>
@@ -265,9 +265,9 @@ export default async function AdminOverviewPage() {
               {overview.topStuckUsers.map((u) => (
                 <li key={u.id} className="flex items-center gap-2 py-2">
                   <UserAvatar name={u.name} email={u.email} />
-                  <span className="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-300">
+                  <Link href={`/admin/users/${u.id}`} className="min-w-0 flex-1 truncate text-sm text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">
                     {u.name ?? u.email}
-                  </span>
+                  </Link>
                   <span className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
                     {u.applicationCount} stuck
                   </span>
@@ -310,12 +310,12 @@ export default async function AdminOverviewPage() {
                 {overview.topHiredUsers.map((u) => (
                   <li key={u.id} className="flex items-center gap-2 py-2">
                     <UserAvatar name={u.name} email={u.email} />
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-gray-800 dark:text-gray-200">
+                    <Link href={`/admin/users/${u.id}`} className="min-w-0">
+                      <p className="truncate text-sm font-medium text-gray-800 hover:text-indigo-600 dark:text-gray-200 dark:hover:text-indigo-400">
                         {u.name ?? u.email}
                       </p>
                       <p className="truncate text-xs text-gray-500">{getCategoryLabel(u.category)}</p>
-                    </div>
+                    </Link>
                   </li>
                 ))}
               </ul>

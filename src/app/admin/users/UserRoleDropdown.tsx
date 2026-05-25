@@ -59,23 +59,36 @@ export default function UserRoleDropdown({
 
   return (
     <div className="flex flex-col gap-1">
-      <select
-        value={selected}
-        onChange={handleChange}
-        disabled={loading}
-        className="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-      >
-        {!current && (
-          <option value="" disabled>
-            — not set —
-          </option>
+      <div className="relative flex items-center gap-1.5">
+        <select
+          value={selected}
+          onChange={handleChange}
+          disabled={loading}
+          className="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+        >
+          {!current && (
+            <option value="" disabled>
+              — not set —
+            </option>
+          )}
+          {OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+        {loading && (
+          <svg
+            className="h-3.5 w-3.5 animate-spin text-indigo-500"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
         )}
-        {OPTIONS.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+      </div>
       {error && <p className="text-xs text-red-400">{error}</p>}
     </div>
   );
