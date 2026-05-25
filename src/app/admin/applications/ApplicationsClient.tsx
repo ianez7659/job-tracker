@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo, useEffect } from "react";
+import { useMemo } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { getCategoryLabel, USER_CATEGORIES } from "@/lib/constants/categories";
 import type { AdminApplication } from "@/domains/admin/types";
 
@@ -162,20 +163,38 @@ function Pagination({
 }
 
 export default function ApplicationsClient({ applications }: Props) {
-  const [query, setQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [trackFilter, setTrackFilter] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey | null>(null);
-  const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [page, setPage] = useState(1);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const query = searchParams.get("q") ?? "";
+  const statusFilter = searchParams.get("status") ?? "";
+  const trackFilter = searchParams.get("track") ?? "";
+  const sortKey = (searchParams.get("sort") as SortKey | null) ?? null;
+  const sortDir = (searchParams.get("dir") as SortDir) || "desc";
+  const page = Math.max(1, Number(searchParams.get("page") ?? "1"));
+
+  function pushParams(updates: Record<string, string | null>, resetPage = true) {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [k, v] of Object.entries(updates)) {
+      if (v === null || v === "") params.delete(k);
+      else params.set(k, v);
+    }
+    if (resetPage) params.delete("page");
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
+  }
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {
-      setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+      pushParams({ dir: sortDir === "desc" ? "asc" : "desc" });
     } else {
-      setSortKey(key);
-      setSortDir("desc");
+      pushParams({ sort: key, dir: "desc" });
     }
+  }
+
+  function setPage(p: number) {
+    pushParams({ page: p === 1 ? null : String(p) }, false);
   }
 
   const filtered = useMemo(() => {
@@ -219,8 +238,6 @@ export default function ApplicationsClient({ applications }: Props) {
     });
   }, [filtered, sortKey, sortDir]);
 
-  useEffect(() => { setPage(1); }, [query, statusFilter, trackFilter, sortKey, sortDir]);
-
   const paginated = useMemo(
     () => sorted.slice((page - 1) * PER_PAGE, page * PER_PAGE),
     [sorted, page],
@@ -238,14 +255,14 @@ export default function ApplicationsClient({ applications }: Props) {
             type="text"
             placeholder="Search by company, title, or user..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => pushParams({ q: e.target.value })}
             className="w-full rounded-md border border-gray-300 bg-white py-1.5 pl-8 pr-3 text-xs text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:placeholder-gray-500"
           />
         </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className={SELECT_CLS}>
+        <select value={statusFilter} onChange={(e) => pushParams({ status: e.target.value })} className={SELECT_CLS}>
           {STATUS_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
-        <select value={trackFilter} onChange={(e) => setTrackFilter(e.target.value)} className={SELECT_CLS}>
+        <select value={trackFilter} onChange={(e) => pushParams({ track: e.target.value })} className={SELECT_CLS}>
           {TRACK_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
         <span className="ml-auto shrink-0 text-xs text-gray-500 dark:text-gray-400">
@@ -262,7 +279,7 @@ export default function ApplicationsClient({ applications }: Props) {
           <p className="text-sm text-gray-400 dark:text-gray-500">No applications match the current filters.</p>
           {(query || statusFilter || trackFilter) && (
             <button
-              onClick={() => { setQuery(""); setStatusFilter(""); setTrackFilter(""); }}
+              onClick={() => router.replace(pathname)}
               className="mt-2 text-xs text-indigo-500 hover:text-indigo-400"
             >
               Clear filters
