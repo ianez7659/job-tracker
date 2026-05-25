@@ -1,6 +1,14 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getCategoryLabel } from "@/lib/constants/categories";
+import {
+  ACTIVE_WINDOW_DAYS,
+  INACTIVE_THRESHOLD_DAYS,
+  STUCK_THRESHOLD_DAYS,
+  PREVIEW_LIMIT,
+  OFFER_STATUS,
+  STUCK_STATUSES,
+} from "./config";
 import type {
   AdminOverview,
   CategoryCount,
@@ -9,13 +17,6 @@ import type {
   StuckUserPreview,
   HiredUserPreview,
 } from "./types";
-
-const OFFER_STATUS = "offer";
-const STUCK_STATUSES = ["applying", "resume"] as const;
-const STUCK_THRESHOLD_DAYS = 14;
-const INACTIVE_THRESHOLD_DAYS = 14;
-const ACTIVE_WINDOW_DAYS = 3;
-const PREVIEW_LIMIT = 3;
 
 // Shared where clause — excludes STAFF users
 const NON_STAFF_WHERE = {

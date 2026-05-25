@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getAdminSession } from "@/domains/admin/require-admin";
 import { prisma } from "@/lib/prisma";
 
@@ -61,6 +62,10 @@ export async function PATCH(
     data: { hubStatus: hubStatus as ValidStatus },
     select: { id: true, email: true, hubStatus: true },
   });
+
+  // Invalidate admin user caches so the next page load reflects the change
+  revalidateTag("admin-users-detailed");
+  revalidateTag("admin-user-detail");
 
   return NextResponse.json(updated);
 }

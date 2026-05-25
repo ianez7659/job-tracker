@@ -1,9 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { OFFER_STATUS, STUCK_STATUSES, STUCK_THRESHOLD_DAYS } from "./config";
 import type { AdminApplication, StuckApplication } from "./types";
-
-const OFFER_STATUS = "offer";
-const STUCK_STATUSES = ["applying", "resume"] as const;
-const STUCK_THRESHOLD_DAYS = 14;
 
 function daysAgo(days: number): Date {
   const d = new Date();

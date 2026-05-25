@@ -1,6 +1,11 @@
 /**
  * @jest-environment node
  */
+jest.mock("next/cache", () => ({
+  revalidateTag: jest.fn(),
+  unstable_cache: (fn: (...args: unknown[]) => unknown) => fn,
+}));
+
 jest.mock("@/lib/auth", () => ({
   authOptions: {},
 }));
