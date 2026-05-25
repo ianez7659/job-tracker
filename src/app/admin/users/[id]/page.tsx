@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminUserDetail } from "@/domains/admin/users";
+import { getAdminSession } from "@/domains/admin/require-admin";
 import { getCategoryLabel } from "@/lib/constants/categories";
+import UserRoleDropdown from "../UserRoleDropdown";
 import type { EmploymentStatus } from "@/domains/admin/types";
 
 export const dynamic = "force-dynamic";
@@ -62,9 +64,14 @@ export default async function AdminUserDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const user = await getAdminUserDetail(id);
+  const [user, session] = await Promise.all([
+    getAdminUserDetail(id),
+    getAdminSession(),
+  ]);
 
   if (!user) notFound();
+
+  const isSuperAdmin = session?.isSuperAdmin ?? false;
 
   const joinedDate = user.createdAt.toLocaleDateString("en-CA");
   const lastActive = user.lastActiveAt
@@ -118,7 +125,17 @@ export default async function AdminUserDetailPage({
           </div>
           <div>
             <dt className="text-xs text-gray-500 dark:text-gray-400">Hub Status</dt>
-            <dd className="mt-0.5 font-medium text-gray-900 dark:text-gray-100">{user.hubStatus ?? "—"}</dd>
+            <dd className="mt-0.5">
+              {isSuperAdmin ? (
+                <UserRoleDropdown
+                  userId={user.id}
+                  current={user.hubStatus}
+                  isSelf={false}
+                />
+              ) : (
+                <span className="font-medium text-gray-900 dark:text-gray-100">{user.hubStatus ?? "—"}</span>
+              )}
+            </dd>
           </div>
           <div>
             <dt className="text-xs text-gray-500 dark:text-gray-400">Joined</dt>
