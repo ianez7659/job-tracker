@@ -4,13 +4,24 @@
  */
 
 jest.mock("@/lib/prisma", () => ({
-  prisma: { user: { findMany: jest.fn() } },
+  prisma: {
+    user: {
+      findMany: jest.fn(),
+      groupBy: jest.fn(),
+    },
+  },
+}));
+
+// unstable_cache: bypass caching in tests — call wrapped function directly
+jest.mock("next/cache", () => ({
+  unstable_cache: (fn: (...args: unknown[]) => unknown) => fn,
 }));
 
 import { prisma } from "@/lib/prisma";
 import { getAdminOverview } from "./overview";
 
 const mockFindMany = prisma.user.findMany as jest.Mock;
+const mockGroupBy = prisma.user.groupBy as jest.Mock;
 
 function makeUser(overrides: {
   id: string;
@@ -42,7 +53,11 @@ const DAY = 86400000;
 const daysAgo = (n: number) => new Date(NOW.getTime() - n * DAY);
 
 describe("getAdminOverview", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // groupBy returns empty array by default — individual tests override as needed
+    mockGroupBy.mockResolvedValue([]);
+  });
 
   it("counts hired users with offer jobs only", async () => {
     mockFindMany.mockResolvedValue([
@@ -56,16 +71,7 @@ describe("getAdminOverview", () => {
   });
 
   it("excludes soft-deleted jobs from hired calculation", async () => {
-    mockFindMany.mockResolvedValue([
-      makeUser({
-        id: "u1",
-        jobs: [{ status: "offer", appliedAt: daysAgo(5), deletedAt: daysAgo(1) }],
-      }),
-    ]);
-
-    // soft-deleted job should not count as hired
-    // The prisma where clause filters deletedAt: null before returning,
-    // so we simulate a user whose offer job was already filtered out
+    // soft-deleted jobs are pre-filtered by the prisma where clause
     mockFindMany.mockResolvedValue([
       {
         id: "u1",
@@ -122,8 +128,8 @@ describe("getAdminOverview", () => {
 
   it("counts needs support — no jobs or inactive 14+ days", async () => {
     mockFindMany.mockResolvedValue([
-      makeUser({ id: "u1", jobs: [] }),                                         // no jobs
-      makeUser({ id: "u2", xpEvents: [{ createdAt: daysAgo(20) }],             // inactive
+      makeUser({ id: "u1", jobs: [] }),                                        // no jobs
+      makeUser({ id: "u2", xpEvents: [{ createdAt: daysAgo(20) }],            // inactive
         jobs: [{ status: "applying", appliedAt: daysAgo(5) }] }),
       makeUser({ id: "u3", xpEvents: [{ createdAt: daysAgo(2) }],             // active + has jobs
         jobs: [{ status: "resume", appliedAt: daysAgo(3) }] }),
@@ -133,11 +139,11 @@ describe("getAdminOverview", () => {
     expect(result.needsSupportCount).toBe(2);
   });
 
-  it("builds category distribution correctly", async () => {
-    mockFindMany.mockResolvedValue([
-      makeUser({ id: "u1", category: "web_development" }),
-      makeUser({ id: "u2", category: "web_development" }),
-      makeUser({ id: "u3", category: null }),
+  it("builds category distribution from groupBy result", async () => {
+    mockFindMany.mockResolvedValue([]);
+    mockGroupBy.mockResolvedValue([
+      { category: "web_development", _count: { _all: 2 } },
+      { category: null, _count: { _all: 1 } },
     ]);
 
     const result = await getAdminOverview();
@@ -149,5 +155,6 @@ describe("getAdminOverview", () => {
     );
     expect(webDev?.count).toBe(2);
     expect(notSet?.count).toBe(1);
+    expect(notSet?.label).toBe("Not set");
   });
 });
