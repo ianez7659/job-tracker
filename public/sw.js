@@ -1,4 +1,4 @@
-const CACHE_NAME = "jobflow-v20";
+const CACHE_NAME = "jobflow-v21";
 
 // Cache only static app shell assets — exclude Next.js internals and API routes
 const PRECACHE_URLS = ["/", "/manifest.json"];
@@ -48,11 +48,19 @@ self.addEventListener("fetch", (event) => {
           .then((response) => {
             if (response.ok) {
               const clone = response.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+              caches
+                .open(CACHE_NAME)
+                .then((cache) => cache.put(request, clone));
             }
             return response;
           })
-          .catch(() => new Response(null, { status: 503, statusText: "Service Unavailable" }));
+          .catch(
+            () =>
+              new Response(null, {
+                status: 503,
+                statusText: "Service Unavailable",
+              }),
+          );
       }),
     );
   }
