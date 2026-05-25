@@ -51,6 +51,62 @@ function HubBadge({ status }: { status: HubStatus }) {
   );
 }
 
+// ── Sort ──────────────────────────────────────────────────────────────────────
+
+type SortKey = "total" | "xp" | "lastActive" | "streak";
+type SortDir = "asc" | "desc";
+
+function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`ml-1 inline-block transition-opacity ${active ? "opacity-100" : "opacity-30"}`}
+    >
+      {active && dir === "asc" ? (
+        <path d="M12 19V5M5 12l7-7 7 7" />
+      ) : (
+        <path d="M12 5v14M5 12l7 7 7-7" />
+      )}
+    </svg>
+  );
+}
+
+function SortableTh({
+  label,
+  sortKey,
+  current,
+  dir,
+  onSort,
+  className,
+}: {
+  label: string;
+  sortKey: SortKey;
+  current: SortKey | null;
+  dir: SortDir;
+  onSort: (k: SortKey) => void;
+  className?: string;
+}) {
+  return (
+    <th
+      className={`cursor-pointer select-none px-4 py-3 hover:text-gray-700 dark:hover:text-gray-300 ${className ?? ""}`}
+      onClick={() => onSort(sortKey)}
+    >
+      {label}
+      <SortIcon active={current === sortKey} dir={dir} />
+    </th>
+  );
+}
+
+// ── Filter options ────────────────────────────────────────────────────────────
+
 const TRACK_OPTIONS = [
   { value: "", label: "All Tracks" },
   ...USER_CATEGORIES.map((c) => ({ value: c.value, label: c.label })),
@@ -84,6 +140,17 @@ export default function UsersClient({ users, currentUserId }: Props) {
   const [trackFilter, setTrackFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [hubFilter, setHubFilter] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+
+  function handleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+    } else {
+      setSortKey(key);
+      setSortDir("desc");
+    }
+  }
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase();
@@ -112,6 +179,18 @@ export default function UsersClient({ users, currentUserId }: Props) {
       return true;
     });
   }, [users, query, trackFilter, statusFilter, hubFilter]);
+
+  const sorted = useMemo(() => {
+    if (!sortKey) return filtered;
+    return [...filtered].sort((a, b) => {
+      let av = 0, bv = 0;
+      if (sortKey === "total")      { av = a.jobCounts.total; bv = b.jobCounts.total; }
+      if (sortKey === "xp")         { av = a.totalXp; bv = b.totalXp; }
+      if (sortKey === "lastActive") { av = a.lastActiveAt?.getTime() ?? 0; bv = b.lastActiveAt?.getTime() ?? 0; }
+      if (sortKey === "streak")     { av = a.loginStreak; bv = b.loginStreak; }
+      return sortDir === "desc" ? bv - av : av - bv;
+    });
+  }, [filtered, sortKey, sortDir]);
 
   return (
     <div className="space-y-4">
@@ -144,9 +223,20 @@ export default function UsersClient({ users, currentUserId }: Props) {
       </div>
 
       {/* Table */}
-      {filtered.length === 0 ? (
+      {sorted.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white px-5 py-10 text-center dark:border-gray-800 dark:bg-gray-900">
+          <svg className="mx-auto mb-3 text-gray-300 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+          </svg>
           <p className="text-sm text-gray-400 dark:text-gray-500">No users match the current filters.</p>
+          {(query || trackFilter || statusFilter || hubFilter) && (
+            <button
+              onClick={() => { setQuery(""); setTrackFilter(""); setStatusFilter(""); setHubFilter(""); }}
+              className="mt-2 text-xs text-indigo-500 hover:text-indigo-400"
+            >
+              Clear filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800">
@@ -156,23 +246,23 @@ export default function UsersClient({ users, currentUserId }: Props) {
                 <th className="px-4 py-3">Name / Email</th>
                 <th className="px-4 py-3">Track</th>
                 <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-center">Total</th>
+                <SortableTh label="Total" sortKey="total" current={sortKey} dir={sortDir} onSort={handleSort} className="text-center" />
                 <th className="px-4 py-3 text-center">Apply</th>
                 <th className="px-4 py-3 text-center">Wait</th>
                 <th className="px-4 py-3 text-center">Interview</th>
                 <th className="px-4 py-3 text-center">Rejected</th>
                 <th className="px-4 py-3 text-center">Offered</th>
-                <th className="px-4 py-3 text-center">XP</th>
+                <SortableTh label="XP" sortKey="xp" current={sortKey} dir={sortDir} onSort={handleSort} className="text-center" />
                 <th className="px-4 py-3 text-center">Lv</th>
-                <th className="px-4 py-3 text-center">Streak</th>
-                <th className="px-4 py-3">Last Active</th>
+                <SortableTh label="Streak" sortKey="streak" current={sortKey} dir={sortDir} onSort={handleSort} className="text-center" />
+                <SortableTh label="Last Active" sortKey="lastActive" current={sortKey} dir={sortDir} onSort={handleSort} className="" />
                 <th className="px-4 py-3">Hub Role</th>
                 <th className="px-4 py-3">Change Role</th>
                 <th className="px-4 py-3">Detail</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white dark:divide-gray-800 dark:bg-gray-950">
-              {filtered.map((user) => (
+              {sorted.map((user) => (
                 <tr key={user.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-900/60">
                   <td className="px-4 py-3">
                     <p className="whitespace-nowrap font-medium text-gray-900 dark:text-gray-100">
