@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { getCategoryLabel, USER_CATEGORIES } from "@/lib/constants/categories";
 import type { AdminApplication } from "@/domains/admin/types";
 
@@ -116,6 +116,50 @@ interface Props {
 }
 
 const SELECT_CLS = "rounded-md border border-gray-300 bg-white px-2 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300";
+const PER_PAGE = 20;
+
+function Pagination({
+  page,
+  total,
+  perPage,
+  onPage,
+}: {
+  page: number;
+  total: number;
+  perPage: number;
+  onPage: (p: number) => void;
+}) {
+  const totalPages = Math.max(1, Math.ceil(total / perPage));
+  if (totalPages <= 1) return null;
+  const start = (page - 1) * perPage + 1;
+  const end = Math.min(page * perPage, total);
+  return (
+    <div className="flex items-center justify-between border-t border-gray-200 px-1 pt-3 dark:border-gray-800">
+      <span className="text-xs text-gray-500 dark:text-gray-400">
+        Showing {start}–{end} of {total}
+      </span>
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => onPage(page - 1)}
+          disabled={page === 1}
+          className="rounded-md border border-gray-300 px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
+        >
+          Prev
+        </button>
+        <span className="min-w-[4rem] text-center text-xs text-gray-600 dark:text-gray-400">
+          {page} / {totalPages}
+        </span>
+        <button
+          onClick={() => onPage(page + 1)}
+          disabled={page === totalPages}
+          className="rounded-md border border-gray-300 px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function ApplicationsClient({ applications }: Props) {
   const [query, setQuery] = useState("");
@@ -123,6 +167,7 @@ export default function ApplicationsClient({ applications }: Props) {
   const [trackFilter, setTrackFilter] = useState("");
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [page, setPage] = useState(1);
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {
@@ -174,6 +219,13 @@ export default function ApplicationsClient({ applications }: Props) {
     });
   }, [filtered, sortKey, sortDir]);
 
+  useEffect(() => { setPage(1); }, [query, statusFilter, trackFilter, sortKey, sortDir]);
+
+  const paginated = useMemo(
+    () => sorted.slice((page - 1) * PER_PAGE, page * PER_PAGE),
+    [sorted, page],
+  );
+
   return (
     <div className="space-y-4">
       {/* Search + filters */}
@@ -197,7 +249,7 @@ export default function ApplicationsClient({ applications }: Props) {
           {TRACK_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
         <span className="ml-auto shrink-0 text-xs text-gray-500 dark:text-gray-400">
-          Showing {filtered.length} of {applications.length} applications
+          {filtered.length} of {applications.length} applications
         </span>
       </div>
 
@@ -218,6 +270,7 @@ export default function ApplicationsClient({ applications }: Props) {
           )}
         </div>
       ) : (
+        <div className="space-y-3">
         <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800">
           <table className="min-w-full text-sm">
             <thead>
@@ -234,7 +287,7 @@ export default function ApplicationsClient({ applications }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white dark:divide-gray-800 dark:bg-gray-950">
-              {sorted.map((app) => (
+              {paginated.map((app) => (
                 <tr key={app.jobId} className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-900/60">
                   <td className="px-4 py-3">
                     <Link href={`/admin/users/${app.userId}`} className="whitespace-nowrap font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
@@ -271,6 +324,8 @@ export default function ApplicationsClient({ applications }: Props) {
               ))}
             </tbody>
           </table>
+        </div>
+        <Pagination page={page} total={sorted.length} perPage={PER_PAGE} onPage={setPage} />
         </div>
       )}
     </div>
