@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import { getDetailedUsersForAdmin } from "@/domains/admin/users";
 import { getAdminSession } from "@/domains/admin/require-admin";
 import AdminHeader from "@/components/admin/AdminHeader";
 import UsersClient from "./UsersClient";
+import AdminUsersLoading from "./loading";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +22,9 @@ export default async function AdminUsersPage() {
         title="Users"
         subtitle={`${users.length} registered user${users.length !== 1 ? "s" : ""}`}
       />
-      <UsersClient users={users} currentUserId={currentUserId} isSuperAdmin={isSuperAdmin} />
+      <Suspense fallback={<AdminUsersLoading />}>
+        <UsersClient users={users} currentUserId={currentUserId} isSuperAdmin={isSuperAdmin} />
+      </Suspense>
     </div>
   );
 }
