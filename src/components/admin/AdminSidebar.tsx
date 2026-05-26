@@ -82,6 +82,38 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
   );
 }
 
+function openSearch() {
+  document.dispatchEvent(new CustomEvent("open-search"));
+}
+
+function SearchButton() {
+  return (
+    <button
+      onClick={openSearch}
+      className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+      </svg>
+      <span className="flex-1 text-left">Search</span>
+      <kbd className="rounded border border-gray-200 px-1 py-0.5 text-[10px] dark:border-gray-700">
+        ⌘K
+      </kbd>
+    </button>
+  );
+}
+
 function BottomActions({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <>
@@ -120,15 +152,26 @@ export default function AdminSidebar() {
         <span className="text-sm font-semibold tracking-wide text-gray-900 dark:text-gray-100">
           Jobflow Admin
         </span>
-        <button
-          onClick={() => setOpen(true)}
-          className="rounded-md p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
-          aria-label="Open menu"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="18" y2="18" />
-          </svg>
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={openSearch}
+            className="rounded-md p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            aria-label="Open search"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+            </svg>
+          </button>
+          <button
+            onClick={() => setOpen(true)}
+            className="rounded-md p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            aria-label="Open menu"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+          </button>
+        </div>
       </header>
 
       {/* ── Mobile drawer overlay ── */}
@@ -158,6 +201,7 @@ export default function AdminSidebar() {
             </div>
             {/* Nav */}
             <nav className="flex-1 space-y-1 overflow-y-auto px-2 py-4">
+              <SearchButton />
               <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} />
             </nav>
             {/* Bottom */}
@@ -178,6 +222,7 @@ export default function AdminSidebar() {
         </div>
         {/* Nav */}
         <nav className="flex-1 space-y-1 overflow-y-auto px-2 py-4">
+          <SearchButton />
           <NavLinks pathname={pathname} />
         </nav>
         {/* Bottom */}
