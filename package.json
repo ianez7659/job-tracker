@@ -27,6 +27,7 @@
     "bcryptjs": "^3.0.2",
     "chart.js": "^4.5.0",
     "cheerio": "^1.1.0",
+    "cmdk": "^1.1.1",
     "framer-motion": "^12.23.0",
     "lucide-react": "^0.525.0",
     "next": "^15.3.5",
@@ -44,6 +45,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.52.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -61,7 +63,6 @@
     "jest-environment-jsdom": "^30.2.0",
     "prisma": "^6.11.0",
     "tailwindcss": "^4",
-    "@playwright/test": "^1.52.0",
     "tsx": "^4.21.0",
     "typescript": "^5",
     "undici": "^7.22.0",
