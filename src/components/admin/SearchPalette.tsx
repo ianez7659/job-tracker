@@ -37,13 +37,84 @@ const STATUS_LABELS: Record<string, string> = {
   rejected: "Rejected",
 };
 
+const NAV_ITEMS = [
+  {
+    href: "/admin",
+    label: "Overview",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" />
+      </svg>
+    ),
+  },
+  {
+    href: "/admin/users",
+    label: "Students",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
+  {
+    href: "/admin/applications",
+    label: "Applications",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" />
+      </svg>
+    ),
+  },
+  {
+    href: "/admin/analytics",
+    label: "Analytics",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" x2="18" y1="20" y2="10" /><line x1="12" x2="12" y1="20" y2="4" /><line x1="6" x2="6" y1="20" y2="14" />
+      </svg>
+    ),
+  },
+  {
+    href: "/admin/rankings",
+    label: "Rankings",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" /><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+      </svg>
+    ),
+  },
+] as const;
+
+// Shared item class
+const ITEM_CLASS =
+  "flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 aria-selected:bg-indigo-50 aria-selected:text-indigo-700 dark:text-gray-200 dark:aria-selected:bg-gray-800 dark:aria-selected:text-white";
+
+// Group heading class
+function GroupHeading({ label }: { label: string }) {
+  return (
+    <span className="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+      {label}
+    </span>
+  );
+}
+
 export default function SearchPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResults>({ users: [], applications: [] });
   const [loading, setLoading] = useState(false);
+  const [isDark, setIsDark] = useState(false);
   const router = useRouter();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Sync dark mode state
+  useEffect(() => {
+    const check = () => setIsDark(document.documentElement.classList.contains("dark"));
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 
   // Keyboard shortcut: Cmd+K / Ctrl+K
   useEffect(() => {
@@ -106,10 +177,27 @@ export default function SearchPalette() {
     router.push(href);
   }
 
+  function exportCsv(path: string) {
+    close();
+    window.location.href = path;
+  }
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    if (html.classList.contains("dark")) {
+      html.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    } else {
+      html.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    }
+    close();
+  }
+
   if (!open) return null;
 
-  const hasResults =
-    results.users.length > 0 || results.applications.length > 0;
+  const isSearching = query.trim().length >= 2;
+  const hasResults = results.users.length > 0 || results.applications.length > 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
@@ -143,7 +231,7 @@ export default function SearchPalette() {
               autoFocus
               value={query}
               onValueChange={setQuery}
-              placeholder="Search students or applications…"
+              placeholder="Search or jump to…"
               className="flex-1 bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none dark:text-gray-100 dark:placeholder-gray-500"
             />
             {loading && (
@@ -173,16 +261,72 @@ export default function SearchPalette() {
             </kbd>
           </div>
 
-          <Command.List className="max-h-80 overflow-y-auto p-2">
-            {query.trim().length < 2 && (
-              <Command.Empty>
-                <p className="px-3 py-6 text-center text-xs text-gray-400">
-                  Type at least 2 characters to search
-                </p>
-              </Command.Empty>
+          <Command.List className="max-h-96 overflow-y-auto p-2">
+
+            {/* ── Default state: no query ── */}
+            {!isSearching && (
+              <>
+                {/* Pages */}
+                <Command.Group heading={<GroupHeading label="Pages" />}>
+                  {NAV_ITEMS.map(({ href, label, icon }) => (
+                    <Command.Item
+                      key={href}
+                      value={`nav-${href}`}
+                      onSelect={() => navigateTo(href)}
+                      className={ITEM_CLASS}
+                    >
+                      <span className="shrink-0 text-gray-400">{icon}</span>
+                      {label}
+                    </Command.Item>
+                  ))}
+                </Command.Group>
+
+                {/* Actions */}
+                <Command.Group heading={<GroupHeading label="Actions" />}>
+                  <Command.Item
+                    value="action-export-users"
+                    onSelect={() => exportCsv("/api/admin/export/users")}
+                    className={ITEM_CLASS}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-gray-400">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" />
+                    </svg>
+                    Export Students CSV
+                  </Command.Item>
+
+                  <Command.Item
+                    value="action-export-applications"
+                    onSelect={() => exportCsv("/api/admin/export/applications")}
+                    className={ITEM_CLASS}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-gray-400">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" />
+                    </svg>
+                    Export Applications CSV
+                  </Command.Item>
+
+                  <Command.Item
+                    value="action-toggle-theme"
+                    onSelect={toggleTheme}
+                    className={ITEM_CLASS}
+                  >
+                    {isDark ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-gray-400">
+                        <circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-gray-400">
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                      </svg>
+                    )}
+                    {isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                  </Command.Item>
+                </Command.Group>
+              </>
             )}
 
-            {query.trim().length >= 2 && !loading && !hasResults && (
+            {/* ── Search state: query >= 2 chars ── */}
+            {isSearching && !loading && !hasResults && (
               <Command.Empty>
                 <p className="px-3 py-6 text-center text-xs text-gray-400">
                   No results for &ldquo;{query}&rdquo;
@@ -192,19 +336,13 @@ export default function SearchPalette() {
 
             {/* Students group */}
             {results.users.length > 0 && (
-              <Command.Group
-                heading={
-                  <span className="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                    Students
-                  </span>
-                }
-              >
+              <Command.Group heading={<GroupHeading label="Students" />}>
                 {results.users.map((u) => (
                   <Command.Item
                     key={u.id}
                     value={`user-${u.id}`}
                     onSelect={() => navigateTo(`/admin/users/${u.id}`)}
-                    className="flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 aria-selected:bg-indigo-50 aria-selected:text-indigo-700 dark:text-gray-200 dark:aria-selected:bg-gray-800 dark:aria-selected:text-white"
+                    className={ITEM_CLASS}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -243,19 +381,13 @@ export default function SearchPalette() {
 
             {/* Applications group */}
             {results.applications.length > 0 && (
-              <Command.Group
-                heading={
-                  <span className="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                    Applications
-                  </span>
-                }
-              >
+              <Command.Group heading={<GroupHeading label="Applications" />}>
                 {results.applications.map((a) => (
                   <Command.Item
                     key={a.jobId}
                     value={`app-${a.jobId}`}
                     onSelect={() => navigateTo(`/admin/users/${a.userId}`)}
-                    className="flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 aria-selected:bg-indigo-50 aria-selected:text-indigo-700 dark:text-gray-200 dark:aria-selected:bg-gray-800 dark:aria-selected:text-white"
+                    className={ITEM_CLASS}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -301,7 +433,7 @@ export default function SearchPalette() {
             </span>
             <span className="text-[10px] text-gray-400">
               <kbd className="rounded border border-gray-200 px-1 py-0.5 dark:border-gray-700">↵</kbd>{" "}
-              open
+              select
             </span>
           </div>
         </Command>
