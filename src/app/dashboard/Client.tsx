@@ -30,6 +30,7 @@ import {
   activeOnly,
   countWaitingActive,
   isFinal,
+  isStaleApplying,
   statusCountsActive,
 } from "@/app/dashboard/lib/jobs/metrics";
 import type { Job } from "@/generated/prisma";
@@ -107,12 +108,17 @@ export default function DashboardClient({
   const safeJobs = useMemo(() => (Array.isArray(jobs) ? jobs : []), [jobs]);
   const safeAllJobs = useMemo(() => (Array.isArray(allJobs) ? allJobs : []), [allJobs]);
 
-  // Derived sets and counts
+  // Derived sets and counts (stale applying excluded from dashboard)
   const activeJobs = useMemo(() => activeOnly(safeJobs), [safeJobs]);
-  const counts = useMemo(() => statusCountsActive(activeJobs), [activeJobs]);
-  const pipelineTotal = useMemo(
-    () => activeJobs.filter((j) => !isFinal(j)).length,
+  /** Active, non-final jobs with stale applying cards removed — what the dashboard shows. */
+  const freshActiveJobs = useMemo(
+    () => activeJobs.filter((j) => !isStaleApplying(j)),
     [activeJobs],
+  );
+  const counts = useMemo(() => statusCountsActive(freshActiveJobs), [freshActiveJobs]);
+  const pipelineTotal = useMemo(
+    () => freshActiveJobs.filter((j) => !isFinal(j)).length,
+    [freshActiveJobs],
   );
   const applyingCount = counts["applying"] ?? 0;
   const appliedCount = useMemo(
@@ -120,8 +126,8 @@ export default function DashboardClient({
     [pipelineTotal, applyingCount],
   );
   const waitingCount = useMemo(
-    () => countWaitingActive(activeJobs),
-    [activeJobs],
+    () => countWaitingActive(freshActiveJobs),
+    [freshActiveJobs],
   );
   const interviewCount = useMemo(
     () =>
@@ -235,23 +241,22 @@ export default function DashboardClient({
     setFilterStatus(s);
   };
 
-  // Filtered list (active, non-finalized)
+  // Filtered list — active, non-finalized, stale applying excluded
   const filteredJobs = useMemo(() => {
-    return safeJobs
-      .filter((job) => job.status !== "offer" && job.status !== "rejected")
+    return freshActiveJobs
+      .filter((job) => !isFinal(job))
       .filter((job) => {
         const q = searchTerm.toLowerCase();
         const company = (job.company ?? "").toLowerCase();
         const title = (job.title ?? "").toLowerCase();
-        const matchesSearch =
-          company.includes(q) || title.includes(q);
+        const matchesSearch = company.includes(q) || title.includes(q);
         const matchesStatus =
           filterStatus === "all" ||
           (filterStatus === "postApplying" && job.status !== "applying") ||
           job.status === filterStatus;
         return matchesSearch && matchesStatus;
       });
-  }, [safeJobs, searchTerm, filterStatus]);
+  }, [freshActiveJobs, searchTerm, filterStatus]);
 
   // Add New button handler — attempts clipboard read on user gesture (works on iOS)
   const handleAddNew = async () => {
@@ -504,15 +509,28 @@ export default function DashboardClient({
           <h2 className="flex items-center gap-2 font-bold text-2xl text-gray-700 dark:text-gray-200 p-4 pb-0 flex-shrink-0">
             <LayoutList size={24} aria-hidden="true" />
             Card List
-            <span className="text-xl font-semibold text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-slate-600 px-2 py-0.5 rounded-full">
+            <motion.span
+              key={filterStatus}
+              initial={{ opacity: 0, scale: 0.7 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2, ease: [0.25, 0.1, 0.35, 1] }}
+              className={`text-xl font-semibold px-2 py-0.5 rounded-full ${
+                filterStatus === "applying"
+                  ? "text-indigo-800 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-900/80"
+                  : filterStatus === "postApplying"
+                    ? "text-emerald-800 bg-emerald-100 dark:text-emerald-100 dark:bg-emerald-950/60"
+                    : "text-gray-600 bg-gray-200 dark:text-gray-300 dark:bg-slate-600"
+              }`}
+            >
               {filteredJobs.length}
-            </span>
+            </motion.span>
           </h2>
           <div className="flex-1 min-h-0 overflow-y-auto p-4 pt-3 lg:max-h-[calc(100vh-12rem)]">
             <JobList
               jobs={filteredJobs}
               onDelete={onDelete}
               singleColumn
+              filterKey={filterStatus}
             />
           </div>
         </motion.div>

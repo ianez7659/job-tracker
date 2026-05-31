@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import { useMotionValue, useMotionValueEvent, animate } from "framer-motion";
+import { motion, useMotionValue, useMotionValueEvent, animate } from "framer-motion";
 
 export default function SummaryCard({
   title,
@@ -53,7 +53,7 @@ export default function SummaryCard({
     : "text-xl sm:text-4xl font-medium";
 
   return (
-    <div
+    <motion.div
       className={`rounded-lg shadow-sm ${padClass} ${color} ${
         isClickable ? "cursor-pointer" : ""
       }`}
@@ -67,6 +67,8 @@ export default function SummaryCard({
           onClick?.();
         }
       }}
+      whileTap={isClickable ? { scale: 0.93 } : undefined}
+      transition={{ type: "spring", stiffness: 400, damping: 20 }}
     >
       <div className={layoutClass}>
         <p className={`${titleClass} ${textColor} min-w-0`}>
@@ -99,6 +101,6 @@ export default function SummaryCard({
         </p>
         <h2 className={`${valueClass} ${textColor}`}>{displayValue}</h2>
       </div>
-    </div>
+    </motion.div>
   );
 }
