@@ -45,8 +45,8 @@ const OverviewSection: React.FC<Props> = ({
       shortTitle: "Total",
       value: pipelineTotal,
       color:
-        "bg-indigo-100 border border-indigo-300 dark:bg-indigo-900/80 dark:border-indigo-500",
-      textColor: "text-indigo-800 dark:text-indigo-100",
+        "bg-gray-100 border border-gray-300 dark:bg-slate-700 dark:border-slate-500",
+      textColor: "text-gray-700 dark:text-gray-200",
       icon: <Briefcase size={20} />,
       onClick: () => setFilterStatus("all"),
     },
@@ -55,8 +55,8 @@ const OverviewSection: React.FC<Props> = ({
       shortTitle: "Applying",
       value: applyingCount,
       color:
-        "bg-amber-50 border border-amber-300 dark:bg-amber-950/40 dark:border-amber-700",
-      textColor: "text-amber-900 dark:text-amber-100",
+        "bg-indigo-100 border border-indigo-300 dark:bg-indigo-900/80 dark:border-indigo-500",
+      textColor: "text-indigo-800 dark:text-indigo-100",
       icon: <FileInput size={20} />,
       onClick: () => setFilterStatus("applying"),
     },

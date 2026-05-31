@@ -18,12 +18,19 @@ type Props = {
   jobs: Job[];
   onDelete: (id: string) => Promise<void>;
   singleColumn?: boolean;
+  /** Changes when the active filter changes — triggers stagger re-animation. */
+  filterKey?: string;
 };
 
-export default function JobList({ jobs, onDelete, singleColumn }: Props) {
+export default function JobList({ jobs, onDelete, singleColumn, filterKey }: Props) {
   const [visibleCount, setVisibleCount] = useState(INITIAL_SIZE);
 
-  // When jobs load (or filter changes): show at least INITIAL_SIZE if there are jobs, or reduce if list shrank
+  // Reset visible count when filter changes so we start fresh
+  useEffect(() => {
+    setVisibleCount(INITIAL_SIZE);
+  }, [filterKey]);
+
+  // When jobs load: show at least INITIAL_SIZE if there are jobs, or reduce if list shrank
   useEffect(() => {
     if (jobs.length < visibleCount) {
       setVisibleCount(Math.min(INITIAL_SIZE, jobs.length));
@@ -37,7 +44,8 @@ export default function JobList({ jobs, onDelete, singleColumn }: Props) {
 
   return (
     <div>
-      <ul className={`grid gap-4 ${singleColumn ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}>
+      {/* key on ul remounts the list on filter change, re-triggering stagger animation */}
+      <ul key={filterKey} className={`grid gap-4 ${singleColumn ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}>
         {visibleJobs.map((job, index) => (
           <motion.li
             key={job.id}

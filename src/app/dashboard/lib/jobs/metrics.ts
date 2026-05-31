@@ -4,8 +4,16 @@ import type { Job } from "@/generated/prisma";
 
 export const isFinal = (j: Job) =>
   j.status === "offer" || j.status === "rejected";
+
 /** Treat missing `deletedAt` (e.g. from JSON) as active, same as null */
 export const isActive = (j: Job) => j.deletedAt == null;
+
+export const STALE_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** True when an applying job has been untouched for 7+ days (belongs on the stale-applying page). */
+export const isStaleApplying = (j: Job): boolean =>
+  j.status === "applying" &&
+  Date.now() - new Date(j.createdAt).getTime() > STALE_MS;
 
 export function activeOnly(all: Job[]) {
   if (!Array.isArray(all)) {
