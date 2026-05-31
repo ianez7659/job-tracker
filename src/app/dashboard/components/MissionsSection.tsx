@@ -66,7 +66,7 @@ function MissionRow({
 }) {
   const busy = busyId === row.id;
   return (
-    <div className="flex gap-3 rounded-lg border border-gray-200 bg-white p-3 dark:border-slate-600 dark:bg-slate-800/80 sm:p-4">
+    <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 dark:border-slate-600 dark:bg-slate-800/80 sm:items-start sm:p-4">
       <div
         className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950/50"
         aria-hidden
