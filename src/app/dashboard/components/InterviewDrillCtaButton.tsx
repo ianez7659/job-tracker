@@ -7,10 +7,14 @@ import type { MissionStatus } from "@/lib/xp/missionsDisplayCore";
 type Props = {
   drillStatus: MissionStatus;
   allDailyDone: boolean;
+  /** When true the drill mission is actionable in the Missions list — hide this button. */
+  hiddenByMission?: boolean;
 };
 
-export default function InterviewDrillCtaButton({ drillStatus, allDailyDone }: Props) {
+export default function InterviewDrillCtaButton({ drillStatus, allDailyDone, hiddenByMission = false }: Props) {
   const router = useRouter();
+
+  if (hiddenByMission) return null;
 
   const isDone = drillStatus === "completed";
   const isAllDone = allDailyDone && isDone;

@@ -1,7 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import DashboardClient from "./Client";
 
 type PageProps = {
@@ -19,12 +18,6 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   if (!session) {
     redirect("/login");
   }
-
-  const userId = session.user.id;
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  const staleApplyingCount = await prisma.job.count({
-    where: { userId, status: "applying", createdAt: { lte: sevenDaysAgo }, deletedAt: null },
-  });
 
   const sp = await searchParams;
   const raw = sp.newJob;
@@ -44,7 +37,6 @@ export default async function DashboardPage({ searchParams }: PageProps) {
       openNewJobFromQuery={openNewJobFromQuery}
       openNewJobAutoFromQuery={openNewJobAutoFromQuery}
       openJobSearchFromQuery={openJobSearchFromQuery}
-      staleApplyingCount={staleApplyingCount}
     />
   );
 }

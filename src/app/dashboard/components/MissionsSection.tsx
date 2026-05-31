@@ -75,11 +75,11 @@ function MissionRow({
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{row.title}</p>
-        <p className="mt-0.5 text-xs leading-relaxed text-gray-600 dark:text-gray-400 sm:text-sm">
+        <p className="mt-0.5 hidden text-xs leading-relaxed text-gray-600 dark:text-gray-400 sm:block sm:text-sm">
           {row.description}
         </p>
         {(row.progressLabel || row.rewardLabel) && (
-          <div className="mt-1.5 flex items-center gap-2.5 text-xs">
+          <div className="mt-1.5 hidden items-center gap-2.5 text-xs sm:flex">
             {row.progressLabel && (
               <span className="font-medium text-gray-500 dark:text-gray-400">
                 {row.progressLabel}
