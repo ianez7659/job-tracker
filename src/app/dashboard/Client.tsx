@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { LayoutList, LayoutDashboard, Search, Plus, ClipboardList } from "lucide-react";
+import { LayoutList, LayoutDashboard, Search, Plus } from "lucide-react";
 
 // Dashboard-local pieces
 import OverviewSection from "@/app/dashboard/components/OverviewSection";
@@ -16,6 +16,7 @@ import JobSearchModal from "@/app/dashboard/components/JobSearchModal";
 import FindJobsCtaCard from "@/app/dashboard/components/FindJobsCtaCard";
 import MissionsSection from "@/app/dashboard/components/MissionsSection";
 import InterviewDrillCtaButton from "@/app/dashboard/components/InterviewDrillCtaButton";
+import StackedApplyingCard from "@/components/StackedApplyingCard";
 import type { MissionsPayload, MissionStatus } from "@/lib/xp/missionsDisplayCore";
 import XpSummaryCard from "@/app/dashboard/components/XpSummaryCard";
 import DashboardStreakPanel from "@/app/dashboard/components/DashboardStreakPanel";
@@ -60,8 +61,6 @@ type Props = {
   openNewJobAutoFromQuery?: boolean;
   /** ?jobSearch=1 — open job search modal. */
   openJobSearchFromQuery?: boolean;
-  /** Count of jobs stuck in Applying for 7+ days (server-computed). */
-  staleApplyingCount?: number;
 };
 
 // Narrowed union for safer filtering (matches your UI statuses)
@@ -92,7 +91,6 @@ export default function DashboardClient({
   openNewJobFromQuery = false,
   openNewJobAutoFromQuery = false,
   openJobSearchFromQuery = false,
-  staleApplyingCount = 0,
 }: Props) {
   const router = useRouter();
 
@@ -108,17 +106,23 @@ export default function DashboardClient({
   const safeJobs = useMemo(() => (Array.isArray(jobs) ? jobs : []), [jobs]);
   const safeAllJobs = useMemo(() => (Array.isArray(allJobs) ? allJobs : []), [allJobs]);
 
-  // Derived sets and counts (stale applying excluded from dashboard)
+  // Derived sets and counts
   const activeJobs = useMemo(() => activeOnly(safeJobs), [safeJobs]);
-  /** Active, non-final jobs with stale applying cards removed — what the dashboard shows. */
+  /** Stale applying cards excluded — used for individual card rendering only. */
   const freshActiveJobs = useMemo(
     () => activeJobs.filter((j) => !isStaleApplying(j)),
     [activeJobs],
   );
-  const counts = useMemo(() => statusCountsActive(freshActiveJobs), [freshActiveJobs]);
+  /** Client-side count of stale applying cards (drives StackedApplyingCard visibility). */
+  const staleCount = useMemo(
+    () => activeJobs.filter(isStaleApplying).length,
+    [activeJobs],
+  );
+  // Overview counts include stale applying so totals are accurate
+  const counts = useMemo(() => statusCountsActive(activeJobs), [activeJobs]);
   const pipelineTotal = useMemo(
-    () => freshActiveJobs.filter((j) => !isFinal(j)).length,
-    [freshActiveJobs],
+    () => activeJobs.filter((j) => !isFinal(j)).length,
+    [activeJobs],
   );
   const applyingCount = counts["applying"] ?? 0;
   const appliedCount = useMemo(
@@ -148,6 +152,8 @@ export default function DashboardClient({
   const [xpRefreshToken, setXpRefreshToken] = useState(0);
   const [drillStatus, setDrillStatus] = useState<MissionStatus>("not_started");
   const [allDailyDone, setAllDailyDone] = useState(false);
+  /** True while daily_interview_drill mission is in the list and not yet completed. */
+  const [drillMissionActive, setDrillMissionActive] = useState(false);
   const [headerSummary, setHeaderSummary] = useState<DashboardHeaderSummaryPayload | null>(
     null,
   );
@@ -411,9 +417,15 @@ export default function DashboardClient({
           const drill = payload.daily.find((m) => m.id === "daily_interview_drill");
           setDrillStatus((drill?.status as MissionStatus) ?? "not_started");
           setAllDailyDone(payload.dailyRemaining === 0);
+          // Hide the standalone CTA button while the drill mission is actionable
+          setDrillMissionActive(!!drill && !drill.completed);
         }}
       />
-      <InterviewDrillCtaButton drillStatus={drillStatus} allDailyDone={allDailyDone} />
+      <InterviewDrillCtaButton
+        drillStatus={drillStatus}
+        allDailyDone={allDailyDone}
+        hiddenByMission={drillMissionActive}
+      />
 
       {/* Main card: left (overview + Find Jobs CTA) | right (card list) */}
       <motion.div
@@ -492,20 +504,6 @@ export default function DashboardClient({
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.08, ease: [0.25, 0.1, 0.35, 1] }}
         >
-          {staleApplyingCount > 0 && (
-            <button
-              type="button"
-              onClick={() => router.push("/dashboard/jobs/stale-applying")}
-              className="mx-4 mt-3 flex items-center gap-2.5 rounded-lg border border-indigo-200 bg-indigo-50 px-3.5 py-2.5 text-left text-sm transition hover:bg-indigo-100 dark:border-indigo-700/60 dark:bg-indigo-950/40 dark:hover:bg-indigo-950/60 flex-shrink-0"
-            >
-              <ClipboardList size={16} className="shrink-0 text-indigo-500 dark:text-indigo-400" />
-              <span className="flex-1 text-indigo-800 dark:text-indigo-200">
-                <span className="font-semibold">{staleApplyingCount} Applying card{staleApplyingCount === 1 ? "" : "s"}</span>
-                {" "}stuck for 7+ days — review &amp; update
-              </span>
-              <span className="shrink-0 text-xs font-medium text-indigo-500 dark:text-indigo-400">Review →</span>
-            </button>
-          )}
           <h2 className="flex items-center gap-2 font-bold text-2xl text-gray-700 dark:text-gray-200 p-4 pb-0 flex-shrink-0">
             <LayoutList size={24} aria-hidden="true" />
             Card List
@@ -526,6 +524,12 @@ export default function DashboardClient({
             </motion.span>
           </h2>
           <div className="flex-1 min-h-0 overflow-y-auto p-4 pt-3 lg:max-h-[calc(100vh-12rem)]">
+            {staleCount > 0 && (filterStatus === "all" || filterStatus === "applying") && (
+              <StackedApplyingCard
+                count={staleCount}
+                onClick={() => router.push("/dashboard/jobs/stale-applying")}
+              />
+            )}
             <JobList
               jobs={filteredJobs}
               onDelete={onDelete}
