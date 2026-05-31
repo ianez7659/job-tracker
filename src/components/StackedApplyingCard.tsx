@@ -30,7 +30,7 @@ export default function StackedApplyingCard({ count, onClick }: Props) {
         whileHover={{ y: -1, boxShadow: "0 6px 20px -4px rgba(245,158,11,0.28)" }}
         whileTap={{ scale: 0.98 }}
         transition={{ type: "spring", stiffness: 380, damping: 22 }}
-        className="block w-full -mt-px rounded-xl rounded-tl-none border border-amber-400 bg-amber-50 px-4 py-3.5 text-left shadow-sm transition-colors hover:bg-amber-100/80 dark:border-amber-500/60 dark:bg-amber-950/25 dark:hover:bg-amber-950/40"
+        className="block w-full -mt-px rounded-xl rounded-tl-none border border-amber-400 bg-amber-50 px-4 py-5 text-left shadow-sm transition-colors hover:bg-amber-100/80 dark:border-amber-500/60 dark:bg-amber-950/25 dark:hover:bg-amber-950/40"
       >
         <div className="flex items-center justify-between gap-3">
           <span className="text-sm font-semibold text-amber-900 dark:text-amber-100">

@@ -249,7 +249,7 @@ export default function MissionsSection({
       ) : (
         <>
           <div className="mb-4 flex flex-col items-center gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
-            <h2 className="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-gray-100 sm:text-lg">
+            <h2 className="flex w-full items-center justify-center gap-2 text-base font-bold text-gray-900 dark:text-gray-100 sm:w-auto sm:justify-start sm:text-lg">
               <span className="flex h-9 w-9 items-center justify-center text-rose-700 dark:text-rose-300">
                 <Target className="h-5 w-5" aria-hidden />
               </span>
