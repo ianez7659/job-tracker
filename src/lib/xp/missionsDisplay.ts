@@ -87,10 +87,22 @@ export async function loadMissionsPayloadForUser(
   const weekAgo = new Date(now.getTime() - MISSIONS_WEEK_MS);
 
   // Query today's quiz session — independent of userXp (quiz works even before first XP event).
-  const quizSession = await prisma.dailyQuizSession.findFirst({
-    where: { userId, dateKey: currentKey },
-    select: { status: true, completedQuestions: true, totalQuestions: true },
-  });
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const [quizSession, staleApplyingCount] = await Promise.all([
+    prisma.dailyQuizSession.findFirst({
+      where: { userId, dateKey: currentKey },
+      select: { status: true, completedQuestions: true, totalQuestions: true },
+    }),
+    prisma.job.count({
+      where: {
+        userId,
+        status: "applying",
+        createdAt: { lte: sevenDaysAgo },
+        deletedAt: null,
+      },
+    }),
+  ]);
   const quizStatus = (quizSession?.status ?? "not_started") as MissionStatus;
   const quizCompletedQuestions = quizSession?.completedQuestions ?? 0;
   const quizTotalQuestions = quizSession?.totalQuestions ?? 5;
@@ -108,6 +120,7 @@ export async function loadMissionsPayloadForUser(
       quizStatus,
       quizCompletedQuestions,
       quizTotalQuestions,
+      staleApplyingCount,
     });
   }
 
@@ -150,5 +163,6 @@ export async function loadMissionsPayloadForUser(
     quizStatus,
     quizCompletedQuestions,
     quizTotalQuestions,
+    staleApplyingCount,
   });
 }

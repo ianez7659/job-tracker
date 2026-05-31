@@ -14,6 +14,7 @@ export type MissionId =
   | "daily_check_in"
   | "daily_job_card"
   | "daily_interview_drill"
+  | "daily_stale_applying_cleanup"
   | "weekly_review"
   | "weekly_cycle";
 
@@ -74,6 +75,8 @@ export type MissionsComputeInput = {
   quizStatus?: MissionStatus | null;
   quizCompletedQuestions?: number;
   quizTotalQuestions?: number;
+  // Stale applying cleanup — optional. When omitted, mission is hidden.
+  staleApplyingCount?: number;
 };
 
 // ---------------------------------------------------------------------------
@@ -115,6 +118,8 @@ export function computeMissionsPayload(
   const quizRewardLabel =
     quizStatus === "completed" ? "+10 XP earned" : "+10 XP";
 
+  const staleApplyingCount = input.staleApplyingCount ?? 0;
+
   const daily: MissionRowDTO[] = [
     {
       id: "daily_check_in",
@@ -140,6 +145,18 @@ export function computeMissionsPayload(
       rewardLabel: quizRewardLabel,
     },
   ];
+
+  if (staleApplyingCount > 0) {
+    daily.push({
+      id: "daily_stale_applying_cleanup",
+      title: "Review old Applying cards",
+      description: "You have job cards that have stayed in Applying for 7+ days. Review them and either mark them as Applied or remove the ones you no longer need.",
+      completed: false,
+      ctaLabel: "Review cards",
+      href: "/dashboard/jobs/stale-applying",
+      progressLabel: `${staleApplyingCount} card${staleApplyingCount === 1 ? "" : "s"}`,
+    });
+  }
 
   const weekly: MissionRowDTO[] = [
     {

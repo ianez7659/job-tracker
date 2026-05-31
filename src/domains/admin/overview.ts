@@ -128,6 +128,21 @@ async function getAdminOverviewRaw(): Promise<AdminOverview> {
     }))
     .sort((a, b) => b.count - a.count);
 
+  // ── Active users by category — in-memory, no extra DB query ───────────────
+  const activeCategoryMap = new Map<string, number>();
+  for (const u of students) {
+    if (!activeUserIds.has(u.id)) continue;
+    const key = u.category ?? "not_set";
+    activeCategoryMap.set(key, (activeCategoryMap.get(key) ?? 0) + 1);
+  }
+  const activeCategoryDistribution: CategoryCount[] = Array.from(activeCategoryMap.entries())
+    .map(([category, count]) => ({
+      category,
+      label: category === "not_set" ? "Not set" : getCategoryLabel(category),
+      count,
+    }))
+    .sort((a, b) => b.count - a.count);
+
   // ── Preview lists ──────────────────────────────────────────────────────────
 
   const topActiveUsers: ActiveUserPreview[] = students
@@ -188,6 +203,7 @@ async function getAdminOverviewRaw(): Promise<AdminOverview> {
     stuckUsersCount,
     needsSupportCount,
     categoryDistribution,
+    activeCategoryDistribution,
     topActiveUsers,
     topSupportUsers: topSupportUsersPreview,
     topStuckUsers,

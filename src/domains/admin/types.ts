@@ -37,6 +37,7 @@ export interface AdminOverview {
   stuckUsersCount: number;          // users with 3+ applying/resume jobs, no interview/offer
   needsSupportCount: number;        // 14+ days no activity OR 0 jobs
   categoryDistribution: CategoryCount[];
+  activeCategoryDistribution: CategoryCount[];
   topActiveUsers: ActiveUserPreview[];
   topSupportUsers: SupportUserPreview[];
   topStuckUsers: StuckUserPreview[];

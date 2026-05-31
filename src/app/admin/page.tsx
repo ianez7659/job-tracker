@@ -3,6 +3,7 @@ import { getAdminOverview } from "@/domains/admin/overview";
 import { getActiveJobSeekerRanking } from "@/domains/admin/users";
 import AdminHeader from "@/components/admin/AdminHeader";
 import TrackDistributionCard from "@/components/admin/TrackDistributionCard";
+import ActiveUsersCard from "@/components/admin/ActiveUsersCard";
 import { getCategoryLabel } from "@/lib/constants/categories";
 
 export const dynamic = "force-dynamic";
@@ -88,9 +89,6 @@ export default async function AdminOverviewPage() {
     getActiveJobSeekerRanking(5),
   ]);
 
-  const activePct = overview.totalStudents > 0
-    ? Math.round((overview.currentlyActiveUsers / overview.totalStudents) * 100)
-    : 0;
   const hiredPct = (overview.hiredRate * 100).toFixed(1);
 
   return (
@@ -100,44 +98,12 @@ export default async function AdminOverviewPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
 
         {/* ── Card 1 — Currently Active Users ── */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
-          <div className="flex items-center gap-3">
-            <CardIconBox color="indigo">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-              </svg>
-            </CardIconBox>
-            <div>
-              <p className="text-sm font-medium uppercase tracking-wider text-gray-600 dark:text-gray-200">Currently Active Users</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Logged in within the last 3 days</p>
-            </div>
-          </div>
-          <div className="mt-4 flex items-end justify-between">
-            <BigStat count={overview.currentlyActiveUsers} total={overview.totalStudents} label="students" />
-            <div className="text-right">
-              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{activePct}%</p>
-              <p className="text-xs text-gray-500">of total students</p>
-            </div>
-          </div>
-          {overview.topActiveUsers.length === 0 ? (
-            <p className="mt-4 text-sm text-gray-400 dark:text-gray-500">No active users in the last 3 days</p>
-          ) : (
-            <ul className="mt-4 divide-y divide-gray-100 dark:divide-gray-800">
-              {overview.topActiveUsers.map((u) => (
-                <li key={u.id} className="flex items-center gap-2 py-2">
-                  <UserAvatar name={u.name} email={u.email} />
-                  <Link href={`/admin/users/${u.id}`} className="min-w-0 flex-1 truncate text-sm text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">
-                    {u.name ?? u.email}
-                  </Link>
-                  <span className="shrink-0 rounded-md bg-emerald-50 px-1.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
-                    Active
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-          <ViewAllLink href="/admin/users" />
-        </div>
+        <ActiveUsersCard
+          currentlyActiveUsers={overview.currentlyActiveUsers}
+          totalStudents={overview.totalStudents}
+          topActiveUsers={overview.topActiveUsers}
+          activeCategoryDistribution={overview.activeCategoryDistribution}
+        />
 
         {/* ── Card 2 — Active Job Seeker Ranking ── */}
         <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">

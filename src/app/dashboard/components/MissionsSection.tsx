@@ -48,6 +48,8 @@ function missionIcon(id: MissionId) {
       return <ClipboardList className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
     case "weekly_cycle":
       return <CalendarDays className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
+    case "daily_stale_applying_cleanup":
+      return <ClipboardList className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
     default:
       return <Target className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
   }
@@ -184,6 +186,13 @@ export default function MissionsSection({
   }, [load, refreshToken]);
 
   const handleStart = async (id: MissionId) => {
+    // Generic href handler — if the row has an href, navigate to it
+    const row = [...(data?.daily ?? []), ...(data?.weekly ?? [])].find((r) => r.id === id);
+    if (row?.href && id !== "daily_check_in" && id !== "daily_job_card") {
+      router.push(row.href);
+      return;
+    }
+
     if (id === "daily_check_in") {
       setBusyId(id);
       try {
