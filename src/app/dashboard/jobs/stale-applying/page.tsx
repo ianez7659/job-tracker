@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ClipboardList } from "lucide-react";
+import StaleJobCard from "@/components/StaleJobCard";
 
 interface StaleJob {
   id: string;
@@ -11,6 +12,7 @@ interface StaleJob {
   status: string;
   createdAt: string;
   daysInApplying: number;
+  url: string | null;
   hasUrl: boolean;
   hasJd: boolean;
 }
@@ -37,22 +39,6 @@ export default function StaleApplyingPage() {
   useEffect(() => {
     void load();
   }, [load]);
-
-  const handleMarkAsApplied = async (jobId: string) => {
-    setBusyId(jobId);
-    try {
-      const res = await fetch(`/api/jobs/${jobId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "resume" }),
-      });
-      if (res.ok) {
-        setJobs((prev) => prev.filter((j) => j.id !== jobId));
-      }
-    } finally {
-      setBusyId(null);
-    }
-  };
 
   const handleDelete = async (jobId: string) => {
     setBusyId(jobId);
@@ -119,59 +105,22 @@ export default function StaleApplyingPage() {
         </div>
       ) : (
         <ul className="space-y-3">
-          {jobs.map((job) => {
-            const busy = busyId === job.id;
-            return (
-              <li
-                key={job.id}
-                className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium text-gray-900 dark:text-gray-100">
-                      {job.title || "Untitled"}
-                    </p>
-                    <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                      {job.company || "Unknown company"}
-                    </p>
-                    <div className="mt-2 flex flex-wrap items-center gap-2">
-                      <span className="rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
-                        {job.daysInApplying} day{job.daysInApplying === 1 ? "" : "s"} in Applying
-                      </span>
-                      {!job.hasUrl && (
-                        <span className="rounded-md bg-amber-50 px-2 py-0.5 text-xs text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-                          No URL
-                        </span>
-                      )}
-                      {!job.hasJd && (
-                        <span className="rounded-md bg-amber-50 px-2 py-0.5 text-xs text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-                          No JD
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex shrink-0 flex-col gap-2">
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={() => handleMarkAsApplied(job.id)}
-                      className="rounded-lg border border-indigo-500 px-3 py-1.5 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 disabled:opacity-50 dark:border-indigo-400 dark:text-indigo-400 dark:hover:bg-indigo-950/40"
-                    >
-                      Mark as Applied
-                    </button>
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={() => handleDelete(job.id)}
-                      className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              </li>
-            );
-          })}
+          {jobs.map((job) => (
+            <li key={job.id}>
+              <StaleJobCard
+                id={job.id}
+                title={job.title}
+                company={job.company}
+                createdAt={job.createdAt}
+                daysInApplying={job.daysInApplying}
+                url={job.url}
+                hasUrl={job.hasUrl}
+                hasJd={job.hasJd}
+                onRemove={handleDelete}
+                busy={busyId === job.id}
+              />
+            </li>
+          ))}
         </ul>
       )}
     </div>

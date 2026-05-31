@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { LayoutList, LayoutDashboard, Search, Plus } from "lucide-react";
+import { LayoutList, LayoutDashboard, Search, Plus, ClipboardList } from "lucide-react";
 
 // Dashboard-local pieces
 import OverviewSection from "@/app/dashboard/components/OverviewSection";
@@ -59,6 +59,8 @@ type Props = {
   openNewJobAutoFromQuery?: boolean;
   /** ?jobSearch=1 — open job search modal. */
   openJobSearchFromQuery?: boolean;
+  /** Count of jobs stuck in Applying for 7+ days (server-computed). */
+  staleApplyingCount?: number;
 };
 
 // Narrowed union for safer filtering (matches your UI statuses)
@@ -89,6 +91,7 @@ export default function DashboardClient({
   openNewJobFromQuery = false,
   openNewJobAutoFromQuery = false,
   openJobSearchFromQuery = false,
+  staleApplyingCount = 0,
 }: Props) {
   const router = useRouter();
 
@@ -484,6 +487,20 @@ export default function DashboardClient({
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.08, ease: [0.25, 0.1, 0.35, 1] }}
         >
+          {staleApplyingCount > 0 && (
+            <button
+              type="button"
+              onClick={() => router.push("/dashboard/jobs/stale-applying")}
+              className="mx-4 mt-3 flex items-center gap-2.5 rounded-lg border border-indigo-200 bg-indigo-50 px-3.5 py-2.5 text-left text-sm transition hover:bg-indigo-100 dark:border-indigo-700/60 dark:bg-indigo-950/40 dark:hover:bg-indigo-950/60 flex-shrink-0"
+            >
+              <ClipboardList size={16} className="shrink-0 text-indigo-500 dark:text-indigo-400" />
+              <span className="flex-1 text-indigo-800 dark:text-indigo-200">
+                <span className="font-semibold">{staleApplyingCount} Applying card{staleApplyingCount === 1 ? "" : "s"}</span>
+                {" "}stuck for 7+ days — review &amp; update
+              </span>
+              <span className="shrink-0 text-xs font-medium text-indigo-500 dark:text-indigo-400">Review →</span>
+            </button>
+          )}
           <h2 className="flex items-center gap-2 font-bold text-2xl text-gray-700 dark:text-gray-200 p-4 pb-0 flex-shrink-0">
             <LayoutList size={24} aria-hidden="true" />
             Card List
