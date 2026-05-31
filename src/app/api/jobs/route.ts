@@ -115,6 +115,7 @@ export async function GET() {
         company: true,
         status: true,
         appliedAt: true,
+        createdAt: true,
         tags: true,
         source: true,
         url: true,

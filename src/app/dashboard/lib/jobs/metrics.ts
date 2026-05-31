@@ -10,10 +10,13 @@ export const isActive = (j: Job) => j.deletedAt == null;
 
 export const STALE_MS = 7 * 24 * 60 * 60 * 1000;
 
-/** True when an applying job has been untouched for 7+ days (belongs on the stale-applying page). */
-export const isStaleApplying = (j: Job): boolean =>
-  j.status === "applying" &&
-  Date.now() - new Date(j.createdAt).getTime() > STALE_MS;
+/** True when an applying job has been untouched for 7+ days (belongs on the stale-applying page).
+ *  Uses toDate() to handle JSON-deserialized string dates safely. */
+export const isStaleApplying = (j: Job): boolean => {
+  if (j.status !== "applying") return false;
+  const created = toDate(j.createdAt);
+  return created !== null && Date.now() - created.getTime() > STALE_MS;
+};
 
 export function activeOnly(all: Job[]) {
   if (!Array.isArray(all)) {
