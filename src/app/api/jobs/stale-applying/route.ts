@@ -41,6 +41,7 @@ export async function GET() {
     status: j.status,
     createdAt: j.createdAt.toISOString(),
     daysInApplying: Math.floor((now - j.createdAt.getTime()) / (24 * 60 * 60 * 1000)),
+    url: j.url?.trim() || null,
     hasUrl: !!j.url?.trim(),
     hasJd: !!j.jd?.trim(),
   }));
