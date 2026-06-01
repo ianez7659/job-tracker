@@ -106,14 +106,14 @@ export function computeMissionsPayload(
   const quizDone = quizStatus === "completed";
 
   const quizCtaLabel =
-    quizStatus === "completed" ? "Review" :
-    quizStatus === "in_progress" ? "Continue" :
-    "Start";
+    quizStatus === "completed"
+      ? "Review"
+      : quizStatus === "in_progress"
+        ? "Continue"
+        : "Start";
 
   const quizProgressLabel =
-    quizStatus === "completed"
-      ? "Completed"
-      : `${quizCompleted}/${quizTotal}`;
+    quizStatus === "completed" ? "Completed" : `${quizCompleted}/${quizTotal}`;
 
   const quizRewardLabel =
     quizStatus === "completed" ? "+10 XP earned" : "+10 XP";
@@ -150,9 +150,9 @@ export function computeMissionsPayload(
     daily.push({
       id: "daily_stale_applying_cleanup",
       title: "Review old Applying cards",
-      description: "You have job cards that have stayed in Applying for 7+ days. Review them and either mark them as Applied or remove the ones you no longer need.",
+      description: "Review job cards that have stayed in Applying for 7+ days.",
       completed: false,
-      ctaLabel: "Review cards",
+      ctaLabel: "Review",
       href: "/dashboard/jobs/stale-applying",
       progressLabel: `${staleApplyingCount} card${staleApplyingCount === 1 ? "" : "s"}`,
     });
@@ -180,7 +180,9 @@ export function computeMissionsPayload(
 }
 
 /** Client fallback when the missions API fails — shows all rows as incomplete (no XP logic change). */
-export function fallbackIncompleteMissionsPayload(timeZone: string): MissionsPayload {
+export function fallbackIncompleteMissionsPayload(
+  timeZone: string,
+): MissionsPayload {
   return computeMissionsPayload({
     now: new Date(),
     timeZone,

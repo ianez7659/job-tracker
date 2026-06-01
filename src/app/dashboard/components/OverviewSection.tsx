@@ -1,12 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import {
-  ClipboardList,
-  Briefcase,
-  FileInput,
-  BadgeCheck,
-} from "lucide-react";
+import { ClipboardList, Briefcase, FileInput, BadgeCheck } from "lucide-react";
 import SummarySection from "@/components/SummarySection";
 
 type FilterStatus =
@@ -75,9 +70,9 @@ const OverviewSection: React.FC<Props> = ({
   if (embedded) {
     return (
       <div className="mb-6">
-        <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2 uppercase tracking-wide">
+        {/* <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2 uppercase tracking-wide">
           Application Overview
-        </h3>
+        </h3> */}
         <SummarySection
           cards={overviewCards}
           grid="grid-cols-3 gap-1 sm:gap-2"
@@ -91,10 +86,10 @@ const OverviewSection: React.FC<Props> = ({
 
   return (
     <section className="mb-4 border border-gray-400 dark:border-slate-200 rounded-lg bg-white dark:bg-slate-700 shadow-sm p-4">
-      <h2 className="flex items-center gap-2 font-bold text-xl text-gray-700 dark:text-gray-200 mb-4">
+      {/* <h2 className="flex items-center gap-2 font-bold text-xl text-gray-700 dark:text-gray-200 mb-4">
         <ClipboardList size={24} aria-hidden="true" />
         Application Overview
-      </h2>
+      </h2> */}
       <SummarySection
         cards={overviewCards}
         grid="grid-cols-3 gap-1.5 sm:gap-3"

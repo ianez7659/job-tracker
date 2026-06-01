@@ -52,6 +52,8 @@ Architecture.md
 Quality_Score.md
 Security.md
 todo-prompt.md
+todo-quiz.md
+todo-admin.md
 Harness-Prompt.md
 /docs
 
@@ -66,4 +68,6 @@ Harness-Prompt.md
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+/worktree
 

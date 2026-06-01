@@ -526,6 +526,7 @@ export default function DashboardClient({
           <div className="flex-1 min-h-0 overflow-y-auto p-4 pt-3 lg:max-h-[calc(100vh-12rem)]">
             {staleCount > 0 && (filterStatus === "all" || filterStatus === "applying") && (
               <StackedApplyingCard
+                key={filterStatus}
                 count={staleCount}
                 onClick={() => router.push("/dashboard/jobs/stale-applying")}
               />

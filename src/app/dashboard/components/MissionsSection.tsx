@@ -7,6 +7,7 @@ import {
   CalendarDays,
   CircleCheck,
   ClipboardList,
+  FolderOpen,
   Loader2,
   PartyPopper,
   Send,
@@ -39,19 +40,54 @@ function apiUrl(path: string): string {
 function missionIcon(id: MissionId) {
   switch (id) {
     case "daily_check_in":
-      return <Sparkles className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
+      return (
+        <Sparkles
+          className="h-5 w-5 text-indigo-600 dark:text-indigo-300"
+          aria-hidden
+        />
+      );
     case "daily_job_card":
-      return <Send className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
+      return (
+        <Send
+          className="h-5 w-5 text-indigo-600 dark:text-indigo-300"
+          aria-hidden
+        />
+      );
     case "daily_interview_drill":
-      return <BookOpen className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
+      return (
+        <BookOpen
+          className="h-5 w-5 text-indigo-600 dark:text-indigo-300"
+          aria-hidden
+        />
+      );
     case "weekly_review":
-      return <ClipboardList className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
+      return (
+        <ClipboardList
+          className="h-5 w-5 text-indigo-600 dark:text-indigo-300"
+          aria-hidden
+        />
+      );
     case "weekly_cycle":
-      return <CalendarDays className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
+      return (
+        <CalendarDays
+          className="h-5 w-5 text-indigo-600 dark:text-indigo-300"
+          aria-hidden
+        />
+      );
     case "daily_stale_applying_cleanup":
-      return <ClipboardList className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
+      return (
+        <FolderOpen
+          className="h-5 w-5 text-amber-600 dark:text-amber-400"
+          aria-hidden
+        />
+      );
     default:
-      return <Target className="h-5 w-5 text-indigo-600 dark:text-indigo-300" aria-hidden />;
+      return (
+        <Target
+          className="h-5 w-5 text-indigo-600 dark:text-indigo-300"
+          aria-hidden
+        />
+      );
   }
 }
 
@@ -68,13 +104,19 @@ function MissionRow({
   return (
     <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 dark:border-slate-600 dark:bg-slate-800/80 sm:items-start sm:p-4">
       <div
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950/50"
+        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${
+          row.id === "daily_stale_applying_cleanup"
+            ? "bg-amber-50 dark:bg-amber-950/50"
+            : "bg-indigo-50 dark:bg-indigo-950/50"
+        }`}
         aria-hidden
       >
         {missionIcon(row.id)}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{row.title}</p>
+        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+          {row.title}
+        </p>
         <p className="mt-0.5 hidden text-xs leading-relaxed text-gray-600 dark:text-gray-400 sm:block sm:text-sm">
           {row.description}
         </p>
@@ -110,9 +152,17 @@ function MissionRow({
             type="button"
             onClick={() => onStart(row.id)}
             disabled={busy}
-            className="inline-flex min-h-[2.5rem] min-w-[4.5rem] items-center justify-center rounded-lg border-2 border-indigo-500 px-3 py-2 text-xs font-semibold text-indigo-600 transition-colors hover:bg-indigo-50 disabled:opacity-60 dark:border-indigo-400 dark:text-indigo-300 dark:hover:bg-indigo-950/40 sm:text-sm"
+            className={`inline-flex min-h-[2.5rem] min-w-[4.5rem] items-center justify-center rounded-lg border-2 px-3 py-2 text-xs font-semibold transition-colors disabled:opacity-60 sm:text-sm ${
+              row.id === "daily_stale_applying_cleanup"
+                ? "border-amber-500 text-amber-700 hover:bg-amber-50 dark:border-amber-400 dark:text-amber-300 dark:hover:bg-amber-950/40"
+                : "border-indigo-500 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-400 dark:text-indigo-300 dark:hover:bg-indigo-950/40"
+            }`}
           >
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : (row.ctaLabel ?? "Start")}
+            {busy ? (
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+            ) : (
+              (row.ctaLabel ?? "Start")
+            )}
           </button>
         )}
       </div>
@@ -187,7 +237,9 @@ export default function MissionsSection({
 
   const handleStart = async (id: MissionId) => {
     // Generic href handler — if the row has an href, navigate to it
-    const row = [...(data?.daily ?? []), ...(data?.weekly ?? [])].find((r) => r.id === id);
+    const row = [...(data?.daily ?? []), ...(data?.weekly ?? [])].find(
+      (r) => r.id === id,
+    );
     if (row?.href && id !== "daily_check_in" && id !== "daily_job_card") {
       router.push(row.href);
       return;
@@ -231,11 +283,15 @@ export default function MissionsSection({
 
   const payload = data ?? EMPTY_PAYLOAD;
   const visibleDaily = useMemo(
-    () => (showCompleted ? payload.daily : payload.daily.filter((m) => !m.completed)),
+    () =>
+      showCompleted ? payload.daily : payload.daily.filter((m) => !m.completed),
     [payload.daily, showCompleted],
   );
   const visibleWeekly = useMemo(
-    () => (showCompleted ? payload.weekly : payload.weekly.filter((m) => !m.completed)),
+    () =>
+      showCompleted
+        ? payload.weekly
+        : payload.weekly.filter((m) => !m.completed),
     [payload.weekly, showCompleted],
   );
 
@@ -245,11 +301,13 @@ export default function MissionsSection({
       aria-label="Missions"
     >
       {loading ? (
-        <p className="text-center text-sm text-gray-600 dark:text-gray-400">Loading missions…</p>
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+          Loading missions…
+        </p>
       ) : (
         <>
-          <div className="mb-4 flex flex-col items-center gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
-            <h2 className="flex w-full items-center justify-center gap-2 text-base font-bold text-gray-900 dark:text-gray-100 sm:w-auto sm:justify-start sm:text-lg">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-gray-100 sm:text-lg">
               <span className="flex h-9 w-9 items-center justify-center text-rose-700 dark:text-rose-300">
                 <Target className="h-5 w-5" aria-hidden />
               </span>
@@ -351,7 +409,12 @@ export default function MissionsSection({
             className="flex flex-col gap-2.5"
           >
             {visibleDaily.map((row) => (
-              <MissionRow key={row.id} row={row} onStart={handleStart} busyId={busyId} />
+              <MissionRow
+                key={row.id}
+                row={row}
+                onStart={handleStart}
+                busyId={busyId}
+              />
             ))}
             {visibleDaily.length === 0 && (
               <p className="rounded-lg border border-dashed border-gray-300 bg-white/70 p-3 text-center text-xs leading-normal text-gray-500 dark:border-slate-600 dark:bg-slate-800/60 dark:text-gray-400">
@@ -359,7 +422,10 @@ export default function MissionsSection({
                   className="mr-1 inline-block h-[1.1em] w-[1.1em] align-[-0.15em] text-amber-500 dark:text-amber-400"
                   aria-hidden
                 />
-                <span className="font-semibold text-gray-700 dark:text-gray-200 text-base">Congratulations!</span><br/>
+                <span className="font-semibold text-gray-700 dark:text-gray-200 text-base">
+                  Congratulations!
+                </span>
+                <br />
                 All daily missions are done. See you tomorrow!
               </p>
             )}
@@ -373,7 +439,12 @@ export default function MissionsSection({
             className="flex flex-col gap-2.5"
           >
             {visibleWeekly.map((row) => (
-              <MissionRow key={row.id} row={row} onStart={handleStart} busyId={busyId} />
+              <MissionRow
+                key={row.id}
+                row={row}
+                onStart={handleStart}
+                busyId={busyId}
+              />
             ))}
             {visibleWeekly.length === 0 && (
               <p className="rounded-lg border border-dashed border-gray-300 bg-white/70 p-3 text-center text-xs text-gray-500 dark:border-slate-600 dark:bg-slate-800/60 dark:text-gray-400">
@@ -382,7 +453,9 @@ export default function MissionsSection({
             )}
           </div>
 
-          {!(payload.daily.length > 0 && payload.daily.every((m) => m.completed)) && (
+          {!(
+            payload.daily.length > 0 && payload.daily.every((m) => m.completed)
+          ) && (
             <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-xs text-gray-600 dark:text-gray-400 sm:text-sm">
               <Star className="h-4 w-4 shrink-0 text-amber-500" aria-hidden />
               Complete your missions to earn XP!
