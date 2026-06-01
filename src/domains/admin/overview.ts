@@ -61,7 +61,9 @@ async function getAdminOverviewRaw(): Promise<AdminOverview> {
         email: true,
         category: true,
         jobs: {
-          where: { deletedAt: null },
+          // Include terminal-status jobs (offer/rejected) even though they are
+          // soft-deleted by design — excluding them would make hiredRate always 0.
+          where: { OR: [{ deletedAt: null }, { status: { in: [OFFER_STATUS, "rejected"] } }] },
           select: { id: true, status: true, appliedAt: true },
         },
         xp: {
