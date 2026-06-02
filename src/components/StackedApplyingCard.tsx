@@ -49,7 +49,7 @@ export default function StackedApplyingCard({ count, onClick }: Props) {
             aria-hidden
           />
           <div className="mb-1 flex flex-col leading-snug">
-            <span className="text-lg sm:text-xl  font-bold text-amber-900 dark:text-amber-100">
+            <span className="text-lg sm:text-xl  font-bold text-amber-900 dark:text-amber-400">
               +7 Days Cards Stuck
             </span>
             {/* <span className="text-base font-bold text-amber-900 dark:text-amber-100">
@@ -63,7 +63,7 @@ export default function StackedApplyingCard({ count, onClick }: Props) {
 
         {/* Footer: sub-label + arrow */}
         <div className="flex items-center justify-end gap-2 pt-2.5">
-          <span className="text-base font-medium text-amber-700 dark:text-amber-300">
+          <span className="text-base font-medium text-amber-700 dark:text-amber-400">
             Total {count} cards
           </span>
           <ChevronRight

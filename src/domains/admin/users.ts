@@ -327,7 +327,9 @@ async function getAdminUserDetailRaw(userId: string): Promise<AdminUserDetail | 
       category: true,
       createdAt: true,
       jobs: {
-        where: { deletedAt: null },
+        // Include terminal-status jobs (offer/rejected) even though they are
+        // soft-deleted by design — excluding them would make offered count always 0.
+        where: { OR: [{ deletedAt: null }, { status: { in: [OFFER_STATUS, "rejected"] } }] },
         select: {
           id: true,
           title: true,
