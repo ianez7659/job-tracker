@@ -23,6 +23,9 @@ import XpToast from "@/components/XpToast";
 import { ClipboardPasteButton } from "@/components/ClipboardPasteButton";
 import WalkInCompanyPrepPanel from "@/components/WalkInCompanyPrepPanel";
 import { JobSource } from "@/generated/prisma";
+import OfferTransitionModal, {
+  type OfferFormData,
+} from "@/components/OfferTransitionModal";
 
 type Job = {
   id: string;
@@ -69,6 +72,7 @@ export default function EditJobClient({ job }: Props) {
   });
 
   const [xpToast, setXpToast] = useState(0);
+  const [showOfferModal, setShowOfferModal] = useState(false);
 
   const [adviceText, setAdviceText] = useState<string | null>(null);
   const [adviceLoading, setAdviceLoading] = useState(false);
@@ -273,6 +277,32 @@ export default function EditJobClient({ job }: Props) {
     }
   };
 
+  const handleOfferConfirm = async (formData: OfferFormData) => {
+    const res = await fetch("/api/hired/offers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jobId: job.id,
+        offerDate: formData.offerDate,
+        employmentType: formData.employmentType,
+        workArrangement: formData.workArrangement || null,
+        salaryRange: formData.salaryRange,
+      }),
+    });
+    const data = (await res.json().catch(() => ({}))) as {
+      message?: string;
+      xpGained?: number;
+    };
+    if (!res.ok) {
+      throw new Error(typeof data.message === "string" ? data.message : "Could not save offer");
+    }
+    setShowOfferModal(false);
+    if ((data.xpGained ?? 0) > 0) {
+      setXpToast(data.xpGained!);
+    }
+    router.push("/dashboard");
+  };
+
   return (
     <section className="max-w-5xl mx-auto mt-8 p-4 sm:p-6">
       <a
@@ -339,7 +369,7 @@ export default function EditJobClient({ job }: Props) {
                     <button
                       type="button"
                       disabled={pipelineLoading}
-                      onClick={() => patchStatusOnly("offer")}
+                      onClick={() => setShowOfferModal(true)}
                       className="text-sm px-3 py-2.5 rounded-md border-2 border-emerald-600 text-emerald-800 hover:bg-emerald-100 disabled:opacity-50 min-h-[44px]"
                     >
                       Mark as Offer
@@ -655,6 +685,13 @@ export default function EditJobClient({ job }: Props) {
         </div>
       </div>
       <XpToast xp={xpToast} onDismiss={() => setXpToast(0)} />
+      {showOfferModal && (
+        <OfferTransitionModal
+          companyName={form.company}
+          onConfirm={handleOfferConfirm}
+          onCancel={() => setShowOfferModal(false)}
+        />
+      )}
     </section>
   );
 }

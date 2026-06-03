@@ -1,0 +1,131 @@
+import { prisma } from "@/lib/prisma";
+import { isAllowedStatusTransition } from "@/lib/jobPipeline";
+import { deriveCycleEndStage } from "@/lib/xp/cycleStage";
+import type { EmploymentType, WorkArrangement, SalaryRange } from "./constants";
+
+export type OfferTransitionInput = {
+  userId: string;
+  jobId: string;
+  offerDate: Date;
+  employmentType: EmploymentType;
+  workArrangement?: WorkArrangement | null;
+  salaryRange?: SalaryRange | null;
+};
+
+export type OfferTransitionResult = {
+  job: {
+    id: string;
+    title: string;
+    company: string;
+    status: string;
+    appliedAt: Date;
+    url: string | null;
+    jd: string | null;
+    cycleEndStage: string | null;
+  };
+  hiredProfile: {
+    id: string;
+    userId: string;
+    followUpDate: Date | null;
+    notes: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  hiredOffer: {
+    id: string;
+    hiredProfileId: string;
+    jobId: string;
+    offerDate: Date | null;
+    employmentType: string | null;
+    workArrangement: string | null;
+    salaryRange: string | null;
+    status: string;
+    verifiedAt: Date | null;
+    verifiedByUserId: string | null;
+    deactivatedAt: Date | null;
+    deactivatedByUserId: string | null;
+    deactivateReason: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+};
+
+/**
+ * Atomically transitions a job to "offer" status and creates the
+ * HiredProfile + HiredOffer records in a single Prisma transaction.
+ *
+ * Throws with a typed error code so the API route can map to HTTP status.
+ */
+export async function createOfferTransition(
+  input: OfferTransitionInput,
+): Promise<OfferTransitionResult> {
+  const { userId, jobId, offerDate, employmentType, workArrangement, salaryRange } = input;
+
+  // 1. Verify job belongs to this user and is not deleted
+  const job = await prisma.job.findFirst({
+    where: { id: jobId, userId, deletedAt: null },
+  });
+
+  if (!job) {
+    const err = new Error("Job not found or does not belong to user");
+    (err as NodeJS.ErrnoException).code = "JOB_NOT_FOUND";
+    throw err;
+  }
+
+  // 2. Validate the status transition
+  if (!isAllowedStatusTransition(job.status, "offer")) {
+    const err = new Error(
+      `Status transition from "${job.status}" to "offer" is not allowed`,
+    );
+    (err as NodeJS.ErrnoException).code = "INVALID_TRANSITION";
+    throw err;
+  }
+
+  const cycleEndStage = deriveCycleEndStage(job.status);
+
+  // 3. Transaction: update job + upsert HiredProfile + create HiredOffer
+  const [updatedJob, hiredProfile, hiredOffer] = await prisma.$transaction(
+    async (tx) => {
+      const updatedJob = await tx.job.update({
+        where: { id: jobId },
+        data: {
+          status: "offer",
+          deletedAt: new Date(),
+          ...(cycleEndStage !== null && { cycleEndStage }),
+        },
+        select: {
+          id: true,
+          title: true,
+          company: true,
+          status: true,
+          appliedAt: true,
+          url: true,
+          jd: true,
+          cycleEndStage: true,
+        },
+      });
+
+      const hiredProfile = await tx.hiredProfile.upsert({
+        where: { userId },
+        create: { userId },
+        update: {},
+      });
+
+      const hiredOffer = await tx.hiredOffer.create({
+        data: {
+          hiredProfileId: hiredProfile.id,
+          jobId,
+          offerDate,
+          employmentType,
+          workArrangement: workArrangement ?? null,
+          salaryRange: salaryRange ?? "not_disclosed",
+          status: "pending",
+        },
+      });
+
+      return [updatedJob, hiredProfile, hiredOffer] as const;
+    },
+  );
+
+  return { job: updatedJob, hiredProfile, hiredOffer };
+}
