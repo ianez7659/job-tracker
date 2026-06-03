@@ -24,6 +24,7 @@ model User {
   sessions      Session[]
   xp            UserXp?
   quizSessions  DailyQuizSession[]
+  hiredProfile  HiredProfile?
 
   @@map("User")
 }
@@ -55,8 +56,9 @@ model Job {
   jd            String?
   resumeFile    String?
   cycleEndStage String?   // last non-terminal stage when job reached offer/rejected
-  user          User      @relation(fields: [userId], references: [id])
+  user              User               @relation(fields: [userId], references: [id])
   atsMatchSnapshots AtsMatchSnapshot[]
+  hiredOffer        HiredOffer?
 }
 
 /// ATS-style match runs for Applying (history, deltas, future subscores/actions).
@@ -104,6 +106,49 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// ── Hired Profile / Offer ─────────────────────────────────────────────────────
+
+/// One per user — created when first job reaches offer status.
+/// CRM container for admin follow-up and notes.
+model HiredProfile {
+  id           String      @id @default(cuid())
+  userId       String      @unique
+  followUpDate DateTime?
+  notes        String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  user   User        @relation(fields: [userId], references: [id])
+  offers HiredOffer[]
+
+  @@map("HiredProfile")
+}
+
+/// One per offer job — records offer details and lifecycle status.
+/// status values: "pending" | "current_hired" | "inactive" | "not_selected" | "unverifiable"
+model HiredOffer {
+  id                  String    @id @default(cuid())
+  hiredProfileId      String
+  jobId               String    @unique
+  offerDate           DateTime?
+  employmentType      String?   // "full_time" | "part_time" | "contract" | "internship"
+  workArrangement     String?   // "on_site" | "remote" | "hybrid"
+  salaryRange         String?   // "not_disclosed" | "under_40k" | "40k_50k" | ... | "80k_plus"
+  status              String    @default("pending")
+  verifiedAt          DateTime?
+  verifiedByUserId    String?
+  deactivatedAt       DateTime?
+  deactivatedByUserId String?
+  deactivateReason    String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  hiredProfile HiredProfile @relation(fields: [hiredProfileId], references: [id])
+  job          Job          @relation(fields: [jobId], references: [id])
+
+  @@map("HiredOffer")
 }
 
 // ── XP System ────────────────────────────────────────────────────────────────

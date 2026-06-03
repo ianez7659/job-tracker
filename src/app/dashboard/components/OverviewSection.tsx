@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { ClipboardList, Briefcase, FileInput, BadgeCheck } from "lucide-react";
+import { Briefcase, FileInput, BadgeCheck } from "lucide-react";
 import SummarySection from "@/components/SummarySection";
 
 type FilterStatus =
