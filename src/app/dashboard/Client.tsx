@@ -21,6 +21,7 @@ import type { MissionsPayload, MissionStatus } from "@/lib/xp/missionsDisplayCor
 import XpSummaryCard from "@/app/dashboard/components/XpSummaryCard";
 import DashboardStreakPanel from "@/app/dashboard/components/DashboardStreakPanel";
 import XpToast from "@/components/XpToast";
+import HiredBadge, { type ActiveOffer } from "@/components/HiredBadge";
 import { computeLevel } from "@/lib/xp/levels";
 import { computeLoginStreakDisplay, type WeekCircleDay } from "@/lib/xp/streakDisplayCore";
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
@@ -157,6 +158,24 @@ export default function DashboardClient({
   const [headerSummary, setHeaderSummary] = useState<DashboardHeaderSummaryPayload | null>(
     null,
   );
+
+  // Hired badge state
+  const [activeOffer, setActiveOffer] = useState<ActiveOffer | null | undefined>(undefined);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch("/api/hired/offers/active", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = (await res.json()) as { offer: ActiveOffer | null };
+        if (!cancelled) setActiveOffer(data.offer);
+      } catch {
+        if (!cancelled) setActiveOffer(null);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -408,6 +427,15 @@ export default function DashboardClient({
           </div>
         </div>
       </div>
+
+      {activeOffer && (
+        <div className="mb-3">
+          <HiredBadge
+            offer={activeOffer}
+            onDeactivated={() => setActiveOffer(null)}
+          />
+        </div>
+      )}
 
       <MissionsSection
         refreshToken={xpRefreshToken}

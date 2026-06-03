@@ -129,3 +129,57 @@ export async function createOfferTransition(
 
   return { job: updatedJob, hiredProfile, hiredOffer };
 }
+
+// ── Deactivate ────────────────────────────────────────────────────────────────
+
+export type DeactivateInput = {
+  userId: string;
+  offerId: string;
+  reason?: string | null;
+};
+
+/**
+ * User-triggered deactivation of their current_hired offer.
+ * Validates ownership and status, then sets the offer to "inactive".
+ *
+ * Throws with typed error codes:
+ *   OFFER_NOT_FOUND      — offerId does not exist
+ *   FORBIDDEN            — offer does not belong to userId
+ *   NOT_CURRENT_HIRED    — offer.status is not "current_hired"
+ */
+export async function deactivateHiredOffer(input: DeactivateInput): Promise<void> {
+  const { userId, offerId, reason } = input;
+
+  const offer = await prisma.hiredOffer.findUnique({
+    where: { id: offerId },
+    include: { hiredProfile: { select: { userId: true } } },
+  });
+
+  if (!offer) {
+    const err = new Error("Offer not found");
+    (err as NodeJS.ErrnoException).code = "OFFER_NOT_FOUND";
+    throw err;
+  }
+
+  if (offer.hiredProfile.userId !== userId) {
+    const err = new Error("Forbidden");
+    (err as NodeJS.ErrnoException).code = "FORBIDDEN";
+    throw err;
+  }
+
+  if (offer.status !== "current_hired") {
+    const err = new Error(`Offer status is "${offer.status}", not "current_hired"`);
+    (err as NodeJS.ErrnoException).code = "NOT_CURRENT_HIRED";
+    throw err;
+  }
+
+  await prisma.hiredOffer.update({
+    where: { id: offerId },
+    data: {
+      status: "inactive",
+      deactivatedAt: new Date(),
+      deactivatedByUserId: userId,
+      deactivateReason: reason ?? null,
+    },
+  });
+}
