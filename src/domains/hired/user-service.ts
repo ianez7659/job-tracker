@@ -183,3 +183,76 @@ export async function deactivateHiredOffer(input: DeactivateInput): Promise<void
     },
   });
 }
+
+// ── Complete Offer Selection ───────────────────────────────────────────────────
+
+export type CompleteOfferSelectionInput = {
+  userId: string;
+  offerId: string;
+  offerDate: Date;
+  employmentType: EmploymentType;
+  workArrangement?: WorkArrangement | null;
+  salaryRange?: SalaryRange | null;
+};
+
+/**
+ * User completes offer details for an existing pending HiredOffer
+ * (created by backfill or a previous transition with missing data).
+ *
+ * - Updates the selected offer with the provided detail fields.
+ * - Marks all other pending offers on the same HiredProfile as "not_selected".
+ * - Offer remains "pending" until admin verifies it in /admin/hired-pool.
+ *
+ * Throws with typed error codes:
+ *   OFFER_NOT_FOUND  — offerId does not exist
+ *   FORBIDDEN        — offer does not belong to userId
+ *   INVALID_STATUS   — offer is not in "pending" state
+ */
+export async function completeOfferSelection(
+  input: CompleteOfferSelectionInput,
+): Promise<void> {
+  const { userId, offerId, offerDate, employmentType, workArrangement, salaryRange } = input;
+
+  const offer = await prisma.hiredOffer.findUnique({
+    where: { id: offerId },
+    include: { hiredProfile: { select: { id: true, userId: true } } },
+  });
+
+  if (!offer) {
+    const err = new Error("Offer not found");
+    (err as NodeJS.ErrnoException).code = "OFFER_NOT_FOUND";
+    throw err;
+  }
+
+  if (offer.hiredProfile.userId !== userId) {
+    const err = new Error("Forbidden");
+    (err as NodeJS.ErrnoException).code = "FORBIDDEN";
+    throw err;
+  }
+
+  if (offer.status !== "pending") {
+    const err = new Error(`Offer status is "${offer.status}", not "pending"`);
+    (err as NodeJS.ErrnoException).code = "INVALID_STATUS";
+    throw err;
+  }
+
+  const hiredProfileId = offer.hiredProfile.id;
+
+  await prisma.$transaction([
+    // Mark all other pending offers on this profile as not_selected
+    prisma.hiredOffer.updateMany({
+      where: { hiredProfileId, status: "pending", id: { not: offerId } },
+      data: { status: "not_selected" },
+    }),
+    // Update the selected offer with detail fields
+    prisma.hiredOffer.update({
+      where: { id: offerId },
+      data: {
+        offerDate,
+        employmentType,
+        workArrangement: workArrangement ?? null,
+        salaryRange: salaryRange ?? "not_disclosed",
+      },
+    }),
+  ]);
+}

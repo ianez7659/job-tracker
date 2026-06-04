@@ -22,6 +22,8 @@ import XpSummaryCard from "@/app/dashboard/components/XpSummaryCard";
 import DashboardStreakPanel from "@/app/dashboard/components/DashboardStreakPanel";
 import XpToast from "@/components/XpToast";
 import HiredBadge, { type ActiveOffer } from "@/components/HiredBadge";
+import OfferCompletionFlow from "@/components/OfferCompletionFlow";
+import type { PendingOffer } from "@/app/api/hired/offers/pending/route";
 import { computeLevel } from "@/lib/xp/levels";
 import { computeLoginStreakDisplay, type WeekCircleDay } from "@/lib/xp/streakDisplayCore";
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
@@ -159,8 +161,9 @@ export default function DashboardClient({
     null,
   );
 
-  // Hired badge state
+  // Hired badge + offer completion state
   const [activeOffer, setActiveOffer] = useState<ActiveOffer | null | undefined>(undefined);
+  const [pendingOffers, setPendingOffers] = useState<PendingOffer[] | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -169,7 +172,15 @@ export default function DashboardClient({
         const res = await fetch("/api/hired/offers/active", { cache: "no-store" });
         if (!res.ok) return;
         const data = (await res.json()) as { offer: ActiveOffer | null };
-        if (!cancelled) setActiveOffer(data.offer);
+        if (cancelled) return;
+        setActiveOffer(data.offer);
+        // Only prompt completion flow when user has no active hired offer
+        if (!data.offer) {
+          const pendingRes = await fetch("/api/hired/offers/pending", { cache: "no-store" });
+          if (!pendingRes.ok || cancelled) return;
+          const pendingData = (await pendingRes.json()) as { offers: PendingOffer[] };
+          if (!cancelled) setPendingOffers(pendingData.offers);
+        }
       } catch {
         if (!cancelled) setActiveOffer(null);
       }
@@ -435,6 +446,22 @@ export default function DashboardClient({
             onDeactivated={() => setActiveOffer(null)}
           />
         </div>
+      )}
+
+      {pendingOffers && pendingOffers.length > 0 && (
+        <OfferCompletionFlow
+          offers={pendingOffers}
+          onDone={() => {
+            setPendingOffers(null);
+            // Refresh active offer in case the completed offer is now verified
+            void fetch("/api/hired/offers/active", { cache: "no-store" })
+              .then((r) => r.ok ? r.json() : null)
+              .then((data: { offer: ActiveOffer | null } | null) => {
+                if (data) setActiveOffer(data.offer);
+              })
+              .catch(() => undefined);
+          }}
+        />
       )}
 
       <MissionsSection
