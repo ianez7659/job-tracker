@@ -32,6 +32,7 @@ const MOCK_STATS = {
 
 const MOCK_ROWS = [
   {
+    profileId: "profile-1",
     offerId: "offer-1",
     userId: "user-1",
     userName: "Alice",
@@ -45,6 +46,7 @@ const MOCK_ROWS = [
     status: "current_hired",
     verifiedAt: new Date("2025-06-10"),
     createdAt: new Date("2025-06-01"),
+    offerCount: 1,
   },
 ];
 
@@ -69,7 +71,9 @@ describe("GET /api/admin/hired/rate", () => {
     expect(data.stats.total).toBe(2);
     expect(data.stats.byStatus.current_hired).toBe(1);
     expect(data.rows).toHaveLength(1);
+    expect(data.rows[0].profileId).toBe("profile-1");
     expect(data.rows[0].offerId).toBe("offer-1");
+    expect(data.rows[0].offerCount).toBe(1);
   });
 
   it("returns 200 with empty data when no offers exist", async () => {
