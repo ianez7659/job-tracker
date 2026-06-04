@@ -44,7 +44,7 @@ function NotesEditor({ profileId, initialNotes }: { profileId: string; initialNo
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch {
-      setError("저장 실패");
+      setError("Failed to save");
     } finally {
       setSaving(false);
     }
@@ -57,7 +57,7 @@ function NotesEditor({ profileId, initialNotes }: { profileId: string; initialNo
         value={notes}
         onChange={(e) => { setNotes(e.target.value); setSaved(false); }}
         rows={2}
-        placeholder="admin 메모..."
+        placeholder="Admin notes..."
         className="w-full resize-none rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:border-indigo-400 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
       />
       <div className="flex items-center gap-2">
@@ -66,9 +66,9 @@ function NotesEditor({ profileId, initialNotes }: { profileId: string; initialNo
           disabled={!isDirty || saving}
           className="rounded-md bg-indigo-600 px-3 py-1 text-xs font-medium text-white disabled:opacity-40 hover:bg-indigo-700 transition-colors"
         >
-          {saving ? "저장 중…" : "저장"}
+          {saving ? "Saving…" : "Save"}
         </button>
-        {saved && <span className="text-xs text-emerald-500">저장됨</span>}
+        {saved && <span className="text-xs text-emerald-500">Saved</span>}
         {error && <span className="text-xs text-red-500">{error}</span>}
       </div>
     </div>
@@ -96,7 +96,7 @@ function OfferRow({ offer, onUpdate }: {
       const data = await res.json() as { offer: { status: string } };
       onUpdate(offer.offerId, data.offer.status);
     } catch {
-      setError("요청 실패");
+      setError("Request failed");
     } finally {
       setLoading(null);
     }
@@ -110,7 +110,7 @@ function OfferRow({ offer, onUpdate }: {
             {offer.company} — {offer.title}
           </p>
           <p className="mt-0.5 text-xs text-gray-400">
-            {offer.offerDate ? new Date(offer.offerDate).toLocaleDateString() : "날짜 미입력"}
+            {offer.offerDate ? new Date(offer.offerDate).toLocaleDateString() : "No date"}
             {offer.employmentType ? ` · ${offer.employmentType}` : ""}
             {offer.salaryRange ? ` · ${offer.salaryRange}` : ""}
           </p>
@@ -127,7 +127,7 @@ function OfferRow({ offer, onUpdate }: {
             disabled={loading !== null}
             className="rounded-md bg-emerald-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-40 transition-colors"
           >
-            {loading === "verify" ? "처리 중…" : "Verify"}
+            {loading === "verify" ? "Processing…" : "Verify"}
           </button>
         )}
         {offer.status !== "inactive" && (
@@ -136,7 +136,7 @@ function OfferRow({ offer, onUpdate }: {
             disabled={loading !== null}
             className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition-colors dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"
           >
-            {loading === "deactivate" ? "처리 중…" : "Deactivate"}
+            {loading === "deactivate" ? "Processing…" : "Deactivate"}
           </button>
         )}
         {error && <span className="text-xs text-red-500">{error}</span>}

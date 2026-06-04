@@ -11,7 +11,7 @@ export default async function AdminHiredPoolPage() {
     <div className="space-y-6">
       <AdminHeader
         title="Hired Pool"
-        subtitle="학생별 HiredProfile CRM — offer verify, deactivate, notes 관리"
+        subtitle="Per-student CRM — verify or deactivate offers, manage admin notes"
       />
       <HiredPoolClient entries={entries} />
     </div>
