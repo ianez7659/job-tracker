@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import ThemeToggle from "./ThemeToggle";
 
@@ -73,12 +73,21 @@ const NAV_ITEMS = [
 ] as const;
 
 // Shared nav link used in both desktop sidebar and mobile drawer
-function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
+function NavLinks({
+  pathname,
+  pendingCount,
+  onNavigate,
+}: {
+  pathname: string;
+  pendingCount: number;
+  onNavigate?: () => void;
+}) {
   return (
     <>
       {NAV_ITEMS.map(({ href, label, icon }) => {
         const isActive =
           href === "/admin" ? pathname === href : pathname.startsWith(href);
+        const showBadge = href === "/admin/hired-pool" && pendingCount > 0;
         return (
           <Link
             key={href}
@@ -92,7 +101,12 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
             ].join(" ")}
           >
             {icon}
-            {label}
+            <span className="flex-1">{label}</span>
+            {showBadge && (
+              <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white dark:bg-amber-400 dark:text-gray-900">
+                {pendingCount > 99 ? "99+" : pendingCount}
+              </span>
+            )}
           </Link>
         );
       })}
@@ -162,6 +176,18 @@ function BottomActions({ onNavigate }: { onNavigate?: () => void }) {
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch("/api/admin/hired/pool/pending-count", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { count: number } | null) => {
+        if (!cancelled && data) setPendingCount(data.count);
+      })
+      .catch(() => undefined);
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <>
@@ -220,7 +246,7 @@ export default function AdminSidebar() {
             {/* Nav */}
             <nav className="flex-1 space-y-1 overflow-y-auto px-2 py-4">
               <SearchButton />
-              <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} />
+              <NavLinks pathname={pathname} pendingCount={pendingCount} onNavigate={() => setOpen(false)} />
             </nav>
             {/* Bottom */}
             <div className="space-y-1 border-t border-gray-200 px-2 py-3 dark:border-gray-800">
@@ -241,7 +267,7 @@ export default function AdminSidebar() {
         {/* Nav */}
         <nav className="flex-1 space-y-1 overflow-y-auto px-2 py-4">
           <SearchButton />
-          <NavLinks pathname={pathname} />
+          <NavLinks pathname={pathname} pendingCount={pendingCount} />
         </nav>
         {/* Bottom */}
         <div className="space-y-1 border-t border-gray-200 px-2 py-3 dark:border-gray-800">
