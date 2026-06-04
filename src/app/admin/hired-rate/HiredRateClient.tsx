@@ -155,7 +155,7 @@ export default function HiredRateClient({ stats, rows }: Props) {
     <div className="space-y-6">
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <KpiCard label="Total Offers" value={stats.total} />
+        <KpiCard label="Total People" value={stats.total} sub="with offer" />
         <KpiCard label="Current Hired" value={verified} sub="verified" />
         <KpiCard label="Pending" value={pending} sub="awaiting verification" />
         <KpiCard label="Inactive" value={inactive} sub="deactivated" />
@@ -218,7 +218,7 @@ export default function HiredRateClient({ stats, rows }: Props) {
         )}
 
         <span className="ml-auto self-center text-sm text-gray-400">
-          {filteredRows.length} / {rows.length} offers
+          {filteredRows.length} / {rows.length} people
         </span>
       </div>
 
@@ -247,7 +247,7 @@ export default function HiredRateClient({ stats, rows }: Props) {
             ) : (
               filteredRows.map((row) => (
                 <tr
-                  key={row.offerId}
+                  key={row.profileId}
                   className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
                 >
                   <td className="px-4 py-3">
@@ -257,8 +257,17 @@ export default function HiredRateClient({ stats, rows }: Props) {
                     <p className="text-xs text-gray-400">{row.userEmail}</p>
                   </td>
                   <td className="px-4 py-3">
-                    <p className="font-medium text-gray-900 dark:text-gray-100">{row.company}</p>
-                    <p className="text-xs text-gray-400">{row.title}</p>
+                    <div className="flex items-center gap-2">
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-gray-100">{row.company}</p>
+                        <p className="text-xs text-gray-400">{row.title}</p>
+                      </div>
+                      {row.offerCount > 1 && (
+                        <span className="shrink-0 rounded-full bg-indigo-100 px-1.5 py-0.5 text-[10px] font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
+                          {row.offerCount} offers
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
                     {row.offerDate ? new Date(row.offerDate).toLocaleDateString() : "—"}
