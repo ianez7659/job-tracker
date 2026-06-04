@@ -30,11 +30,12 @@ async function main() {
     console.log("=== EXECUTE MODE — writing to DB ===\n");
   }
 
-  // 1. Find all offer jobs without a HiredOffer (not soft-deleted)
+  // 1. Find all offer jobs without a HiredOffer (regardless of deletedAt —
+  //    createOfferTransition sets deletedAt when transitioning, so backfill
+  //    targets may have deletedAt set)
   const offerJobs = await prisma.job.findMany({
     where: {
       status: "offer",
-      deletedAt: null,
       hiredOffer: null,
     },
     select: {
