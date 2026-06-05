@@ -548,19 +548,19 @@ export default function HiredRateClient({ stats, rows }: Props) {
                     {row.userCategory ?? "—"}
                   </td>
 
-                  {/* Company */}
+                  {/* Company — hidden until verified */}
                   <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">
-                    {row.company}
+                    {row.status === "current_hired" ? row.company : <span className="text-gray-400">—</span>}
                   </td>
 
-                  {/* Position */}
+                  {/* Position — hidden until verified */}
                   <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                    {row.title}
+                    {row.status === "current_hired" ? row.title : "—"}
                   </td>
 
-                  {/* Offer Date */}
+                  {/* Offer Date — hidden until verified */}
                   <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                    {row.offerDate
+                    {row.status === "current_hired" && row.offerDate
                       ? new Date(row.offerDate).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
@@ -569,9 +569,9 @@ export default function HiredRateClient({ stats, rows }: Props) {
                       : "—"}
                   </td>
 
-                  {/* Employment Type */}
+                  {/* Employment Type — hidden until verified */}
                   <td className="px-4 py-3">
-                    {row.employmentType ? (
+                    {row.status === "current_hired" && row.employmentType ? (
                       <span
                         className={[
                           "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
