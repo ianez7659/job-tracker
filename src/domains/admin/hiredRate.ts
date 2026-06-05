@@ -1,11 +1,16 @@
 import { prisma } from "@/lib/prisma";
 
 export type HiredRateStats = {
-  total: number;
-  byStatus: Record<string, number>;
-  bySalaryRange: Record<string, number>;
-  byEmploymentType: Record<string, number>;
-  byWorkArrangement: Record<string, number>;
+  /** Unique users with a current_hired offer */
+  totalHired: number;
+  /** totalHired / studentCount × 100, rounded to 1 decimal */
+  hiredRate: number;
+  /** Distinct company names from current_hired offers */
+  uniqueCompanies: number;
+  /** HiredOffers created within the selected date range */
+  offersThisMonth: number;
+  /** Total users with hubStatus === STUDENT (denominator) */
+  studentCount: number;
 };
 
 export type HiredOfferRow = {
@@ -13,7 +18,8 @@ export type HiredOfferRow = {
   userId: string;
   userName: string | null;
   userEmail: string;
-  /** Representative offer fields */
+  /** User.category (program/track, e.g. "IT / Tech", "Hospitality") */
+  userCategory: string | null;
   offerId: string;
   company: string;
   title: string;
@@ -21,50 +27,74 @@ export type HiredOfferRow = {
   employmentType: string | null;
   workArrangement: string | null;
   salaryRange: string | null;
-  status: string;
   verifiedAt: Date | null;
   createdAt: Date;
-  /** Total number of HiredOffers on this profile */
+  /** Total HiredOffers on this profile — used for Student cell badge */
   offerCount: number;
 };
 
-type RawOffer = {
-  id: string;
-  status: string;
-  offerDate: Date | null;
-  employmentType: string | null;
-  workArrangement: string | null;
-  salaryRange: string | null;
-  verifiedAt: Date | null;
-  createdAt: Date;
-  job: { company: string; title: string };
-};
-
 /**
- * Pick one representative offer from a profile's offer list.
- * Priority: current_hired → newest pending → newest other
+ * Aggregate stats for the Hired Rate page.
+ *
+ * @param dateFrom  Start of date range (inclusive). Defaults to first of current month.
+ * @param dateTo    End of date range (inclusive). Defaults to last of current month.
  */
-function pickRepresentative(offers: RawOffer[]): RawOffer {
-  const currentHired = offers.find((o) => o.status === "current_hired");
-  if (currentHired) return currentHired;
+export async function getHiredRateStats(
+  dateFrom?: Date,
+  dateTo?: Date,
+): Promise<HiredRateStats> {
+  const now = new Date();
+  const rangeStart =
+    dateFrom ?? new Date(now.getFullYear(), now.getMonth(), 1);
+  const rangeEnd =
+    dateTo ??
+    new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 
-  const pendingSorted = offers
-    .filter((o) => o.status === "pending")
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-  if (pendingSorted.length > 0) return pendingSorted[0];
+  const [currentHiredOffers, studentCount, offersThisMonth] = await Promise.all(
+    [
+      prisma.hiredOffer.findMany({
+        where: { status: "current_hired" },
+        select: {
+          hiredProfile: { select: { userId: true } },
+          job: { select: { company: true } },
+        },
+      }),
+      prisma.user.count({ where: { hubStatus: "STUDENT" } }),
+      prisma.hiredOffer.count({
+        where: { createdAt: { gte: rangeStart, lte: rangeEnd } },
+      }),
+    ],
+  );
 
-  return [...offers].sort(
-    (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
-  )[0];
+  const uniqueUserIds = new Set(
+    currentHiredOffers.map((o) => o.hiredProfile.userId),
+  );
+  const uniqueCompanyNames = new Set(
+    currentHiredOffers.map((o) => o.job.company),
+  );
+
+  const totalHired = uniqueUserIds.size;
+  const uniqueCompanies = uniqueCompanyNames.size;
+  const hiredRate =
+    studentCount > 0
+      ? Math.round((totalHired / studentCount) * 1000) / 10
+      : 0;
+
+  return { totalHired, hiredRate, uniqueCompanies, offersThisMonth, studentCount };
 }
 
-/** Load all HiredProfiles with their offers, user, and job details. */
-async function loadProfiles() {
-  return prisma.hiredProfile.findMany({
+/**
+ * One row per HiredProfile that has a current_hired offer.
+ * Sorted by offerDate descending (most recent first).
+ */
+export async function getHiredOfferRows(): Promise<HiredOfferRow[]> {
+  const profiles = await prisma.hiredProfile.findMany({
+    where: { offers: { some: { status: "current_hired" } } },
     select: {
       id: true,
-      createdAt: true,
-      user: { select: { id: true, name: true, email: true } },
+      user: {
+        select: { id: true, name: true, email: true, category: true },
+      },
       offers: {
         select: {
           id: true,
@@ -79,67 +109,17 @@ async function loadProfiles() {
         },
       },
     },
-    orderBy: { createdAt: "desc" },
   });
-}
-
-/**
- * Aggregate stats over all HiredProfiles (one person = one unit).
- * Stats are derived from each profile's representative offer.
- */
-export async function getHiredRateStats(): Promise<HiredRateStats> {
-  const profiles = await loadProfiles();
-  const active = profiles.filter((p) => p.offers.length > 0);
-
-  const byStatus: Record<string, number> = {};
-  const bySalaryRange: Record<string, number> = {};
-  const byEmploymentType: Record<string, number> = {};
-  const byWorkArrangement: Record<string, number> = {};
-
-  for (const profile of active) {
-    const rep = pickRepresentative(profile.offers);
-
-    byStatus[rep.status] = (byStatus[rep.status] ?? 0) + 1;
-
-    const salary = rep.salaryRange ?? "unknown";
-    bySalaryRange[salary] = (bySalaryRange[salary] ?? 0) + 1;
-
-    if (rep.employmentType) {
-      byEmploymentType[rep.employmentType] =
-        (byEmploymentType[rep.employmentType] ?? 0) + 1;
-    }
-
-    if (rep.workArrangement) {
-      byWorkArrangement[rep.workArrangement] =
-        (byWorkArrangement[rep.workArrangement] ?? 0) + 1;
-    }
-  }
-
-  return {
-    total: active.length,
-    byStatus,
-    bySalaryRange,
-    byEmploymentType,
-    byWorkArrangement,
-  };
-}
-
-/**
- * One row per HiredProfile using the representative offer for display.
- * Ordered by profile createdAt desc (newest first).
- */
-export async function getHiredOfferRows(): Promise<HiredOfferRow[]> {
-  const profiles = await loadProfiles();
 
   return profiles
-    .filter((p) => p.offers.length > 0)
     .map((p) => {
-      const rep = pickRepresentative(p.offers);
+      const rep = p.offers.find((o) => o.status === "current_hired")!;
       return {
         profileId: p.id,
         userId: p.user.id,
         userName: p.user.name,
         userEmail: p.user.email,
+        userCategory: p.user.category,
         offerId: rep.id,
         company: rep.job.company,
         title: rep.job.title,
@@ -147,10 +127,14 @@ export async function getHiredOfferRows(): Promise<HiredOfferRow[]> {
         employmentType: rep.employmentType,
         workArrangement: rep.workArrangement,
         salaryRange: rep.salaryRange,
-        status: rep.status,
         verifiedAt: rep.verifiedAt,
         createdAt: rep.createdAt,
         offerCount: p.offers.length,
       };
+    })
+    .sort((a, b) => {
+      const aTime = a.offerDate?.getTime() ?? 0;
+      const bTime = b.offerDate?.getTime() ?? 0;
+      return bTime - aTime;
     });
 }
