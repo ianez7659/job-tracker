@@ -25,6 +25,22 @@ const EMPLOYMENT_BADGE_COLORS: Record<string, string> = {
     "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  pending: "Pending",
+  current_hired: "Verified",
+  inactive: "Inactive",
+  not_selected: "Not Selected",
+  unverifiable: "Unverifiable",
+};
+
+const STATUS_COLORS: Record<string, string> = {
+  pending: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+  current_hired: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+  inactive: "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400",
+  not_selected: "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400",
+  unverifiable: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
+};
+
 // ── KPI Card ──────────────────────────────────────────────────────────────────
 
 function KpiCard({
@@ -162,14 +178,6 @@ function IconExport() {
         strokeLinejoin="round"
         d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
       />
-    </svg>
-  );
-}
-
-function IconDotsVertical() {
-  return (
-    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-      <path d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z" />
     </svg>
   );
 }
@@ -478,18 +486,19 @@ export default function HiredRateClient({ stats, rows }: Props) {
           <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
             <tr>
               <th className="px-4 py-3">Student Name</th>
+              <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Job Category</th>
-              <th className="px-4 py-3">Company Name</th>
+              <th className="px-4 py-3">Company</th>
               <th className="px-4 py-3">Position</th>
               <th className="px-4 py-3">Offer Date</th>
               <th className="px-4 py-3">Employment Type</th>
-              <th className="px-4 py-3">Actions</th>
+              <th className="px-4 py-3">Offers</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 bg-white dark:divide-gray-800 dark:bg-gray-900">
             {pageRows.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center">
+                <td colSpan={8} className="px-4 py-12 text-center">
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     No offer records yet
                   </p>
@@ -499,118 +508,90 @@ export default function HiredRateClient({ stats, rows }: Props) {
                 </td>
               </tr>
             ) : (
-              pageRows.map((row) => {
-                const isVerified = row.status === "current_hired";
-                return (
-                  <tr
-                    key={row.profileId}
-                    onClick={() => router.push(`/admin/hired-pool/${row.profileId}`)}
-                    className="cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                  >
-                    {/* Student Name + offerCount badge */}
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
-                          {(row.userName ?? row.userEmail)
-                            .slice(0, 2)
-                            .toUpperCase()}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="font-medium text-gray-900 dark:text-gray-100">
-                            {row.userName ?? "—"}
-                          </p>
-                          <p className="truncate text-xs text-gray-400">
-                            {row.userEmail}
-                          </p>
-                        </div>
-                        {row.offerCount > 1 && (
-                          <span className="shrink-0 rounded-full bg-indigo-100 px-1.5 py-0.5 text-[10px] font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
-                            {row.offerCount} offers
-                          </span>
-                        )}
+              pageRows.map((row) => (
+                <tr
+                  key={row.profileId}
+                  onClick={() => router.push(`/admin/hired-pool/${row.profileId}`)}
+                  className="cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                >
+                  {/* Student Name */}
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
+                        {(row.userName ?? row.userEmail).slice(0, 2).toUpperCase()}
                       </div>
-                    </td>
+                      <div className="min-w-0">
+                        <p className="font-medium text-gray-900 dark:text-gray-100">
+                          {row.userName ?? "—"}
+                        </p>
+                        <p className="truncate text-xs text-gray-400">
+                          {row.userEmail}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
 
-                    {/* Job Category */}
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                      {row.userCategory ?? "—"}
-                    </td>
+                  {/* Status */}
+                  <td className="px-4 py-3">
+                    <span
+                      className={[
+                        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+                        STATUS_COLORS[row.status] ?? STATUS_COLORS.inactive,
+                      ].join(" ")}
+                    >
+                      {STATUS_LABELS[row.status] ?? row.status}
+                    </span>
+                  </td>
 
-                    {/* Company Name — pending until verified */}
-                    <td className="px-4 py-3">
-                      {isVerified ? (
-                        <span className="font-medium text-gray-900 dark:text-gray-100">
-                          {row.company}
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
-                          Pending
-                        </span>
-                      )}
-                    </td>
+                  {/* Job Category */}
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                    {row.userCategory ?? "—"}
+                  </td>
 
-                    {/* Position — pending until verified */}
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                      {isVerified ? row.title : "—"}
-                    </td>
+                  {/* Company */}
+                  <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">
+                    {row.company}
+                  </td>
 
-                    {/* Offer Date — pending until verified */}
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                      {isVerified && row.offerDate
-                        ? new Date(row.offerDate).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })
-                        : "—"}
-                    </td>
+                  {/* Position */}
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                    {row.title}
+                  </td>
 
-                    {/* Employment Type — pending until verified */}
-                    <td className="px-4 py-3">
-                      {isVerified && row.employmentType ? (
-                        <span
-                          className={[
-                            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-                            EMPLOYMENT_BADGE_COLORS[row.employmentType] ??
-                              "bg-gray-100 text-gray-700",
-                          ].join(" ")}
-                        >
-                          {EMPLOYMENT_LABELS[row.employmentType] ??
-                            row.employmentType}
-                        </span>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
+                  {/* Offer Date */}
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                    {row.offerDate
+                      ? new Date(row.offerDate).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                      : "—"}
+                  </td>
 
-                    {/* Actions */}
-                    <td className="px-4 py-3">
-                      {!isVerified ? (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/admin/hired-pool/${row.profileId}`);
-                          }}
-                          className="rounded-md bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50"
-                        >
-                          View Profile →
-                        </button>
-                      ) : (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/admin/hired-pool/${row.profileId}`);
-                          }}
-                          className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
-                          aria-label="View profile"
-                        >
-                          <IconDotsVertical />
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })
+                  {/* Employment Type */}
+                  <td className="px-4 py-3">
+                    {row.employmentType ? (
+                      <span
+                        className={[
+                          "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+                          EMPLOYMENT_BADGE_COLORS[row.employmentType] ??
+                            "bg-gray-100 text-gray-700",
+                        ].join(" ")}
+                      >
+                        {EMPLOYMENT_LABELS[row.employmentType] ?? row.employmentType}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400">—</span>
+                    )}
+                  </td>
+
+                  {/* Offers count */}
+                  <td className="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-400">
+                    {row.offerCount}
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>
