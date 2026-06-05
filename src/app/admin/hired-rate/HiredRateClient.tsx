@@ -362,7 +362,7 @@ export default function HiredRateClient({ stats, rows }: Props) {
           icon={<IconBriefcase />}
           label="Hired Rate"
           value={`${stats.hiredRate}%`}
-          sub={`${stats.totalHired} / ${stats.studentCount} students`}
+          sub={`${stats.totalHired} / ${stats.totalUsers} users`}
         />
         <KpiCard
           icon={<IconBuilding />}

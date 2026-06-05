@@ -9,8 +9,8 @@ export type HiredRateStats = {
   uniqueCompanies: number;
   /** HiredOffers created within the selected date range */
   offersThisMonth: number;
-  /** Total users with hubStatus === STUDENT (denominator) */
-  studentCount: number;
+  /** Total non-STAFF users (denominator — matches dashboard overview) */
+  totalUsers: number;
 };
 
 export type HiredOfferRow = {
@@ -82,7 +82,7 @@ export async function getHiredRateStats(
     dateTo ??
     new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 
-  const [allProfiles, currentHiredOffers, studentCount, offersThisMonth] =
+  const [allProfiles, currentHiredOffers, totalUsers, offersThisMonth] =
     await Promise.all([
       // All profiles with at least one offer (any status)
       prisma.hiredProfile.findMany({
@@ -94,7 +94,10 @@ export async function getHiredRateStats(
         where: { status: "current_hired" },
         select: { job: { select: { company: true } } },
       }),
-      prisma.user.count({ where: { hubStatus: "STUDENT" } }),
+      // All non-STAFF users — matches dashboard overview denominator
+      prisma.user.count({
+        where: { OR: [{ hubStatus: null }, { hubStatus: { not: "STAFF" } }] },
+      }),
       prisma.hiredOffer.count({
         where: { createdAt: { gte: rangeStart, lte: rangeEnd } },
       }),
@@ -107,11 +110,11 @@ export async function getHiredRateStats(
   const totalHired = allProfiles.length;
   const uniqueCompanies = uniqueCompanyNames.size;
   const hiredRate =
-    studentCount > 0
-      ? Math.round((totalHired / studentCount) * 1000) / 10
+    totalUsers > 0
+      ? Math.round((totalHired / totalUsers) * 1000) / 10
       : 0;
 
-  return { totalHired, hiredRate, uniqueCompanies, offersThisMonth, studentCount };
+  return { totalHired, hiredRate, uniqueCompanies, offersThisMonth, totalUsers };
 }
 
 /**

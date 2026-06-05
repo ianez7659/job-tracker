@@ -27,7 +27,7 @@ const MOCK_STATS = {
   hiredRate: 12.5,
   uniqueCompanies: 3,
   offersThisMonth: 5,
-  studentCount: 24,
+  totalUsers: 24,
 };
 
 const MOCK_ROWS = [
@@ -94,7 +94,7 @@ describe("GET /api/admin/hired/rate", () => {
     expect(data.stats.hiredRate).toBe(12.5);
     expect(data.stats.uniqueCompanies).toBe(3);
     expect(data.stats.offersThisMonth).toBe(5);
-    expect(data.stats.studentCount).toBe(24);
+    expect(data.stats.totalUsers).toBe(24);
     expect(data.rows).toHaveLength(2);
     expect(data.rows[0].profileId).toBe("profile-1");
     expect(data.rows[0].userCategory).toBe("IT / Tech");
@@ -109,7 +109,7 @@ describe("GET /api/admin/hired/rate", () => {
       hiredRate: 0,
       uniqueCompanies: 0,
       offersThisMonth: 0,
-      studentCount: 24,
+      totalUsers: 24,
     });
     (getHiredOfferRows as jest.Mock).mockResolvedValue([]);
     const res = await GET();
