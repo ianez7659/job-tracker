@@ -504,7 +504,7 @@ export default function HiredRateClient({ stats, rows }: Props) {
                 return (
                   <tr
                     key={row.profileId}
-                    onClick={() => router.push("/admin/hired-pool")}
+                    onClick={() => router.push(`/admin/hired-pool/${row.profileId}`)}
                     className="cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   >
                     {/* Student Name + offerCount badge */}
@@ -589,20 +589,20 @@ export default function HiredRateClient({ stats, rows }: Props) {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            router.push("/admin/hired-pool");
+                            router.push(`/admin/hired-pool/${row.profileId}`);
                           }}
                           className="rounded-md bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50"
                         >
-                          Verify in Pool →
+                          View Profile →
                         </button>
                       ) : (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            router.push("/admin/hired-pool");
+                            router.push(`/admin/hired-pool/${row.profileId}`);
                           }}
                           className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
-                          aria-label="View in pool"
+                          aria-label="View profile"
                         >
                           <IconDotsVertical />
                         </button>

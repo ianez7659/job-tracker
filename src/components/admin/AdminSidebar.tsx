@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { signOut } from "next-auth/react";
 import ThemeToggle from "./ThemeToggle";
 
@@ -61,25 +61,14 @@ const NAV_ITEMS = [
       </svg>
     ),
   },
-  {
-    href: "/admin/hired-pool",
-    label: "Hired Pool",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path d="m19 11 2 2 4-4" />
-      </svg>
-    ),
-  },
 ] as const;
 
 // Shared nav link used in both desktop sidebar and mobile drawer
 function NavLinks({
   pathname,
-  pendingCount,
   onNavigate,
 }: {
   pathname: string;
-  pendingCount: number;
   onNavigate?: () => void;
 }) {
   return (
@@ -87,7 +76,6 @@ function NavLinks({
       {NAV_ITEMS.map(({ href, label, icon }) => {
         const isActive =
           href === "/admin" ? pathname === href : pathname.startsWith(href);
-        const showBadge = href === "/admin/hired-pool" && pendingCount > 0;
         return (
           <Link
             key={href}
@@ -102,11 +90,6 @@ function NavLinks({
           >
             {icon}
             <span className="flex-1">{label}</span>
-            {showBadge && (
-              <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white dark:bg-amber-400 dark:text-gray-900">
-                {pendingCount > 99 ? "99+" : pendingCount}
-              </span>
-            )}
           </Link>
         );
       })}
@@ -176,18 +159,6 @@ function BottomActions({ onNavigate }: { onNavigate?: () => void }) {
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [pendingCount, setPendingCount] = useState(0);
-
-  useEffect(() => {
-    let cancelled = false;
-    void fetch("/api/admin/hired/pool/pending-count", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data: { count: number } | null) => {
-        if (!cancelled && data) setPendingCount(data.count);
-      })
-      .catch(() => undefined);
-    return () => { cancelled = true; };
-  }, []);
 
   return (
     <>
@@ -246,7 +217,7 @@ export default function AdminSidebar() {
             {/* Nav */}
             <nav className="flex-1 space-y-1 overflow-y-auto px-2 py-4">
               <SearchButton />
-              <NavLinks pathname={pathname} pendingCount={pendingCount} onNavigate={() => setOpen(false)} />
+              <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} />
             </nav>
             {/* Bottom */}
             <div className="space-y-1 border-t border-gray-200 px-2 py-3 dark:border-gray-800">
@@ -267,7 +238,7 @@ export default function AdminSidebar() {
         {/* Nav */}
         <nav className="flex-1 space-y-1 overflow-y-auto px-2 py-4">
           <SearchButton />
-          <NavLinks pathname={pathname} pendingCount={pendingCount} />
+          <NavLinks pathname={pathname} />
         </nav>
         {/* Bottom */}
         <div className="space-y-1 border-t border-gray-200 px-2 py-3 dark:border-gray-800">

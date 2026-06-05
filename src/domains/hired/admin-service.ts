@@ -172,6 +172,51 @@ export async function adminDeactivateHiredOffer(input: {
   return updated;
 }
 
+// ── Mark Unverifiable ─────────────────────────────────────────────────────────
+
+/**
+ * Admin-only: marks an offer as unverifiable (pending → unverifiable).
+ *
+ * Throws:
+ *   OFFER_NOT_FOUND — offerId does not exist
+ */
+export async function markHiredOfferUnverifiable(input: {
+  adminId: string;
+  offerId: string;
+}): Promise<UpdatedHiredOffer> {
+  const { offerId } = input;
+
+  const existing = await prisma.hiredOffer.findUnique({
+    where: { id: offerId },
+    select: { id: true },
+  });
+
+  if (!existing) {
+    const err = new Error("Offer not found");
+    (err as NodeJS.ErrnoException).code = "OFFER_NOT_FOUND";
+    throw err;
+  }
+
+  const updated = await prisma.hiredOffer.update({
+    where: { id: offerId },
+    data: { status: "unverifiable" },
+    select: {
+      id: true,
+      hiredProfileId: true,
+      jobId: true,
+      offerDate: true,
+      employmentType: true,
+      workArrangement: true,
+      salaryRange: true,
+      status: true,
+      verifiedAt: true,
+      updatedAt: true,
+    },
+  });
+
+  return updated;
+}
+
 // ── Profile Notes ─────────────────────────────────────────────────────────────
 
 /**
