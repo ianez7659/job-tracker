@@ -24,7 +24,8 @@ model User {
   sessions      Session[]
   xp            UserXp?
   quizSessions  DailyQuizSession[]
-  hiredProfile  HiredProfile?
+  hiredProfile           HiredProfile?
+  adminNotificationReads AdminNotificationRead[]
 
   @@map("User")
 }
@@ -149,6 +150,40 @@ model HiredOffer {
   job          Job          @relation(fields: [jobId], references: [id])
 
   @@map("HiredOffer")
+}
+
+// ── Admin Notifications ──────────────────────────────────────────────────────
+
+/// Admin-facing notification created when a user completes an offer or deactivates.
+/// profileId and offerId are plain strings for navigation — no Prisma relation needed.
+model AdminNotification {
+  id        String   @id @default(cuid())
+  type      String   // "new_offer" | "offer_deactivated"
+  message   String
+  profileId String?  // HiredProfile.id for navigation
+  offerId   String?  // HiredOffer.id for navigation
+  createdAt DateTime @default(now())
+
+  reads AdminNotificationRead[]
+
+  @@index([createdAt])
+  @@map("AdminNotification")
+}
+
+/// Per-admin read tracking for AdminNotification.
+/// Unique constraint on (adminId, notificationId) prevents duplicate reads.
+model AdminNotificationRead {
+  id             String   @id @default(cuid())
+  adminId        String
+  notificationId String
+  readAt         DateTime @default(now())
+
+  admin        User              @relation(fields: [adminId], references: [id])
+  notification AdminNotification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@unique([adminId, notificationId])
+  @@index([notificationId])
+  @@map("AdminNotificationRead")
 }
 
 // ── XP System ────────────────────────────────────────────────────────────────

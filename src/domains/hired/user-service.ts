@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { isAllowedStatusTransition } from "@/lib/jobPipeline";
 import { deriveCycleEndStage } from "@/lib/xp/cycleStage";
+import { createAdminNotification } from "@/domains/admin/notifications";
 import type { EmploymentType, WorkArrangement, SalaryRange } from "./constants";
 
 export type OfferTransitionInput = {
@@ -173,14 +174,32 @@ export async function deactivateHiredOffer(input: DeactivateInput): Promise<void
     throw err;
   }
 
-  await prisma.hiredOffer.update({
-    where: { id: offerId },
-    data: {
-      status: "inactive",
-      deactivatedAt: new Date(),
-      deactivatedByUserId: userId,
-      deactivateReason: reason ?? null,
-    },
+  await prisma.$transaction(async (tx) => {
+    await tx.hiredOffer.update({
+      where: { id: offerId },
+      data: {
+        status: "inactive",
+        deactivatedAt: new Date(),
+        deactivatedByUserId: userId,
+        deactivateReason: reason ?? null,
+      },
+    });
+    // Look up user info for the notification message
+    const user = await tx.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { name: true, category: true },
+    });
+    const displayName = user.name ?? "Unknown";
+    const displayCategory = user.category ?? "N/A";
+    await createAdminNotification(
+      {
+        type: "offer_deactivated",
+        message: `${displayName} (${displayCategory}) deactivated an offer`,
+        profileId: offer.hiredProfileId,
+        offerId,
+      },
+      tx,
+    );
   });
 }
 
@@ -238,14 +257,14 @@ export async function completeOfferSelection(
 
   const hiredProfileId = offer.hiredProfile.id;
 
-  await prisma.$transaction([
+  await prisma.$transaction(async (tx) => {
     // Mark all other pending offers on this profile as not_selected
-    prisma.hiredOffer.updateMany({
+    await tx.hiredOffer.updateMany({
       where: { hiredProfileId, status: "pending", id: { not: offerId } },
       data: { status: "not_selected" },
-    }),
+    });
     // Update the selected offer with detail fields
-    prisma.hiredOffer.update({
+    await tx.hiredOffer.update({
       where: { id: offerId },
       data: {
         offerDate,
@@ -253,6 +272,22 @@ export async function completeOfferSelection(
         workArrangement: workArrangement ?? null,
         salaryRange: salaryRange ?? "not_disclosed",
       },
-    }),
-  ]);
+    });
+    // Look up user info for the notification message
+    const user = await tx.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { name: true, category: true },
+    });
+    const displayName = user.name ?? "Unknown";
+    const displayCategory = user.category ?? "N/A";
+    await createAdminNotification(
+      {
+        type: "new_offer",
+        message: `${displayName} (${displayCategory}) submitted a new offer`,
+        profileId: hiredProfileId,
+        offerId,
+      },
+      tx,
+    );
+  });
 }
