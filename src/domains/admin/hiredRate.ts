@@ -1,10 +1,14 @@
 import { prisma } from "@/lib/prisma";
 
 export type HiredRateStats = {
-  /** Unique users with any HiredOffer (pending + current_hired) */
-  totalHired: number;
-  /** totalHired / studentCount × 100, rounded to 1 decimal */
-  hiredRate: number;
+  /** Unique users with at least one current_hired offer */
+  activeHired: number;
+  /** activeHired / totalUsers × 100, rounded to 1 decimal */
+  activeHiredRate: number;
+  /** Unique users with current_hired OR inactive offer (ever verified) */
+  cumulativeHired: number;
+  /** cumulativeHired / totalUsers × 100, rounded to 1 decimal */
+  cumulativeHiredRate: number;
   /** Distinct company names from current_hired offers only */
   uniqueCompanies: number;
   /** HiredOffers created within the selected date range */
@@ -82,11 +86,16 @@ export async function getHiredRateStats(
     dateTo ??
     new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 
-  const [allProfiles, currentHiredOffers, totalUsers, offersThisMonth] =
+  const [activeProfiles, cumulativeProfiles, currentHiredOffers, totalUsers, offersThisMonth] =
     await Promise.all([
-      // All profiles with at least one offer (any status)
+      // Active: profiles with at least one current_hired offer
       prisma.hiredProfile.findMany({
-        where: { offers: { some: {} } },
+        where: { offers: { some: { status: "current_hired" } } },
+        select: { userId: true },
+      }),
+      // Cumulative: profiles with current_hired OR inactive offer (ever verified)
+      prisma.hiredProfile.findMany({
+        where: { offers: { some: { status: { in: ["current_hired", "inactive"] } } } },
         select: { userId: true },
       }),
       // current_hired only — for unique companies
@@ -107,14 +116,19 @@ export async function getHiredRateStats(
     currentHiredOffers.map((o) => o.job.company),
   );
 
-  const totalHired = allProfiles.length;
+  const activeHired = activeProfiles.length;
+  const cumulativeHired = cumulativeProfiles.length;
   const uniqueCompanies = uniqueCompanyNames.size;
-  const hiredRate =
+  const activeHiredRate =
     totalUsers > 0
-      ? Math.round((totalHired / totalUsers) * 1000) / 10
+      ? Math.round((activeHired / totalUsers) * 1000) / 10
+      : 0;
+  const cumulativeHiredRate =
+    totalUsers > 0
+      ? Math.round((cumulativeHired / totalUsers) * 1000) / 10
       : 0;
 
-  return { totalHired, hiredRate, uniqueCompanies, offersThisMonth, totalUsers };
+  return { activeHired, activeHiredRate, cumulativeHired, cumulativeHiredRate, uniqueCompanies, offersThisMonth, totalUsers };
 }
 
 /**

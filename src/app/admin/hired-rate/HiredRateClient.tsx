@@ -359,18 +359,18 @@ export default function HiredRateClient({ stats, rows }: Props) {
       </div>
 
       {/* ── KPI Cards ── */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <KpiCard
           icon={<IconPeople />}
-          label="Total Hired"
-          value={stats.totalHired}
-          sub="Confirmed hires"
+          label="Active Hired"
+          value={stats.activeHired}
+          sub={`${stats.activeHiredRate}% of ${stats.totalUsers} users`}
         />
         <KpiCard
           icon={<IconBriefcase />}
-          label="Hired Rate"
-          value={`${stats.hiredRate}%`}
-          sub={`${stats.totalHired} / ${stats.totalUsers} users`}
+          label="Cumulative Hired"
+          value={stats.cumulativeHired}
+          sub={`${stats.cumulativeHiredRate}% of ${stats.totalUsers} users`}
         />
         <KpiCard
           icon={<IconBuilding />}

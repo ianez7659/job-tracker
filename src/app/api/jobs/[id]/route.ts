@@ -24,6 +24,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const body = await req.json();
     console.log("✅ PATCH requested:", body);
 
+    // Block direct "offer" status via this route — must use /api/hired/offers
+    if (body.status === "offer") {
+      return NextResponse.json(
+        { message: "Use /api/hired/offers to mark a job as offer" },
+        { status: 400 },
+      );
+    }
+
     const existing = await prisma.job.findFirst({
       where: { id, user: { email: session.user.email } },
     });

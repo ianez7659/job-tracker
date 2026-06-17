@@ -23,8 +23,10 @@ const STAFF_SESSION = {
 };
 
 const MOCK_STATS = {
-  totalHired: 3,
-  hiredRate: 12.5,
+  activeHired: 2,
+  activeHiredRate: 8.3,
+  cumulativeHired: 3,
+  cumulativeHiredRate: 12.5,
   uniqueCompanies: 3,
   offersThisMonth: 5,
   totalUsers: 24,
@@ -90,8 +92,10 @@ describe("GET /api/admin/hired/rate", () => {
       stats: typeof MOCK_STATS;
       rows: typeof MOCK_ROWS;
     };
-    expect(data.stats.totalHired).toBe(3);
-    expect(data.stats.hiredRate).toBe(12.5);
+    expect(data.stats.activeHired).toBe(2);
+    expect(data.stats.activeHiredRate).toBe(8.3);
+    expect(data.stats.cumulativeHired).toBe(3);
+    expect(data.stats.cumulativeHiredRate).toBe(12.5);
     expect(data.stats.uniqueCompanies).toBe(3);
     expect(data.stats.offersThisMonth).toBe(5);
     expect(data.stats.totalUsers).toBe(24);
@@ -105,8 +109,10 @@ describe("GET /api/admin/hired/rate", () => {
   it("returns 200 with empty data when no confirmed hires exist", async () => {
     (getAdminSession as jest.Mock).mockResolvedValue(STAFF_SESSION);
     (getHiredRateStats as jest.Mock).mockResolvedValue({
-      totalHired: 0,
-      hiredRate: 0,
+      activeHired: 0,
+      activeHiredRate: 0,
+      cumulativeHired: 0,
+      cumulativeHiredRate: 0,
       uniqueCompanies: 0,
       offersThisMonth: 0,
       totalUsers: 24,
@@ -115,11 +121,11 @@ describe("GET /api/admin/hired/rate", () => {
     const res = await GET();
     expect(res.status).toBe(200);
     const data = (await res.json()) as {
-      stats: { totalHired: number; hiredRate: number };
+      stats: { activeHired: number; cumulativeHired: number };
       rows: unknown[];
     };
-    expect(data.stats.totalHired).toBe(0);
-    expect(data.stats.hiredRate).toBe(0);
+    expect(data.stats.activeHired).toBe(0);
+    expect(data.stats.cumulativeHired).toBe(0);
     expect(data.rows).toHaveLength(0);
   });
 });

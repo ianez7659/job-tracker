@@ -1,5 +1,8 @@
 import { prisma } from "@/lib/prisma";
+import type { PrismaClient } from "@/generated/prisma";
 import type { EmploymentType, WorkArrangement, SalaryRange } from "./constants";
+
+type TxClient = Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0];
 
 export type UpdateHiredOfferInput = {
   adminId: string;
@@ -75,9 +78,28 @@ export async function updateHiredOfferDetails(
 
 // ── Verify ────────────────────────────────────────────────────────────────────
 
+const OFFER_SELECT = {
+  id: true,
+  hiredProfileId: true,
+  jobId: true,
+  offerDate: true,
+  employmentType: true,
+  workArrangement: true,
+  salaryRange: true,
+  status: true,
+  verifiedAt: true,
+  updatedAt: true,
+} as const;
+
 /**
  * Admin-only: marks an offer as verified (current_hired).
- * Idempotent — safe to call even if already current_hired.
+ *
+ * Enforces single-current_hired invariant per HiredProfile:
+ *   1. Demotes any existing current_hired offer on the same profile → inactive
+ *   2. Sets other pending offers on the same profile → not_selected
+ *   3. Promotes the target offer → current_hired
+ *
+ * All three steps run inside a single transaction for atomicity.
  *
  * Throws:
  *   OFFER_NOT_FOUND — offerId does not exist
@@ -90,7 +112,7 @@ export async function verifyHiredOfferAsAdmin(input: {
 
   const existing = await prisma.hiredOffer.findUnique({
     where: { id: offerId },
-    select: { id: true },
+    select: { id: true, hiredProfileId: true },
   });
 
   if (!existing) {
@@ -99,25 +121,41 @@ export async function verifyHiredOfferAsAdmin(input: {
     throw err;
   }
 
-  const updated = await prisma.hiredOffer.update({
-    where: { id: offerId },
-    data: {
-      status: "current_hired",
-      verifiedAt: new Date(),
-      verifiedByUserId: adminId,
-    },
-    select: {
-      id: true,
-      hiredProfileId: true,
-      jobId: true,
-      offerDate: true,
-      employmentType: true,
-      workArrangement: true,
-      salaryRange: true,
-      status: true,
-      verifiedAt: true,
-      updatedAt: true,
-    },
+  const updated = await prisma.$transaction(async (tx: TxClient) => {
+    // Demote any existing current_hired on the same profile
+    await tx.hiredOffer.updateMany({
+      where: {
+        hiredProfileId: existing.hiredProfileId,
+        status: "current_hired",
+        id: { not: offerId },
+      },
+      data: {
+        status: "inactive",
+        deactivatedAt: new Date(),
+        deactivatedByUserId: adminId,
+      },
+    });
+
+    // Set other pending offers on the same profile to not_selected
+    await tx.hiredOffer.updateMany({
+      where: {
+        hiredProfileId: existing.hiredProfileId,
+        status: "pending",
+        id: { not: offerId },
+      },
+      data: { status: "not_selected" },
+    });
+
+    // Promote the target offer
+    return tx.hiredOffer.update({
+      where: { id: offerId },
+      data: {
+        status: "current_hired",
+        verifiedAt: new Date(),
+        verifiedByUserId: adminId,
+      },
+      select: OFFER_SELECT,
+    });
   });
 
   return updated;
