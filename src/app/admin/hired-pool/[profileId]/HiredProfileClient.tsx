@@ -125,8 +125,7 @@ function OfferCard({
     }
   }
 
-  const canVerify =
-    offer.status !== "current_hired" && offer.status !== "inactive";
+  const canVerify = offer.status === "pending";
   const canMarkUnverifiable = offer.status === "pending";
   const canDeactivate = offer.status !== "inactive";
 
@@ -240,7 +239,15 @@ export default function HiredProfileClient({ profile }: Props) {
 
   function handleOfferUpdate(offerId: string, newStatus: string) {
     setOffers((prev) =>
-      prev.map((o) => (o.offerId === offerId ? { ...o, status: newStatus } : o)),
+      prev.map((o) => {
+        if (o.offerId === offerId) return { ...o, status: newStatus };
+        // When an offer is verified, demote siblings to reflect server state
+        if (newStatus === "current_hired") {
+          if (o.status === "current_hired") return { ...o, status: "inactive" };
+          if (o.status === "pending") return { ...o, status: "not_selected" };
+        }
+        return o;
+      }),
     );
   }
 
