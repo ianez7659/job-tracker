@@ -26,6 +26,7 @@ model User {
   quizSessions  DailyQuizSession[]
   hiredProfile           HiredProfile?
   adminNotificationReads AdminNotificationRead[]
+  adminActivityLogs      AdminActivityLog[]
 
   @@map("User")
 }
@@ -184,6 +185,27 @@ model AdminNotificationRead {
   @@unique([adminId, notificationId])
   @@index([notificationId])
   @@map("AdminNotificationRead")
+}
+
+// ── Admin Activity Log ───────────────────────────────────────────────────────
+
+/// Audit trail for admin actions (offer verify, deactivate, role change, etc.).
+/// Plain string IDs for targetId — no Prisma relation needed on targets.
+model AdminActivityLog {
+  id         String   @id @default(cuid())
+  adminId    String
+  action     String   // "offer_verified" | "offer_deactivated" | "offer_marked_unverifiable" | "offer_details_updated" | "profile_notes_updated" | "user_role_changed" | "user_category_changed"
+  targetType String   // "offer" | "profile" | "user"
+  targetId   String
+  metadata   Json?    // additional context (e.g. { company, title, oldRole, newRole })
+  createdAt  DateTime @default(now())
+
+  admin User @relation(fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+  @@map("AdminActivityLog")
 }
 
 // ── XP System ────────────────────────────────────────────────────────────────

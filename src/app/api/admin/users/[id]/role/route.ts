@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { getAdminSession } from "@/domains/admin/require-admin";
 import { prisma } from "@/lib/prisma";
+import { createActivityLog } from "@/domains/admin/activityLog";
 
 const VALID_STATUSES = ["STUDENT", "ALUMNI", "STAFF"] as const;
 type ValidStatus = (typeof VALID_STATUSES)[number];
@@ -72,18 +73,13 @@ export async function PATCH(
   revalidateTag("admin-users-detailed");
   revalidateTag("admin-user-detail");
 
-  // Audit log — searchable in server logs (Vercel, CloudWatch, etc.)
-  console.log(
-    JSON.stringify({
-      event: "admin.role_change",
-      actorId: session.user.id,
-      actorEmail: session.user.email,
-      targetId,
-      targetEmail: updated.email,
-      to: updated.hubStatus,
-      at: new Date().toISOString(),
-    })
-  );
+  createActivityLog({
+    adminId: session.user.id,
+    action: "user_role_changed",
+    targetType: "user",
+    targetId,
+    metadata: { newRole: updated.hubStatus, targetEmail: updated.email },
+  }).catch(() => {});
 
   return NextResponse.json(updated);
 }

@@ -4,6 +4,7 @@ import { getAdminUserDetail } from "@/domains/admin/users";
 import { getAdminSession } from "@/domains/admin/require-admin";
 import UserRoleDropdown from "../UserRoleDropdown";
 import CategoryEditCell from "./CategoryEditCell";
+import ActivityTimeline from "@/components/admin/ActivityTimeline";
 import type { EmploymentStatus } from "@/domains/admin/types";
 
 export const dynamic = "force-dynamic";
@@ -248,6 +249,9 @@ export default async function AdminUserDetailPage({
           </div>
         )}
       </div>
+
+      {/* Activity Timeline */}
+      <ActivityTimeline targetType="user" targetId={id} />
     </div>
   );
 }

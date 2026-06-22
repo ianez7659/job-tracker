@@ -3,6 +3,7 @@ import { revalidateTag } from "next/cache";
 import { getAdminSession } from "@/domains/admin/require-admin";
 import { prisma } from "@/lib/prisma";
 import { USER_CATEGORY_VALUES } from "@/lib/constants/categories";
+import { createActivityLog } from "@/domains/admin/activityLog";
 
 export async function PATCH(
   req: NextRequest,
@@ -51,6 +52,14 @@ export async function PATCH(
 
   revalidateTag("admin-users-detailed");
   revalidateTag("admin-user-detail");
+
+  createActivityLog({
+    adminId: session.user.id,
+    action: "user_category_changed",
+    targetType: "user",
+    targetId,
+    metadata: { newCategory: category },
+  }).catch(() => {});
 
   return NextResponse.json({ ok: true });
 }

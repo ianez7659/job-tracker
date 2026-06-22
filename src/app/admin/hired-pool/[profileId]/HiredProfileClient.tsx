@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { HiredProfileDetail } from "@/domains/admin/hiredPool";
+import ActivityTimeline from "@/components/admin/ActivityTimeline";
 
 // ── Label maps ────────────────────────────────────────────────────────────────
 
@@ -511,6 +512,9 @@ export default function HiredProfileClient({ profile }: Props) {
           initialNotes={profile.notes}
         />
       </section>
+
+      {/* ── Activity Timeline ── */}
+      <ActivityTimeline targetType="profile" targetId={profile.profileId} />
     </div>
   );
 }

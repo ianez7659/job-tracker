@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { PrismaClient } from "@/generated/prisma";
 import type { EmploymentType, WorkArrangement, SalaryRange } from "./constants";
+import { createActivityLog } from "@/domains/admin/activityLog";
 
 type TxClient = Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0];
 
@@ -72,6 +73,14 @@ export async function updateHiredOfferDetails(
       updatedAt: true,
     },
   });
+
+  createActivityLog({
+    adminId: input.adminId,
+    action: "offer_details_updated",
+    targetType: "offer",
+    targetId: offerId,
+    metadata: data,
+  }).catch(() => {});
 
   return updated;
 }
@@ -158,6 +167,14 @@ export async function verifyHiredOfferAsAdmin(input: {
     });
   });
 
+  createActivityLog({
+    adminId,
+    action: "offer_verified",
+    targetType: "offer",
+    targetId: offerId,
+    metadata: { hiredProfileId: existing.hiredProfileId },
+  }).catch(() => {});
+
   return updated;
 }
 
@@ -207,6 +224,13 @@ export async function adminDeactivateHiredOffer(input: {
     },
   });
 
+  createActivityLog({
+    adminId,
+    action: "offer_deactivated",
+    targetType: "offer",
+    targetId: offerId,
+  }).catch(() => {});
+
   return updated;
 }
 
@@ -252,6 +276,13 @@ export async function markHiredOfferUnverifiable(input: {
     },
   });
 
+  createActivityLog({
+    adminId: input.adminId,
+    action: "offer_marked_unverifiable",
+    targetType: "offer",
+    targetId: offerId,
+  }).catch(() => {});
+
   return updated;
 }
 
@@ -286,6 +317,13 @@ export async function updateHiredProfileNotes(input: {
     data: { notes },
     select: { id: true, notes: true, updatedAt: true },
   });
+
+  createActivityLog({
+    adminId: input.adminId,
+    action: "profile_notes_updated",
+    targetType: "profile",
+    targetId: profileId,
+  }).catch(() => {});
 
   return updated;
 }
