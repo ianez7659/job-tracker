@@ -23,6 +23,7 @@ export type HiredPoolOffer = {
   salaryRange: string | null;
   status: string;
   verifiedAt: Date | null;
+  deactivatedAt: Date | null;
   createdAt: Date;
 };
 
@@ -65,6 +66,7 @@ export async function getHiredProfileDetail(
           salaryRange: true,
           status: true,
           verifiedAt: true,
+          deactivatedAt: true,
           createdAt: true,
           job: {
             select: { company: true, title: true },
@@ -96,6 +98,7 @@ export async function getHiredProfileDetail(
       salaryRange: o.salaryRange,
       status: o.status,
       verifiedAt: o.verifiedAt,
+      deactivatedAt: o.deactivatedAt,
       createdAt: o.createdAt,
     })),
   };
@@ -127,6 +130,7 @@ export async function getHiredPoolEntries(): Promise<HiredPoolEntry[]> {
           salaryRange: true,
           status: true,
           verifiedAt: true,
+          deactivatedAt: true,
           createdAt: true,
           job: {
             select: { company: true, title: true },
@@ -155,6 +159,7 @@ export async function getHiredPoolEntries(): Promise<HiredPoolEntry[]> {
       salaryRange: o.salaryRange,
       status: o.status,
       verifiedAt: o.verifiedAt,
+      deactivatedAt: o.deactivatedAt,
       createdAt: o.createdAt,
     })),
   }));
