@@ -1,11 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { getCategoryLabel } from "@/lib/constants/categories";
 import type { AdminAnalytics } from "./types";
-
-const OFFER_STATUS = "offer";
-const ACTIVE_WINDOW_DAYS = 3;
-const INACTIVE_THRESHOLD_DAYS = 14;
-const INTERVIEW_STATUSES = ["interview1", "interview2", "interview3"];
+import {
+  OFFER_STATUS,
+  ACTIVE_WINDOW_DAYS,
+  INACTIVE_THRESHOLD_DAYS,
+  INTERVIEW_STATUSES,
+} from "./config";
 
 function daysAgo(days: number): Date {
   const d = new Date();
@@ -88,7 +89,7 @@ export async function getAdminAnalytics(): Promise<AdminAnalytics> {
     else inactiveCount++;
 
     const hasInterview = u.jobs.some((j) =>
-      INTERVIEW_STATUSES.includes(j.status)
+      (INTERVIEW_STATUSES as readonly string[]).includes(j.status)
     );
     if (!isHired && hasInterview) usersReachedInterview++;
 
