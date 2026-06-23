@@ -22,8 +22,6 @@ export async function POST(req: Request) {
 
     const session = await getServerSession(authOptions);
 
-    console.log("Logged in as:", session?.user?.email);
-
     if (!session?.user?.email) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
@@ -86,14 +84,11 @@ export async function GET() {
       );
     }
     const session = await getServerSession(authOptions);
-    console.log("🔍 Session:", session ? { email: session.user?.email, name: session.user?.name } : "null");
 
     if (!session?.user?.email) {
-      console.log("❌ Unauthorized - no session or email");
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    console.log("🔍 Attempting to fetch jobs from database...");
     const jobs = await prisma.job.findMany({
       where: {
         user: {
@@ -121,7 +116,6 @@ export async function GET() {
       },
     });
 
-    console.log("✅ Successfully fetched jobs:", jobs.length);
     return NextResponse.json(jobs);
   } catch (error) {
     console.error("Error fetching jobs:", error);

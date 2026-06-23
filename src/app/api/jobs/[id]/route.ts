@@ -10,10 +10,8 @@ import { grantsForCycleCompletion } from "@/lib/xp/rewards";
 const TERMINAL = new Set(["offer", "rejected"]);
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  console.log("✅ PATCH called");
   try {
     const { id } = await params;
-    console.log("✅ ID extracted:", id);
 
     const session = await getServerSession(authOptions);
 
@@ -22,7 +20,6 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     }
 
     const body = await req.json();
-    console.log("✅ PATCH requested:", body);
 
     // Block direct "offer" status via this route — must use /api/hired/offers
     if (body.status === "offer") {
