@@ -63,9 +63,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Job created", job }, { status: 201 });
   } catch (error) {
     console.error("POST /api/jobs/walk-in error:", error);
-    const detail = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { message: "Server error", error: detail },
+      { message: "Server error" },
       { status: 500 },
     );
   }

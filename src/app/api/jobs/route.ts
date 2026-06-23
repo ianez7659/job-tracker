@@ -69,12 +69,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Job created", job, xpGained }, { status: 201 });
   } catch (error) {
     console.error("Error creating job:", error);
-    const detail = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      {
-        message: "Server error",
-        error: detail,
-      },
+      { message: "Server error" },
       { status: 500 },
     );
   }
@@ -128,16 +124,9 @@ export async function GET() {
     console.log("✅ Successfully fetched jobs:", jobs.length);
     return NextResponse.json(jobs);
   } catch (error) {
-    console.error("❌ Error fetching jobs:", error);
-    if (error instanceof Error) {
-      console.error("❌ Error details:", {
-        message: error.message,
-        stack: error.stack,
-        name: error.name,
-      });
-    }
+    console.error("Error fetching jobs:", error);
     return NextResponse.json(
-      { message: "Failed to fetch jobs", error: error instanceof Error ? error.message : "Unknown error" },
+      { message: "Failed to fetch jobs" },
       { status: 500 }
     );
   }
