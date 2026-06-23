@@ -30,11 +30,11 @@ export interface HiredUserPreview {
 
 export interface AdminOverview {
   currentlyActiveUsers: number;     // last 3 days DAILY_ACTIVITY
-  totalStudents: number;            // hubStatus STUDENT or ALUMNI (non-STAFF, non-null category)
+  totalStudents: number;            // non-STAFF users (includes null category)
   hiredCount: number;               // users with at least one offer job
   hiredRate: number;                // hiredCount / totalStudents (0–1)
   stuckApplicationsCount: number;   // jobs stuck in applying/resume 14+ days
-  stuckUsersCount: number;          // users with 3+ applying/resume jobs, no interview/offer
+  stuckUsersCount: number;          // users with 1+ applying/resume jobs stuck 14+ days
   needsSupportCount: number;        // 14+ days no activity OR 0 jobs
   categoryDistribution: CategoryCount[];
   activeCategoryDistribution: CategoryCount[];

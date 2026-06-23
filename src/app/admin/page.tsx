@@ -5,6 +5,7 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import TrackDistributionCard from "@/components/admin/TrackDistributionCard";
 import ActiveUsersCard from "@/components/admin/ActiveUsersCard";
 import { getCategoryLabel } from "@/lib/constants/categories";
+import UserAvatar from "@/components/admin/UserAvatar";
 
 export const dynamic = "force-dynamic";
 
@@ -37,15 +38,6 @@ function BigStat({ count, total, label }: { count: number; total: number; label:
         <span className="text-lg font-normal text-gray-400 dark:text-gray-500"> / {total}</span>
       </p>
       <p className="text-xs text-gray-500">{label}</p>
-    </div>
-  );
-}
-
-function UserAvatar({ name, email }: { name: string | null; email: string }) {
-  const initial = (name ?? email).charAt(0).toUpperCase();
-  return (
-    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-      {initial}
     </div>
   );
 }
@@ -289,7 +281,7 @@ export default async function AdminOverviewPage() {
               <p className="text-sm text-gray-400 dark:text-gray-500">No hired students yet</p>
             )}
           </div>
-          <ViewAllLink href="/admin/users" label="View all students" />
+          <ViewAllLink href="/admin/hired-rate" />
         </div>
 
       </div>
