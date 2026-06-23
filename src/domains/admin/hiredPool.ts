@@ -7,7 +7,6 @@ export type HiredProfileDetail = {
   userEmail: string;
   userCategory: string | null;
   notes: string | null;
-  followUpDate: Date | null;
   profileCreatedAt: Date;
   offers: HiredPoolOffer[];
 };
@@ -33,7 +32,6 @@ export type HiredPoolEntry = {
   userName: string | null;
   userEmail: string;
   notes: string | null;
-  followUpDate: Date | null;
   profileCreatedAt: Date;
   offers: HiredPoolOffer[];
 };
@@ -50,7 +48,6 @@ export async function getHiredProfileDetail(
     select: {
       id: true,
       notes: true,
-      followUpDate: true,
       createdAt: true,
       user: {
         select: { id: true, name: true, email: true, category: true },
@@ -85,7 +82,6 @@ export async function getHiredProfileDetail(
     userEmail: profile.user.email,
     userCategory: profile.user.category,
     notes: profile.notes,
-    followUpDate: profile.followUpDate,
     profileCreatedAt: profile.createdAt,
     offers: profile.offers.map((o) => ({
       offerId: o.id,
@@ -114,7 +110,6 @@ export async function getHiredPoolEntries(): Promise<HiredPoolEntry[]> {
     select: {
       id: true,
       notes: true,
-      followUpDate: true,
       createdAt: true,
       user: {
         select: { id: true, name: true, email: true },
@@ -146,7 +141,6 @@ export async function getHiredPoolEntries(): Promise<HiredPoolEntry[]> {
     userName: p.user.name,
     userEmail: p.user.email,
     notes: p.notes,
-    followUpDate: p.followUpDate,
     profileCreatedAt: p.createdAt,
     offers: p.offers.map((o) => ({
       offerId: o.id,

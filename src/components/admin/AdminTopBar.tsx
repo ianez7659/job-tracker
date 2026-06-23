@@ -216,9 +216,9 @@ export default function AdminTopBar() {
         setNotifications(data.notifications);
       }
 
-      // Mark all as read
-      await fetch("/api/admin/notifications/read-all", { method: "POST" });
-      resetCount();
+      // Mark all as read — only reset count on success
+      const readRes = await fetch("/api/admin/notifications/read-all", { method: "POST" });
+      if (readRes.ok) resetCount();
     } catch {
       // Silently ignore errors
     } finally {

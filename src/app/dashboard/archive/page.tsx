@@ -17,6 +17,5 @@ export default async function ArchivePage() {
     orderBy: { appliedAt: "desc" },
   });
 
-  console.log(jobs);
   return <ArchiveClient jobs={jobs} />;
 }

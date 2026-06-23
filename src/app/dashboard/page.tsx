@@ -13,8 +13,6 @@ type PageProps = {
 export default async function DashboardPage({ searchParams }: PageProps) {
   const session = await getServerSession(authOptions);
 
-  console.log("✅ session", session); // debugging
-
   if (!session) {
     redirect("/login");
   }
