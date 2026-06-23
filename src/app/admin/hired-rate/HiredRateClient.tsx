@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import type { HiredRateStats, HiredOfferRow } from "@/domains/admin/hiredRate";
 import { EMPLOYMENT_TYPES } from "@/domains/hired/constants";
@@ -39,20 +39,6 @@ const STATUS_COLORS: Record<string, string> = {
   inactive: "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400",
   not_selected: "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400",
   unverifiable: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
-};
-
-type BatchAction = "verify" | "deactivate" | "mark_unverifiable";
-
-const BATCH_ACTION_LABELS: Record<BatchAction, string> = {
-  verify: "Verify",
-  deactivate: "Deactivate",
-  mark_unverifiable: "Mark Unverifiable",
-};
-
-const BATCH_ACTION_COLORS: Record<BatchAction, string> = {
-  verify: "bg-emerald-600 hover:bg-emerald-700 text-white",
-  deactivate: "bg-gray-600 hover:bg-gray-700 text-white",
-  mark_unverifiable: "bg-orange-600 hover:bg-orange-700 text-white",
 };
 
 // ── KPI Card ──────────────────────────────────────────────────────────────────
@@ -269,88 +255,6 @@ function monthLabel(monthStr: string): string {
   });
 }
 
-// ── Confirmation Dialog ────────────────────────────────────────────────────────
-
-function ConfirmDialog({
-  action,
-  count,
-  onConfirm,
-  onCancel,
-}: {
-  action: BatchAction;
-  count: number;
-  onConfirm: () => void;
-  onCancel: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-sm rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Confirm Batch Action
-        </h3>
-        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          Are you sure you want to{" "}
-          <span className="font-medium">{BATCH_ACTION_LABELS[action].toLowerCase()}</span>{" "}
-          {count} {count === 1 ? "offer" : "offers"}?
-        </p>
-        <div className="mt-4 flex justify-end gap-3">
-          <button
-            onClick={onCancel}
-            className="rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            className={`rounded-md px-4 py-2 text-sm font-medium ${BATCH_ACTION_COLORS[action]}`}
-          >
-            {BATCH_ACTION_LABELS[action]}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Result Toast ───────────────────────────────────────────────────────────────
-
-function ResultToast({
-  succeeded,
-  failed,
-  onClose,
-}: {
-  succeeded: number;
-  failed: number;
-  onClose: () => void;
-}) {
-  return (
-    <div className="fixed bottom-6 right-6 z-50 rounded-lg border bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-gray-800">
-      <div className="flex items-start gap-3">
-        <div className="min-w-0">
-          {succeeded > 0 && (
-            <p className="text-sm text-emerald-600 dark:text-emerald-400">
-              {succeeded} {succeeded === 1 ? "offer" : "offers"} updated successfully
-            </p>
-          )}
-          {failed > 0 && (
-            <p className="text-sm text-red-600 dark:text-red-400">
-              {failed} {failed === 1 ? "offer" : "offers"} failed
-            </p>
-          )}
-        </div>
-        <button
-          onClick={onClose}
-          className="shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-        >
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  );
-}
-
 // ── Main Client Component ─────────────────────────────────────────────────────
 
 interface Props {
@@ -369,12 +273,6 @@ export default function HiredRateClient({ stats, rows }: Props) {
   const [filterCompany, setFilterCompany] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-
-  // Bulk selection
-  const [selectedOfferIds, setSelectedOfferIds] = useState<Set<string>>(new Set());
-  const [confirmAction, setConfirmAction] = useState<BatchAction | null>(null);
-  const [batchLoading, setBatchLoading] = useState(false);
-  const [toastResult, setToastResult] = useState<{ succeeded: number; failed: number } | null>(null);
 
   // Unique filter options derived from data
   const categories = useMemo(
@@ -434,71 +332,6 @@ export default function HiredRateClient({ stats, rows }: Props) {
     setSearch("");
     setPage(1);
   }
-
-  // ── Selection helpers ─────────────────────────────────────────────────────
-
-  const pageOfferIds = useMemo(() => pageRows.map((r) => r.offerId), [pageRows]);
-  const allPageSelected = pageOfferIds.length > 0 && pageOfferIds.every((id) => selectedOfferIds.has(id));
-  const somePageSelected = pageOfferIds.some((id) => selectedOfferIds.has(id));
-
-  function toggleSelectAll() {
-    setSelectedOfferIds((prev) => {
-      const next = new Set(prev);
-      if (allPageSelected) {
-        pageOfferIds.forEach((id) => next.delete(id));
-      } else {
-        pageOfferIds.forEach((id) => next.add(id));
-      }
-      return next;
-    });
-  }
-
-  function toggleSelect(offerId: string) {
-    setSelectedOfferIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(offerId)) {
-        next.delete(offerId);
-      } else {
-        next.add(offerId);
-      }
-      return next;
-    });
-  }
-
-  // ── Batch action execution ────────────────────────────────────────────────
-
-  const executeBatchAction = useCallback(async (action: BatchAction) => {
-    setBatchLoading(true);
-    setConfirmAction(null);
-
-    try {
-      const res = await fetch("/api/admin/hired/offers/batch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action,
-          offerIds: Array.from(selectedOfferIds),
-        }),
-      });
-
-      if (!res.ok) {
-        setToastResult({ succeeded: 0, failed: selectedOfferIds.size });
-        return;
-      }
-
-      const data = await res.json() as { succeeded: string[]; failed: { offerId: string; reason: string }[] };
-      setToastResult({
-        succeeded: data.succeeded.length,
-        failed: data.failed.length,
-      });
-      setSelectedOfferIds(new Set());
-      router.refresh();
-    } catch {
-      setToastResult({ succeeded: 0, failed: selectedOfferIds.size });
-    } finally {
-      setBatchLoading(false);
-    }
-  }, [selectedOfferIds, router]);
 
   return (
     <div className="space-y-6">
@@ -652,16 +485,6 @@ export default function HiredRateClient({ stats, rows }: Props) {
         <table className="w-full text-left text-sm">
           <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
             <tr>
-              <th className="px-3 py-3 w-10">
-                <input
-                  type="checkbox"
-                  checked={allPageSelected}
-                  ref={(el) => { if (el) el.indeterminate = somePageSelected && !allPageSelected; }}
-                  onChange={toggleSelectAll}
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700"
-                  aria-label="Select all on page"
-                />
-              </th>
               <th className="px-4 py-3">Student Name</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Job Category</th>
@@ -675,7 +498,7 @@ export default function HiredRateClient({ stats, rows }: Props) {
           <tbody className="divide-y divide-gray-100 bg-white dark:divide-gray-800 dark:bg-gray-900">
             {pageRows.length === 0 ? (
               <tr>
-                <td colSpan={9} className="px-4 py-12 text-center">
+                <td colSpan={8} className="px-4 py-12 text-center">
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     No offer records yet
                   </p>
@@ -685,114 +508,90 @@ export default function HiredRateClient({ stats, rows }: Props) {
                 </td>
               </tr>
             ) : (
-              pageRows.map((row) => {
-                const isSelected = selectedOfferIds.has(row.offerId);
-                return (
-                  <tr
-                    key={row.offerId}
-                    className={[
-                      "transition-colors",
-                      isSelected
-                        ? "bg-indigo-50 dark:bg-indigo-900/20"
-                        : "hover:bg-gray-50 dark:hover:bg-gray-800/50",
-                    ].join(" ")}
-                  >
-                    {/* Checkbox */}
-                    <td className="px-3 py-3">
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          toggleSelect(row.offerId);
-                        }}
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700"
-                        aria-label={`Select ${row.userName ?? row.userEmail}`}
-                      />
-                    </td>
-
-                    {/* Student Name */}
-                    <td
-                      className="cursor-pointer px-4 py-3"
-                      onClick={() => router.push(`/admin/hired-pool/${row.profileId}`)}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
-                          {(row.userName ?? row.userEmail).slice(0, 2).toUpperCase()}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="font-medium text-gray-900 dark:text-gray-100">
-                            {row.userName ?? "\u2014"}
-                          </p>
-                          <p className="truncate text-xs text-gray-400">
-                            {row.userEmail}
-                          </p>
-                        </div>
+              pageRows.map((row) => (
+                <tr
+                  key={row.profileId}
+                  onClick={() => router.push(`/admin/hired-pool/${row.profileId}`)}
+                  className="cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                >
+                  {/* Student Name */}
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
+                        {(row.userName ?? row.userEmail).slice(0, 2).toUpperCase()}
                       </div>
-                    </td>
+                      <div className="min-w-0">
+                        <p className="font-medium text-gray-900 dark:text-gray-100">
+                          {row.userName ?? "—"}
+                        </p>
+                        <p className="truncate text-xs text-gray-400">
+                          {row.userEmail}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
 
-                    {/* Status */}
-                    <td className="px-4 py-3">
+                  {/* Status */}
+                  <td className="px-4 py-3">
+                    <span
+                      className={[
+                        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+                        STATUS_COLORS[row.status] ?? STATUS_COLORS.inactive,
+                      ].join(" ")}
+                    >
+                      {STATUS_LABELS[row.status] ?? row.status}
+                    </span>
+                  </td>
+
+                  {/* Job Category */}
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                    {row.userCategory ?? "—"}
+                  </td>
+
+                  {/* Company */}
+                  <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">
+                    {row.company}
+                  </td>
+
+                  {/* Position */}
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                    {row.title}
+                  </td>
+
+                  {/* Offer Date */}
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                    {row.offerDate
+                      ? new Date(row.offerDate).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                      : "—"}
+                  </td>
+
+                  {/* Employment Type */}
+                  <td className="px-4 py-3">
+                    {row.employmentType ? (
                       <span
                         className={[
                           "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-                          STATUS_COLORS[row.status] ?? STATUS_COLORS.inactive,
+                          EMPLOYMENT_BADGE_COLORS[row.employmentType] ??
+                            "bg-gray-100 text-gray-700",
                         ].join(" ")}
                       >
-                        {STATUS_LABELS[row.status] ?? row.status}
+                        {EMPLOYMENT_LABELS[row.employmentType] ?? row.employmentType}
                       </span>
-                    </td>
+                    ) : (
+                      <span className="text-gray-400">—</span>
+                    )}
+                  </td>
 
-                    {/* Job Category */}
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                      {row.userCategory ?? "\u2014"}
-                    </td>
-
-                    {/* Company */}
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">
-                      {row.company}
-                    </td>
-
-                    {/* Position */}
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                      {row.title}
-                    </td>
-
-                    {/* Offer Date */}
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                      {row.offerDate
-                        ? new Date(row.offerDate).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })
-                        : "\u2014"}
-                    </td>
-
-                    {/* Employment Type */}
-                    <td className="px-4 py-3">
-                      {row.employmentType ? (
-                        <span
-                          className={[
-                            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-                            EMPLOYMENT_BADGE_COLORS[row.employmentType] ??
-                              "bg-gray-100 text-gray-700",
-                          ].join(" ")}
-                        >
-                          {EMPLOYMENT_LABELS[row.employmentType] ?? row.employmentType}
-                        </span>
-                      ) : (
-                        <span className="text-gray-400">{"\u2014"}</span>
-                      )}
-                    </td>
-
-                    {/* Offers count */}
-                    <td className="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-400">
-                      {row.offerCount}
-                    </td>
-                  </tr>
-                );
-              })
+                  {/* Offers count */}
+                  <td className="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-400">
+                    {row.offerCount}
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>
@@ -838,52 +637,6 @@ export default function HiredRateClient({ stats, rows }: Props) {
           </button>
         </div>
       </div>
-
-      {/* ── Floating Action Bar ── */}
-      {selectedOfferIds.size > 0 && (
-        <div className="fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-xl border border-gray-200 bg-white px-5 py-3 shadow-xl dark:border-gray-700 dark:bg-gray-800">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {selectedOfferIds.size} selected
-          </span>
-          <div className="h-5 w-px bg-gray-200 dark:bg-gray-700" />
-          {(Object.keys(BATCH_ACTION_LABELS) as BatchAction[]).map((action) => (
-            <button
-              key={action}
-              disabled={batchLoading}
-              onClick={() => setConfirmAction(action)}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium disabled:opacity-50 ${BATCH_ACTION_COLORS[action]}`}
-            >
-              {BATCH_ACTION_LABELS[action]}
-            </button>
-          ))}
-          <div className="h-5 w-px bg-gray-200 dark:bg-gray-700" />
-          <button
-            onClick={() => setSelectedOfferIds(new Set())}
-            className="text-xs text-gray-500 underline hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-          >
-            Clear
-          </button>
-        </div>
-      )}
-
-      {/* ── Confirm Dialog ── */}
-      {confirmAction && (
-        <ConfirmDialog
-          action={confirmAction}
-          count={selectedOfferIds.size}
-          onConfirm={() => executeBatchAction(confirmAction)}
-          onCancel={() => setConfirmAction(null)}
-        />
-      )}
-
-      {/* ── Result Toast ── */}
-      {toastResult && (
-        <ResultToast
-          succeeded={toastResult.succeeded}
-          failed={toastResult.failed}
-          onClose={() => setToastResult(null)}
-        />
-      )}
     </div>
   );
 }
