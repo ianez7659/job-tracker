@@ -68,6 +68,9 @@ export function parseUserProfilePatch(body: unknown):
     } else if (raw === undefined) {
       /* skip */
     } else if (isHubStatus(raw)) {
+      if (raw === "STAFF") {
+        return { ok: false, error: "Cannot set STAFF role from user profile" };
+      }
       patch.hubStatus = raw;
     } else {
       return {

@@ -342,7 +342,6 @@ export default function ProfileClient({ session, initialProfile }: Props) {
                   <option value="">Not set</option>
                   <option value="STUDENT">Student</option>
                   <option value="ALUMNI">Alumni</option>
-                  <option value="STAFF">Staff</option>
                 </select>
               </label>
 
