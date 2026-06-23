@@ -482,10 +482,7 @@ export async function POST(
   } catch (err) {
     console.error("AI resume match error:", err);
     return NextResponse.json(
-      {
-        message:
-          err instanceof Error ? err.message : "Failed to compute match score",
-      },
+      { message: "Failed to compute match score" },
       { status: 500 }
     );
   }

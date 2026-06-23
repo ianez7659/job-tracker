@@ -165,7 +165,7 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("AI assist error:", err);
     return NextResponse.json(
-      { message: err instanceof Error ? err.message : "AI request failed" },
+      { message: "AI request failed" },
       { status: 500 }
     );
   }
