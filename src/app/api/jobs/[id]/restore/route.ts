@@ -11,6 +11,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
+  const existing = await prisma.job.findFirst({
+    where: { id, user: { email: session.user.email } },
+  });
+  if (!existing) {
+    return NextResponse.json({ message: "Job not found" }, { status: 404 });
+  }
+
   await prisma.job.update({
     where: { id },
     data: { deletedAt: null },

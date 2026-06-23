@@ -14,13 +14,20 @@ export async function DELETE(
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
+  const existing = await prisma.job.findFirst({
+    where: { id, user: { email: session.user.email } },
+  });
+  if (!existing) {
+    return NextResponse.json({ message: "Job not found" }, { status: 404 });
+  }
+
   try {
     const job = await prisma.job.delete({ where: { id } });
     return NextResponse.json({ success: true, job }, { status: 200 });
   } catch (error) {
     console.error("Error deleting job:", error);
     return NextResponse.json(
-      { message: "Internal Server Error", error: String(error) },
+      { message: "Delete failed" },
       { status: 500 }
     );
   }
