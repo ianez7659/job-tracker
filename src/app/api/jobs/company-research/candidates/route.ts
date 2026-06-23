@@ -34,7 +34,6 @@ export async function POST(req: Request) {
     return NextResponse.json(result);
   } catch (err) {
     console.error("company-research/candidates:", err);
-    const msg = err instanceof Error ? err.message : "Server error";
-    return NextResponse.json({ message: msg }, { status: 500 });
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }
