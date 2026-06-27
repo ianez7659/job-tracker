@@ -1,16 +1,17 @@
 # Jobflow – Job Tracking Dashboard
 
-Production-style job application tracking dashboard built with **Next.js + Prisma + PostgreSQL + NextAuth**.
+Production-grade job application tracking dashboard built with **Next.js + Prisma + PostgreSQL + NextAuth**.
 
-Designed to help you manage job applications, track interview stages, and analyze your job search activity with a clean, responsive UI.
+Helps you manage job applications, track interview stages, build interview skills, and analyze your job search activity — with gamification, AI assistance, and a dedicated admin panel.
 
 **Live Demo:** [https://job-tracker-wheat.vercel.app/]
+**Live Demo Using Demo Account:** [https://job-tracker-wheat.vercel.app/welcome]
 
-|                             |                              |
-| :-------------------------: | :--------------------------: |
-| ![1](./screenshots/jf1.png) | ![2](./screenshots/jf1d.png) |
-| ![3](./screenshots/jf3.png) | ![4](./screenshots/jf3d.png) |
-| ![5](./screenshots/jf4.png) | ![6](./screenshots/jf4d.png) |
+|                               |                               |
+| :---------------------------: | :---------------------------: |
+|  ![1](./screenshots/jf1.png)  | ![2](./screenshots/jf1d.png)  |
+| ![3](./screenshots/jf001.png) | ![4](./screenshots/jf002.png) |
+|  ![5](./screenshots/jf4.png)  | ![6](./screenshots/jf4d.png)  |
 
 ---
 
@@ -39,8 +40,11 @@ You can also sign in with **GitHub** or **Google** if you prefer.
 - TypeScript
 - Tailwind CSS
 - Framer Motion
-- Recharts
+- Recharts, Chart.js
+- Zustand
+- cmdk (command palette)
 - react-markdown, remark-gfm
+- react-easy-crop
 
 **Backend**
 
@@ -48,45 +52,78 @@ You can also sign in with **GitHub** or **Google** if you prefer.
 - Prisma ORM
 - PostgreSQL (Render)
 - NextAuth.js (GitHub + Google OAuth + Credentials)
-- OpenAI API (assist, match)
-- Vercel Blob
+- OpenAI API (stage advice, ATS match, company research, business card extraction, quiz generation)
+- Cheerio (JD scraping, URL metadata)
+- Vercel Blob (resume / avatar storage)
+
+**PWA**
+
+- Custom service worker with versioned caching
+- Web app manifest with share target
+- iOS / Android install prompts
 
 **Deployment**
 
 - Vercel (App)
-- Render PostgreSQL (database)
+- Render PostgreSQL (Database)
 
 ---
 
 ## Core Features
 
+|                               |                               |
+| :---------------------------: | :---------------------------: |
+| ![1](./screenshots/jf003.png) | ![2](./screenshots/jf004.png) |
+| ![3](./screenshots/jf005.png) | ![4](./screenshots/jf006.png) |
+
 **Job Management**
 
-- Add / Edit / Delete job applications
-- Pipeline / Status workflow: Applying → Applied → Interview 1/2/3 → Offer / Rejected
-- Company, position level (Intern / Co-op / Entry / Junior / Intermediate / Senior / Lead), applied date, tags, job URL
-- Apply flow (resume PDF, optional ATS-style match vs JD).
-- Job detail (Edit) — AI stage advice (auto) and expected interview questions (on demand), JD-based.
-- Soft delete with restore & archive system
+- Add / Edit / Delete job applications (standard and walk-in entry modes)
+- Pipeline workflow: Applying → Applied → Interview 1/2/3 → Offer / Rejected
+- Company, position level, applied date, tags, job URL
+- Apply flow with resume PDF upload and ATS-style match vs JD
+- AI-powered stage advice and expected interview questions (JD-based)
+- Stale applying detection for jobs stuck in early stages
+- Offer completion flow — guides users through confirming pending job offers
+- Soft delete with restore and archive system
 
-**Dashboard & Analytics**
+**Dashboard & Gamification**
 
-- Real-time status overview (Waiting / Decided / Interviews)
+- Real-time status overview with search and filters
+- XP / Level system with daily check-in and login streak
+- Daily missions and interview drill (quiz with category-based question bank + AI-generated questions)
 - Interview progress tracking
-- Charts for offer vs rejected distribution
-- Search & filter functionality
+- Offer vs rejected distribution charts
+
+**AI Features**
+
+- Stage-specific advice and expected interview questions
+- ATS resume match scoring against job descriptions
+- Company research with AI interview angle reports
+- Business card photo extraction (company / contact info)
+
+**Admin Panel**
+
+- User management with role assignment and category overview
+- Hired pool CRM — offer lifecycle tracking (pending → verified / inactive)
+- Hired rate analytics and rankings
+- Real-time notifications with polling and read tracking
+- Activity log (audit trail for all admin actions)
+- Command palette search and CSV export
 
 **Auth & Profile**
 
 - GitHub and Google OAuth
 - Email/password registration and login
-- First-time category selection (redirect to category page until set)
+- Role-based access (Student / Alumni / Staff)
+- First-time category selection flow
+- Profile photo crop and upload
 - Protected routes with session management
 
 **Responsive Design**
 
-- Mobile-first layout
-- Optimized desktop navigation
+- Mobile-first layout with desktop sidebar navigation
+- PWA installable on iOS and Android
 - Clean component-based UI system
 
 ---
@@ -95,42 +132,48 @@ You can also sign in with **GitHub** or **Google** if you prefer.
 
 ```
 Next.js (Frontend + API)
+    ├── src/domains/     ← Domain logic (admin, hired)
+    ├── src/lib/         ← Auth, XP, quiz, utilities
+    ├── src/components/  ← Reusable UI components
     ↓
 Prisma ORM
     ↓
 PostgreSQL (Render)
 ```
 
-Single codebase with separation between UI components and API route handlers.
-
 **Project structure**
 
-- `src/app/` – App Router pages and API routes
+- `src/app/` – App Router pages and API routes (user dashboard + admin panel)
 - `src/components/` – Reusable UI components
-- `src/lib/` – Auth, Prisma client, utilities
+- `src/domains/` – Domain-specific business logic
+- `src/lib/` – Auth, Prisma client, XP system, quiz engine, utilities
+- `src/stores/` – Client state management (Zustand)
 - `prisma/` – Schema and migrations
+- `data/` – Static data (quiz question bank)
 
 ---
 
 ## What This Project Shows
 
 - Fullstack architecture with Next.js App Router
+- Domain-layered backend with separated business logic
 - REST-style API design with Next.js Route Handlers
 - Auth (NextAuth.js) with GitHub, Google, and credentials
+- Role-based access control with admin panel
+- AI integration (OpenAI) across multiple user-facing features
+- Gamification system (XP, missions, streaks, quizzes)
+- PWA with service worker and install flow
 - State management and optimistic updates
 - Production-style UI and responsive layout
 - Deployable stack (Vercel + Render PostgreSQL)
-- Reusable React components and shared types
-- SEO metadata and error handling
 
 ---
 
 ## Future Improvements
 
-- Role-based access
-- Advanced filters and saved views
-- Analytics by period and position type
 - Email reminders for follow-ups
+- Advanced saved views and custom filters
+- Expanded analytics by period and position type
 
 ---
 
@@ -220,4 +263,4 @@ App runs at **http://localhost:3000** (or next available port).
 
 ## About
 
-Job search tracker focused on clarity and simplicity. Built to practice fullstack Next.js, Prisma, and deployment (Vercel + Render).
+Full-featured job search tracker with gamification, AI assistance, and admin tools. Built with Next.js, Prisma, and deployed on Vercel + Render.
