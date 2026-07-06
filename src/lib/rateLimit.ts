@@ -1,11 +1,15 @@
-const store = new Map<string, number[]>();
+const globalForRateLimit = globalThis as unknown as {
+  __rateLimitStore?: Map<string, number[]>;
+  __rateLimitTimer?: ReturnType<typeof setInterval> | null;
+};
+
+const store = globalForRateLimit.__rateLimitStore ??= new Map<string, number[]>();
 
 const CLEANUP_INTERVAL_MS = 60_000;
-let cleanupTimer: ReturnType<typeof setInterval> | null = null;
 
 function ensureCleanup(windowMs: number) {
-  if (cleanupTimer) return;
-  cleanupTimer = setInterval(() => {
+  if (globalForRateLimit.__rateLimitTimer) return;
+  globalForRateLimit.__rateLimitTimer = setInterval(() => {
     const now = Date.now();
     for (const [key, timestamps] of store) {
       const valid = timestamps.filter((t) => now - t < windowMs);
@@ -16,8 +20,9 @@ function ensureCleanup(windowMs: number) {
       }
     }
   }, CLEANUP_INTERVAL_MS);
-  if (typeof cleanupTimer === "object" && "unref" in cleanupTimer) {
-    cleanupTimer.unref();
+  const timer = globalForRateLimit.__rateLimitTimer;
+  if (typeof timer === "object" && timer && "unref" in timer) {
+    timer.unref();
   }
 }
 
@@ -74,8 +79,8 @@ export function rateLimitResponse(retryAfterMs: number | null) {
 /** Visible for testing only. */
 export function _resetStore() {
   store.clear();
-  if (cleanupTimer) {
-    clearInterval(cleanupTimer);
-    cleanupTimer = null;
+  if (globalForRateLimit.__rateLimitTimer) {
+    clearInterval(globalForRateLimit.__rateLimitTimer);
+    globalForRateLimit.__rateLimitTimer = null;
   }
 }
