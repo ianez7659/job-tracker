@@ -4,6 +4,7 @@ import OpenAI from "openai";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { JobSource } from "@/generated/prisma";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rateLimit";
 
 export type AiAssistAction = "skills" | "interview" | "advice";
 
@@ -71,6 +72,9 @@ export async function POST(req: Request) {
     if (!session?.user?.email) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+
+    const rl = checkRateLimit(`ai-assist:${session.user.email}`, 10, 60_000);
+    if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(

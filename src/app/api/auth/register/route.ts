@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
+  const forwarded = req.headers.get("x-forwarded-for");
+  const ip = forwarded?.split(",")[0]?.trim() ?? "unknown";
+  const rl = checkRateLimit(`register:${ip}`, 5, 60_000);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
   try {
     let body: { email?: string; name?: string; password?: string };
     try {
