@@ -6,6 +6,7 @@ import {
   parseBusinessCardJson,
   type BusinessCardFields,
 } from "@/lib/businessCardExtract";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rateLimit";
 
 /** In-memory only; image bytes are never written to disk, DB, or blob storage. */
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
@@ -24,6 +25,9 @@ export async function POST(req: Request) {
     if (!session?.user?.email) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+
+    const rl = checkRateLimit(`biz-card:${session.user.email}`, 10, 60_000);
+    if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { isSafePublicHttpUrl } from "@/lib/companyResearch/ssrf";
 import * as cheerio from "cheerio";
 
 export async function GET(req: Request) {
@@ -21,9 +22,9 @@ export async function GET(req: Request) {
     }
 
     const trimmed = url.trim();
-    if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
+    if (!isSafePublicHttpUrl(trimmed)) {
       return NextResponse.json(
-        { message: "URL must start with http:// or https://" },
+        { message: "URL is not allowed" },
         { status: 400 }
       );
     }

@@ -6,6 +6,7 @@ import type { CompanyCandidate } from "@/lib/companyResearch/types";
 import { fetchPublicPageExcerpt } from "@/lib/companyResearch/fetchSiteExcerpt";
 import { isSafePublicHttpUrl } from "@/lib/companyResearch/ssrf";
 import { generateInterviewReport } from "@/lib/companyResearch/generateInterviewReport";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rateLimit";
 
 export const maxDuration = 60;
 
@@ -29,6 +30,9 @@ export async function POST(req: Request) {
     if (!session?.user?.email) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+
+    const rl = checkRateLimit(`co-research:${session.user.email}`, 10, 60_000);
+    if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(

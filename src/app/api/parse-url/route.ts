@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { isSafePublicHttpUrl } from "@/lib/companyResearch/ssrf";
 import * as cheerio from "cheerio";
 
 export async function POST(req: NextRequest) {
@@ -11,8 +12,24 @@ export async function POST(req: NextRequest) {
 
   const { url } = await req.json();
 
+  if (!url || typeof url !== "string") {
+    return NextResponse.json(
+      { error: "Missing or invalid url parameter" },
+      { status: 400 },
+    );
+  }
+
+  if (!isSafePublicHttpUrl(url)) {
+    return NextResponse.json(
+      { error: "URL is not allowed" },
+      { status: 400 },
+    );
+  }
+
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(10000),
+    });
     const html = await res.text();
     const $ = cheerio.load(html);
 
