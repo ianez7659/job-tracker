@@ -3,7 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import { ReactNode, Suspense } from "react";
 import SessionProvider from "@/components/provider/SessionWraper";
-// import PageTransition from "@/components/PageTransition";
+import PageTransition from "@/components/PageTransition";
 import ThemeProvider from "@/components/ThemeProvider";
 import ErudaLoader from "@/components/ErudaLoader";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
@@ -66,8 +66,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <ErudaLoader />
           </Suspense>
           <SessionProvider>
-            {/* <PageTransition>{children}</PageTransition> */}
-            {children}
+            <PageTransition>{children}</PageTransition>
           </SessionProvider>
         </ThemeProvider>
       </body>

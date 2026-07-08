@@ -11,6 +11,7 @@ import {
 } from "@/lib/styles";
 import { POSITION_LEVELS } from "@/lib/constants/positions";
 import { ClipboardPasteButton } from "@/components/ClipboardPasteButton";
+import { toast } from "sonner";
 
 export default function NewJobClient() {
   const router = useRouter();
@@ -81,7 +82,7 @@ export default function NewJobClient() {
       router.push("/dashboard?jobCreated=1");
     } catch (error) {
       console.error(error);
-      alert("Submission failed");
+      toast.error("Submission failed");
     }
   };
 

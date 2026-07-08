@@ -5,6 +5,7 @@ import Link from "next/link";
 import { X, Calendar, Building2, Link2, Sparkles } from "lucide-react";
 import { JobSource } from "@/generated/prisma";
 import { getAdvanceButtonLabel } from "@/lib/jobPipeline";
+import { toast } from "sonner";
 
 type JobCardProps = {
   id: string;
@@ -61,7 +62,7 @@ export default function JobCard({
     if (res.ok) {
       onDelete(id);
     } else {
-      alert("Failed to delete job");
+      toast.error("Failed to delete job");
     }
   };
 

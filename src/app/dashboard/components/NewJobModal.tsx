@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X, Clipboard } from "lucide-react";
+import { toast } from "sonner";
 import {
   inputBase,
   selectBase,
@@ -141,7 +142,7 @@ export default function NewJobModal({ onClose, onCreated, onXpGained }: NewJobMo
       onClose();
     } catch (error) {
       console.error(error);
-      alert(
+      toast.error(
         error instanceof Error ? error.message : "Failed to create job",
       );
     } finally {

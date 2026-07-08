@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function RegisterPage() {
       router.push("/login");
     } else {
       const data = await res.json();
-      alert(data.message || "Failed to register. Please try again.");
+      toast.error(data.message || "Failed to register. Please try again.");
     }
   };
 

@@ -9,6 +9,7 @@ import {
   type BusinessCardFields,
 } from "@/lib/businessCardExtract";
 import { inputBase, selectBase, labelBase } from "@/lib/styles";
+import { toast } from "sonner";
 
 type Props = {
   onClose: () => void;
@@ -117,11 +118,11 @@ export default function SimpleNewJobModal({
     e.preventDefault();
     const co = company.trim();
     if (!co) {
-      alert("Company name is required.");
+      toast.error("Company name is required.");
       return;
     }
     if (!titleLevel) {
-      alert("Select a position level.");
+      toast.error("Select a position level.");
       return;
     }
 
@@ -155,7 +156,7 @@ export default function SimpleNewJobModal({
       onCreated(body.job);
       onClose();
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to create job");
+      toast.error(err instanceof Error ? err.message : "Failed to create job");
     } finally {
       setSaving(false);
     }

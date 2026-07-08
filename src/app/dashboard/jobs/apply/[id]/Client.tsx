@@ -11,6 +11,7 @@ import {
 } from "@/lib/styles";
 import { POSITION_LEVELS } from "@/lib/constants/positions";
 import { ClipboardPasteButton } from "@/components/ClipboardPasteButton";
+import { toast } from "sonner";
 
 type Job = {
   id: string;
@@ -135,7 +136,7 @@ export default function ApplyJobClient({ job }: Props) {
     });
 
     if (!res.ok) {
-      alert("Failed to apply");
+      toast.error("Failed to apply");
       setSubmitting(false);
       return;
     }
@@ -312,7 +313,7 @@ export default function ApplyJobClient({ job }: Props) {
     });
 
     if (!res.ok) {
-      alert("Failed to apply");
+      toast.error("Failed to apply");
       setSubmitting(false);
       return;
     }

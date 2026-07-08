@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Toaster } from "sonner";
 
 // Applies saved theme (or system preference) to document on load and when theme changes elsewhere (e.g. Settings).
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [isDark, setIsDark] = useState(false);
   useEffect(() => {
     let stored: "light" | "dark" | null = null;
     try {
@@ -19,13 +21,30 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     } catch {
       prefersDark = false;
     }
-    const isDark = stored === "dark" || (stored !== "light" && prefersDark);
-    if (isDark) {
+    const dark = stored === "dark" || (stored !== "light" && prefersDark);
+    setIsDark(dark);
+    if (dark) {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
     }
+
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
   }, []);
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <Toaster
+        position="top-right"
+        theme={isDark ? "dark" : "light"}
+        richColors
+        closeButton
+      />
+    </>
+  );
 }

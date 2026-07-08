@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { LayoutList, LayoutDashboard, Search, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 // Dashboard-local pieces
 import OverviewSection from "@/app/dashboard/components/OverviewSection";
@@ -374,7 +375,7 @@ export default function DashboardClient({
       // Roll back both states on failure
       setJobs(prevJobs);
       setAllJobs(prevAll);
-      alert("Failed to delete job");
+      toast.error("Failed to delete job");
     }
   };
 

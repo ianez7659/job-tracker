@@ -4,6 +4,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DEMO_ACCOUNT_EMAIL } from "@/lib/constants/demoAccount";
+import { toast } from "sonner";
 
 const DEMO_PASSWORD = "demo1234";
 
@@ -24,7 +25,7 @@ export default function WelcomePageClient() {
         router.push("/dashboard");
         router.refresh();
       } else {
-        alert(
+        toast.error(
           "Demo sign-in failed. Create the demo user or use Log in on the main page.",
         );
       }

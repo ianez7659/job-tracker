@@ -12,6 +12,7 @@ import {
   helperText,
 } from "@/lib/styles";
 import { POSITION_LEVELS } from "@/lib/constants/positions";
+import { toast } from "sonner";
 import {
   getAdvanceButtonLabel,
   getNextStage,
@@ -240,7 +241,7 @@ export default function EditJobClient({ job }: Props) {
     });
 
     if (!res.ok) {
-      alert("Failed to update job");
+      toast.error("Failed to update job");
       return;
     }
 
@@ -260,7 +261,7 @@ export default function EditJobClient({ job }: Props) {
         xpGained?: number;
       };
       if (!res.ok) {
-        alert(
+        toast.error(
           typeof data.message === "string"
             ? data.message
             : "Could not update stage",

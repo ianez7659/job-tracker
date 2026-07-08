@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Github } from "lucide-react";
 import { SiGoogle } from "react-icons/si";
+import { toast } from "sonner";
 
 function authErrorMessage(code: string | null): string | null {
   if (!code) return null;
@@ -64,12 +65,12 @@ export default function LoginClient() {
       }
 
       if (!res.ok) {
-        alert(data.message || "Failed to register");
+        toast.error(data.message || "Failed to register");
         setLoading(false);
         return;
       }
 
-      alert("Registration successful! You can now log in.");
+      toast.success("Registration successful! You can now log in.");
       setIsRegistering(false);
       setLoading(false);
       return;
@@ -84,7 +85,7 @@ export default function LoginClient() {
     if (res?.ok) {
       router.push("/dashboard");
     } else {
-      alert("Invalid email or password");
+      toast.error("Invalid email or password");
     }
 
     setLoading(false);
@@ -132,7 +133,7 @@ export default function LoginClient() {
                       redirect: false,
                     }).then((res) => {
                       if (res?.ok) router.push("/dashboard");
-                      else if (res?.error) alert("Invalid email or password");
+                      else if (res?.error) toast.error("Invalid email or password");
                       setLoading(false);
                     });
                   }}
