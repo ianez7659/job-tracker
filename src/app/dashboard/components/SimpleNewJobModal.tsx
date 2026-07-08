@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, Camera, ImageIcon, Loader2 } from "lucide-react";
 import type { Job } from "@/generated/prisma";
 import { POSITION_LEVELS } from "@/lib/constants/positions";
@@ -55,6 +55,14 @@ export default function SimpleNewJobModal({
   onSwitchToStandard,
   onCreated,
 }: Props) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 

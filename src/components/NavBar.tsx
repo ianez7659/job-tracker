@@ -93,6 +93,8 @@ export default function Navbar() {
         <button
           className="md:hidden text-gray-700 dark:text-gray-300"
           onClick={() => setMobileOpen((prev) => !prev)}
+          aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>

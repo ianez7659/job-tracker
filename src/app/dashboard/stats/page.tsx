@@ -209,10 +209,12 @@ export default function StatsPage() {
         </h2>
 
         {/* Tab bar */}
-        <div className="flex gap-1 mb-5 border-b border-gray-200 dark:border-slate-600">
+        <div role="tablist" className="flex gap-1 mb-5 border-b border-gray-200 dark:border-slate-600">
           {TAB_ITEMS.map((tab) => (
             <button
               key={tab.id}
+              role="tab"
+              aria-selected={activeTab === tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-1.5 text-sm font-medium rounded-t transition-colors ${
                 activeTab === tab.id

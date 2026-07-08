@@ -74,6 +74,7 @@ export default function SettingsClient({ session }: Props) {
           <div className="flex gap-3">
             <button
               onClick={() => handleThemeChange("light")}
+              aria-pressed={theme === "light"}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
                 theme === "light"
                   ? "bg-blue-50 dark:bg-blue-900/30 border-blue-500 text-blue-700 dark:text-blue-300"
@@ -85,6 +86,7 @@ export default function SettingsClient({ session }: Props) {
             </button>
             <button
               onClick={() => handleThemeChange("dark")}
+              aria-pressed={theme === "dark"}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
                 theme === "dark"
                   ? "bg-blue-50 dark:bg-blue-900/30 border-blue-500 text-blue-700 dark:text-blue-300"
@@ -116,6 +118,9 @@ export default function SettingsClient({ session }: Props) {
             </div>
             <button
               onClick={() => handleNotificationChange(!notifications)}
+              role="switch"
+              aria-checked={notifications}
+              aria-label="Enable notifications"
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                 notifications ? "bg-blue-600" : "bg-gray-200"
               }`}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, Clipboard } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -28,6 +28,14 @@ function getDetectionHint(url: string, jd: string): string | null {
 }
 
 export default function NewJobModal({ onClose, onCreated, onXpGained }: NewJobModalProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   const { sharedUrl, sharedJd } = useSharedDataStore();
 
   const detectionHint = getDetectionHint(sharedUrl, sharedJd);

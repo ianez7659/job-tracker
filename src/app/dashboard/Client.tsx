@@ -517,6 +517,7 @@ export default function DashboardClient({
               <input
                 type="text"
                 placeholder="Search..."
+                aria-label="Search jobs"
                 className="w-full bg-transparent p-2 text-sm text-gray-800 outline-none placeholder-gray-500 dark:text-gray-200 dark:placeholder-gray-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   X,
@@ -114,6 +115,14 @@ const OTHER_JOB_SITES = [
 ] as const;
 
 export default function JobSearchModal({ onClose }: Props) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   const handleSelect = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
     onClose();

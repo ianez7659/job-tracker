@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { inputBase, selectBase, labelBase } from "@/lib/styles";
 import {
   EMPLOYMENT_TYPES,
@@ -48,6 +48,14 @@ type Props = {
 };
 
 export default function OfferTransitionModal({ companyName, onConfirm, onCancel }: Props) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCancel();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onCancel]);
+
   const today = new Date().toISOString().slice(0, 10);
 
   const [form, setForm] = useState<OfferFormData>({
