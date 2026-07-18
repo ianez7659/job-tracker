@@ -1,6 +1,26 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+
+// Type roles (landing redesign): Display = Space Grotesk, Body = Inter, Mono = JetBrains Mono.
+const displayFont = Space_Grotesk({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-display-src",
+  weight: ["500", "600", "700"],
+});
+const bodyFont = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-body-src",
+});
+const monoFont = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mono-src",
+  weight: ["400", "500", "700"],
+});
 import { ReactNode, Suspense } from "react";
 import SessionProvider from "@/components/provider/SessionWraper";
 import PageTransition from "@/components/PageTransition";
@@ -55,7 +75,12 @@ const themeScript = `
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning translate="no">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      translate="no"
+      className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}
+    >
       <body>
         <Script id="theme-init" strategy="beforeInteractive">
           {themeScript}
