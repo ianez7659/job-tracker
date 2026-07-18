@@ -37,7 +37,7 @@ export default function FinalCta() {
             ) : (
               <>
                 <Link
-                  href="/register"
+                  href="/login?register=1"
                   className="rounded-full bg-signal px-8 py-3.5 text-base font-medium text-white shadow-sm transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
                 >
                   Start free

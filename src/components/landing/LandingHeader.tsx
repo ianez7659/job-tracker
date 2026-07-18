@@ -67,7 +67,7 @@ export default function LandingHeader() {
                 Log in
               </Link>
               <Link
-                href="/register"
+                href="/login?register=1"
                 className="rounded-full bg-signal px-5 py-2 text-sm font-medium text-white transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
               >
                 Start free
@@ -123,7 +123,7 @@ export default function LandingHeader() {
                     Log in
                   </Link>
                   <Link
-                    href="/register"
+                    href="/login?register=1"
                     onClick={() => setMenuOpen(false)}
                     className="rounded-full bg-signal px-5 py-2.5 text-center text-sm font-medium text-white"
                   >

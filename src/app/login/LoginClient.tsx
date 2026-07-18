@@ -39,7 +39,8 @@ export default function LoginClient() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [isRegistering, setIsRegistering] = useState(false);
+  // Deep-link into the registration form via /login?register=1 (e.g. landing "Start free").
+  const [isRegistering, setIsRegistering] = useState(searchParams.get("register") === "1");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {

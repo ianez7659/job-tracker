@@ -7,12 +7,17 @@ jest.mock("next-auth/react", () => ({
   signIn: jest.fn(),
 }));
 
+let mockSearchParams = new URLSearchParams();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn() }),
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => mockSearchParams,
 }));
 
 describe("LoginClient (login page)", () => {
+  beforeEach(() => {
+    mockSearchParams = new URLSearchParams();
+  });
+
   it("renders login form with email and password inputs", () => {
     render(<LoginClient />);
     expect(screen.getByPlaceholderText("Email")).toBeInTheDocument();
@@ -31,5 +36,12 @@ describe("LoginClient (login page)", () => {
     await userEvent.click(screen.getByText(/first time here\? register/i));
     expect(await screen.findByPlaceholderText("Name")).toBeInTheDocument();
     expect(await screen.findByRole("heading", { name: /registration/i })).toBeInTheDocument();
+  });
+
+  it("opens directly in registration mode when ?register=1 is present", () => {
+    mockSearchParams = new URLSearchParams("register=1");
+    render(<LoginClient />);
+    expect(screen.getByRole("heading", { name: /registration/i })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Name")).toBeInTheDocument();
   });
 });

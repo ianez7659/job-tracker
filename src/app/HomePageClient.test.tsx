@@ -57,7 +57,7 @@ describe("HomePageClient (landing)", () => {
     const login = screen.getAllByRole("link", { name: /^log in$/i });
     expect(startFree.length).toBeGreaterThan(0);
     expect(login.length).toBeGreaterThan(0);
-    startFree.forEach((el) => expect(el).toHaveAttribute("href", "/register"));
+    startFree.forEach((el) => expect(el).toHaveAttribute("href", "/login?register=1"));
     expect(screen.queryByRole("link", { name: /go to dashboard/i })).not.toBeInTheDocument();
   });
 
