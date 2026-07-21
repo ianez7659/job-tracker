@@ -49,8 +49,8 @@ export default function SummaryCard({
     ? "text-sm leading-tight sm:text-lg font-medium"
     : "text-md font-medium";
   const valueClass = isCompact
-    ? "text-base sm:text-2xl font-semibold tabular-nums leading-none"
-    : "text-xl sm:text-4xl font-medium";
+    ? "text-base sm:text-2xl font-semibold tabular-nums leading-none font-mono"
+    : "text-xl sm:text-4xl font-medium tabular-nums font-mono";
 
   return (
     <motion.div

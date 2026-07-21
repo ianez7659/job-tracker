@@ -13,7 +13,7 @@ export default function ArchiveClient({ jobs: initialJobs }: Props) {
 
   return (
     <section className="p-4">
-      <h1 className="text-xl font-bold mb-4">Archived Applications</h1>
+      <h1 className="font-display text-xl font-bold mb-4">Archived Applications</h1>
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {jobs.map((job) => (
           <li key={job.id}>

@@ -33,7 +33,7 @@ export default async function DashboardLayout({
       <NavBar />
       <div className="flex">
         <Sidebar />
-        <div className="flex-1 min-h-screen pt-16 pb-16 md:pt-6 md:pb-6 md:pl-56 bg-gradient-to-br from-indigo-200 via-white to-indigo-200 dark:from-slate-950 dark:via-slate-700 dark:to-slate-800">
+        <div className="flex-1 min-h-screen pt-16 pb-16 md:pt-6 md:pb-6 md:pl-56 bg-slate-50 dark:bg-slate-900">
           <CategoryGuard session={session}>{children}</CategoryGuard>
         </div>
       </div>

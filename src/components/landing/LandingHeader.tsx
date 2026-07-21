@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { Menu, X } from "lucide-react";
+import { btnPrimary, btnSecondary } from "./buttonStyles";
 
 const NAV_LINKS = [
   { label: "Features", href: "#features" },
+  { label: "How It Works", href: "#how" },
   { label: "FAQ", href: "#faq" },
 ];
 
@@ -30,7 +33,13 @@ export default function LandingHeader() {
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
         <Link href="/" className="flex items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-signal">
-          <span className="h-3 w-3 rounded-full bg-signal ring-2 ring-canvas" />
+          <Image
+            src="/icons/jobflow-icon.png"
+            alt=""
+            width={28}
+            height={28}
+            className="h-7 w-7 rounded-[7px]"
+          />
           <span className="font-display text-lg font-bold tracking-tight text-ink">Jobflow</span>
         </Link>
 
@@ -52,24 +61,18 @@ export default function LandingHeader() {
           {status === "loading" ? (
             <div className="h-9 w-40 animate-pulse rounded-full bg-line" aria-hidden="true" />
           ) : session ? (
-            <Link
-              href="/dashboard"
-              className="rounded-full bg-signal px-5 py-2 text-sm font-medium text-white transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
-            >
+            <Link href="/dashboard" className={`${btnPrimary} px-5 py-2 text-sm`}>
               Go to dashboard
             </Link>
           ) : (
             <>
               <Link
                 href="/login"
-                className="rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:text-signal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+                className="rounded-xl px-4 py-2 text-sm font-medium text-ink transition-colors hover:text-signal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
               >
                 Log in
               </Link>
-              <Link
-                href="/login?register=1"
-                className="rounded-full bg-signal px-5 py-2 text-sm font-medium text-white transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
-              >
+              <Link href="/login?register=1" className={`${btnPrimary} px-5 py-2 text-sm`}>
                 Start free
               </Link>
             </>
@@ -109,7 +112,7 @@ export default function LandingHeader() {
                 <Link
                   href="/dashboard"
                   onClick={() => setMenuOpen(false)}
-                  className="rounded-full bg-signal px-5 py-2.5 text-center text-sm font-medium text-white"
+                  className={`${btnPrimary} w-full px-5 py-2.5 text-sm`}
                 >
                   Go to dashboard
                 </Link>
@@ -118,14 +121,14 @@ export default function LandingHeader() {
                   <Link
                     href="/login"
                     onClick={() => setMenuOpen(false)}
-                    className="rounded-full border border-line px-5 py-2.5 text-center text-sm font-medium text-ink"
+                    className={`${btnSecondary} w-full px-5 py-2.5 text-sm`}
                   >
                     Log in
                   </Link>
                   <Link
                     href="/login?register=1"
                     onClick={() => setMenuOpen(false)}
-                    className="rounded-full bg-signal px-5 py-2.5 text-center text-sm font-medium text-white"
+                    className={`${btnPrimary} w-full px-5 py-2.5 text-sm`}
                   >
                     Start free
                   </Link>

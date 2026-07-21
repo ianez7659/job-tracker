@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
@@ -173,7 +174,14 @@ export default function AdminSidebar() {
     <>
       {/* ── Mobile topbar (hidden on lg+) ── */}
       <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 dark:border-gray-800 dark:bg-gray-900 lg:hidden">
-        <span className="text-sm font-semibold tracking-wide text-gray-900 dark:text-gray-100">
+        <span className="flex items-center gap-2 font-display text-sm font-semibold tracking-wide text-gray-900 dark:text-gray-100">
+          <Image
+            src="/icons/jobflow-icon.png"
+            alt=""
+            width={24}
+            height={24}
+            className="h-6 w-6 rounded-[6px]"
+          />
           Jobflow Admin
         </span>
         <div className="flex items-center gap-1">
@@ -210,7 +218,14 @@ export default function AdminSidebar() {
           <aside className="absolute inset-y-0 left-0 flex w-64 flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             {/* Header */}
             <div className="flex h-14 items-center justify-between border-b border-gray-200 px-4 dark:border-gray-800">
-              <span className="text-sm font-semibold tracking-wide text-gray-900 dark:text-gray-100">
+              <span className="flex items-center gap-2 font-display text-sm font-semibold tracking-wide text-gray-900 dark:text-gray-100">
+                <Image
+                  src="/icons/jobflow-icon.png"
+                  alt=""
+                  width={24}
+                  height={24}
+                  className="h-6 w-6 rounded-[6px]"
+                />
                 Jobflow Admin
               </span>
               <button
@@ -240,7 +255,14 @@ export default function AdminSidebar() {
       <aside className="hidden w-56 shrink-0 flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 lg:flex">
         {/* Brand */}
         <div className="flex h-14 items-center border-b border-gray-200 px-4 dark:border-gray-800">
-          <span className="text-sm font-semibold tracking-wide text-gray-900 dark:text-gray-100">
+          <span className="flex items-center gap-2 font-display text-sm font-semibold tracking-wide text-gray-900 dark:text-gray-100">
+            <Image
+              src="/icons/jobflow-icon.png"
+              alt=""
+              width={24}
+              height={24}
+              className="h-6 w-6 rounded-[6px]"
+            />
             Jobflow Admin
           </span>
         </div>

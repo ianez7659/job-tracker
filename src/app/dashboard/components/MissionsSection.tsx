@@ -122,8 +122,11 @@ function MissionRow({
         </p>
         {(row.progressLabel || row.rewardLabel) && (
           <div className="mt-1.5 hidden items-center gap-2.5 text-xs sm:flex">
+            {/* progressLabel is "3/5" | "Completed" | "2 cards" — mixed numeric
+                and prose, so only tabular-nums applies here. Forcing font-mono
+                would set the word-only variants in the numeral face. */}
             {row.progressLabel && (
-              <span className="font-medium text-gray-500 dark:text-gray-400">
+              <span className="font-medium tabular-nums text-gray-500 dark:text-gray-400">
                 {row.progressLabel}
               </span>
             )}
@@ -307,7 +310,7 @@ export default function MissionsSection({
       ) : (
         <>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-gray-100 sm:text-lg">
+            <h2 className="flex items-center gap-2 font-display text-base font-bold text-gray-900 dark:text-gray-100 sm:text-lg">
               <span className="flex h-9 w-9 items-center justify-center text-rose-700 dark:text-rose-300">
                 <Target className="h-5 w-5" aria-hidden />
               </span>
@@ -360,7 +363,7 @@ export default function MissionsSection({
                       : "bg-emerald-100 text-emerald-900 ring-emerald-300/80 dark:bg-emerald-950/70 dark:text-emerald-200 dark:ring-emerald-500/35"
                   }`}
                 >
-                  {payload.dailyRemaining} left
+                  <span className="font-mono">{payload.dailyRemaining}</span> left
                 </span>
               </button>
               <button
@@ -395,7 +398,7 @@ export default function MissionsSection({
                       : "bg-blue-100 text-blue-900 ring-blue-300/80 dark:bg-blue-950/70 dark:text-blue-200 dark:ring-blue-500/35"
                   }`}
                 >
-                  {payload.weeklyRemaining} left
+                  <span className="font-mono">{payload.weeklyRemaining}</span> left
                 </span>
               </button>
             </div>

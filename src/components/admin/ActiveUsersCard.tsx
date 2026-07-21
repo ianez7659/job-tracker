@@ -78,7 +78,7 @@ export default function ActiveUsersCard({
       {/* Stat */}
       <div className="mt-4 flex items-end justify-between">
         <div>
-          <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <p className="font-mono text-3xl font-bold tabular-nums text-gray-900 dark:text-gray-100">
             {currentlyActiveUsers}
             <span className="text-lg font-normal text-gray-400 dark:text-gray-500">
               {" "}/ {totalStudents}
@@ -87,7 +87,7 @@ export default function ActiveUsersCard({
           <p className="text-xs text-gray-500">students</p>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+          <p className="font-mono text-2xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
             {activePct}%
           </p>
           <p className="text-xs text-gray-500">of total students</p>

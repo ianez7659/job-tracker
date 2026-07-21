@@ -53,7 +53,7 @@ function StatusBadge({ status }: { status: string }) {
 function CountCard({ label, value, highlight }: { label: string; value: number; highlight?: boolean }) {
   return (
     <div className={`rounded-lg border p-3 text-center ${highlight && value > 0 ? "border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-900/20" : "border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"}`}>
-      <p className={`text-2xl font-bold ${highlight && value > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-gray-900 dark:text-gray-100"}`}>{value}</p>
+      <p className={`font-mono text-2xl font-bold tabular-nums ${highlight && value > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-gray-900 dark:text-gray-100"}`}>{value}</p>
       <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
     </div>
   );
@@ -106,7 +106,7 @@ export default async function AdminUserDetailPage({
               {(user.name ?? user.email).charAt(0).toUpperCase()}
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="font-display text-xl font-bold text-gray-900 dark:text-gray-100">
                 {user.name ?? <span className="italic text-gray-400">No name</span>}
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>

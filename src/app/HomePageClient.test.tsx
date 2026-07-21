@@ -44,7 +44,8 @@ describe("HomePageClient (landing)", () => {
     render(<HomePageClient />);
 
     expect(screen.getByRole("heading", { level: 1, name: /your job search/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /one checkpoint at a time/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /every job is a card/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /three steps, start to hired/i })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /stay in the game/i })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /walk in prepared/i })).toBeInTheDocument();
   });

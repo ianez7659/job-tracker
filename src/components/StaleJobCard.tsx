@@ -59,7 +59,7 @@ export default function StaleJobCard({
       <div className="py-2 sm:py-1 px-6 pl-6 flex-1 flex flex-col gap-3">
         <div>
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 min-w-0 flex-1 leading-snug">
+            <h3 className="font-display text-xl font-semibold text-gray-800 dark:text-gray-100 min-w-0 flex-1 leading-snug">
               {title || "Untitled"}
             </h3>
             <button

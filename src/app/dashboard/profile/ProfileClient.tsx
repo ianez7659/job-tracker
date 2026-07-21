@@ -205,13 +205,13 @@ export default function ProfileClient({ session, initialProfile }: Props) {
       )}
 
       <main className="p-6 max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">
+        <h1 className="font-display text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">
           Profile
         </h1>
 
         <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-600 p-6 shadow-sm space-y-8">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+            <h2 className="font-display text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
               <User size={20} />
               Profile Image
             </h2>
@@ -264,7 +264,7 @@ export default function ProfileClient({ session, initialProfile }: Props) {
           <hr className="border-gray-200 dark:border-slate-600" />
 
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+            <h2 className="font-display text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
               <Briefcase size={20} />
               Profile
             </h2>
@@ -380,7 +380,7 @@ export default function ProfileClient({ session, initialProfile }: Props) {
           <hr className="border-gray-200 dark:border-slate-600" />
 
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            <h2 className="font-display text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
               Account Information
             </h2>
             <div className="space-y-2">

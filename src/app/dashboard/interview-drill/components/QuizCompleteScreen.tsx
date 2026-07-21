@@ -63,7 +63,7 @@ export default function QuizCompleteScreen({
           )}
         </motion.div>
         <div className="text-center space-y-1">
-          <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{scoreLabel}</p>
+          <p className="font-display text-2xl font-bold text-slate-800 dark:text-slate-100">{scoreLabel}</p>
           <p className="text-slate-500 dark:text-slate-400 text-sm">
             {mode === "practice" ? "Practice session complete" : "Daily Interview Drill completed"}
           </p>
@@ -71,7 +71,7 @@ export default function QuizCompleteScreen({
 
         {/* Score */}
         <div className="flex items-center gap-2 rounded-full bg-indigo-50 dark:bg-indigo-950 px-6 py-2 border border-indigo-100 dark:border-indigo-900">
-          <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+          <span className="font-mono text-2xl font-bold text-indigo-600 dark:text-indigo-400">
             {correctCount}/{totalQuestions}
           </span>
           <span className="text-sm text-slate-500 dark:text-slate-400">correct</span>

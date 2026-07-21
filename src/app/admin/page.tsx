@@ -33,7 +33,7 @@ function CardIconBox({
 function BigStat({ count, total, label }: { count: number; total: number; label: string }) {
   return (
     <div>
-      <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+      <p className="font-mono text-3xl font-bold tabular-nums text-gray-900 dark:text-gray-100">
         {count}
         <span className="text-lg font-normal text-gray-400 dark:text-gray-500"> / {total}</span>
       </p>
@@ -256,7 +256,7 @@ export default async function AdminOverviewPage() {
             {/* Gauge + stat */}
             <div className="flex shrink-0 flex-col items-center gap-1">
               <CircleGauge rate={overview.hiredRate} />
-              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{hiredPct}%</p>
+              <p className="font-mono text-2xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400">{hiredPct}%</p>
               <p className="text-xs text-gray-700 dark:text-gray-300">
                 {overview.hiredCount} / {overview.totalStudents}
               </p>

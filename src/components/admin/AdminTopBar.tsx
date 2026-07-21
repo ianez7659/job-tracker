@@ -286,7 +286,7 @@ export default function AdminTopBar() {
                 className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900 z-50"
               >
                 <div className="border-b border-gray-200 px-4 py-2.5 dark:border-gray-700">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  <h3 className="font-display text-sm font-semibold text-gray-900 dark:text-gray-100">
                     Notifications
                   </h3>
                 </div>

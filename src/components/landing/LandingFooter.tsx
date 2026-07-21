@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Moon, Sun } from "lucide-react";
 
 // Footer dark-mode toggle. Mirrors the app convention: flip `.dark` on <html>
@@ -53,7 +54,13 @@ export default function LandingFooter() {
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div className="max-w-xs">
             <Link href="/" className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-signal ring-2 ring-canvas" />
+              <Image
+                src="/icons/jobflow-icon.png"
+                alt=""
+                width={28}
+                height={28}
+                className="h-7 w-7 rounded-[7px]"
+              />
               <span className="font-display text-lg font-bold tracking-tight text-ink">Jobflow</span>
             </Link>
             <p className="mt-3 text-sm text-ink-muted">

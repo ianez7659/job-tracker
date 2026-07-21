@@ -11,7 +11,9 @@
      Cool (Signal) = disciplined pipeline. Warm (Streak) = reward/motivation. */
   --canvas: #f7f8fa;
   --ink: #141a24;
-  --signal: #2348e0;
+  /* Signal = shared primary. Aligned to the app's indigo scale so landing and
+     dashboard read as one brand (indigo-600; matches viewport.themeColor). */
+  --signal: #4f46e5;
   --streak: #f5a524;
   --hired: #0fa968;
   --line: #dce1e9;
@@ -44,7 +46,9 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Body copy = Inter (the --font-sans role from @theme). Landing and dashboard
+     share one body face; headings opt into `font-display`, numerals `font-mono`. */
+  font-family: var(--font-sans);
 }
 
 /* Dark theme when .dark is on html */
@@ -55,7 +59,8 @@ body {
   /* Landing tokens — dark overrides (Signal/Streak/Hired stay in-family). */
   --canvas: #0d1117;
   --ink: #e6eaf0;
-  --signal: #5c7cff;
+  /* Dark: indigo-400, matching the app's `dark:text-indigo-400` accent. */
+  --signal: #818cf8;
   --streak: #f5a524;
   --hired: #0fa968;
   --line: #222a38;

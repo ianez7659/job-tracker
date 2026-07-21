@@ -75,7 +75,7 @@ export default function StaleApplyingPage() {
           <ClipboardList className="h-5 w-5" />
         </div>
         <div>
-          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="font-display text-lg font-bold text-gray-900 dark:text-gray-100">
             Review old Applying cards
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">

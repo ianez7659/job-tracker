@@ -190,7 +190,7 @@ export default function PracticeClient({ userName }: Props) {
 
       <div className="space-y-1">
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+          <h1 className="font-display text-lg font-bold text-slate-800 dark:text-slate-100">
             Practice Mode
           </h1>
           {userName && (

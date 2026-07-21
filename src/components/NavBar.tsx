@@ -85,8 +85,20 @@ export default function Navbar() {
     <header className="md:hidden fixed top-0 left-0 w-full z-50 bg-white dark:bg-slate-800 shadow dark:shadow-slate-900/50">
       <div className=" mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/dashboard" className="text-lg font-bold text-indigo-700 dark:text-indigo-400">
-          JobFlow
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400"
+        >
+          <Image
+            src="/icons/jobflow-icon.png"
+            alt=""
+            width={28}
+            height={28}
+            className="h-7 w-7 rounded-[7px]"
+          />
+          <span className="font-display text-lg font-bold tracking-tight">
+            Jobflow
+          </span>
         </Link>
 
         {/* Hamburger menu for mobile view */}

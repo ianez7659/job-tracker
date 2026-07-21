@@ -10,7 +10,7 @@ export default function PrepSection() {
       <div className="mx-auto max-w-6xl px-5 py-24 sm:px-8">
         <Reveal>
           <p className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-signal">
-            03 / Preparation
+            04 / Preparation
           </p>
           <h2 className="mt-4 max-w-xl font-display text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl">
             Walk in prepared
@@ -24,7 +24,7 @@ export default function PrepSection() {
         <div className="mt-14 grid gap-5 md:grid-cols-3">
           <Reveal delay={0.05}>
             <article className="flex h-full flex-col rounded-2xl border border-line bg-surface p-6 transition-transform hover:-translate-y-1">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-signal/10 text-signal">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-signal/30 bg-signal/10 text-signal">
                 <Target size={20} />
               </span>
               <h3 className="mt-5 font-display text-lg font-semibold text-ink">Resume ↔ job match</h3>
@@ -40,7 +40,7 @@ export default function PrepSection() {
 
           <Reveal delay={0.12}>
             <article className="flex h-full flex-col rounded-2xl border border-line bg-surface p-6 transition-transform hover:-translate-y-1">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-signal/10 text-signal">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-signal/30 bg-signal/10 text-signal">
                 <Building2 size={20} />
               </span>
               <h3 className="mt-5 font-display text-lg font-semibold text-ink">Know who you&rsquo;re meeting</h3>
@@ -54,7 +54,7 @@ export default function PrepSection() {
 
           <Reveal delay={0.19}>
             <article className="flex h-full flex-col rounded-2xl border border-line bg-surface p-6 transition-transform hover:-translate-y-1">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-signal/10 text-signal">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-signal/30 bg-signal/10 text-signal">
                 <ScanLine size={20} />
               </span>
               <h3 className="mt-5 font-display text-lg font-semibold text-ink">Capture every contact</h3>

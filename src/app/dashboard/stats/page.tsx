@@ -38,7 +38,7 @@ function SimpleBars({ entries }: { entries: StatsBarEntry[] }) {
                 }}
               />
             </div>
-            <span className="text-xs sm:text-sm text-right text-gray-800 dark:text-gray-100">
+            <span className="font-mono text-xs sm:text-sm text-right text-gray-800 dark:text-gray-100">
               {entry.count}
             </span>
           </div>
@@ -193,7 +193,7 @@ export default function StatsPage() {
 
   return (
     <section className="p-6 bg-slate-50 dark:bg-slate-900 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">Application Statistics</h1>
+      <h1 className="font-display text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">Application Statistics</h1>
       {loading && (
         <p className="mb-4 text-sm text-gray-600 dark:text-gray-300">Loading stats…</p>
       )}
@@ -203,7 +203,7 @@ export default function StatsPage() {
 
       {/* Status Distribution — tabbed */}
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md dark:shadow-slate-900/50 p-4 mb-8 border border-transparent dark:border-slate-600">
-        <h2 className="flex items-center text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+        <h2 className="flex items-center font-display text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
           <ChartNoAxesCombined className="mr-2" size={25} />
           Application Status
         </h2>
@@ -257,7 +257,7 @@ export default function StatsPage() {
       {/* Monthly posts created - one year at a time, year dropdown */}
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md dark:shadow-slate-900/50 p-4 mb-8 overflow-x-auto border border-transparent dark:border-slate-600">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-          <h2 className="flex text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="flex font-display text-lg font-semibold text-gray-900 dark:text-gray-100">
             <Calendar className="mr-2" size={25} />
             Monthly posts created
           </h2>

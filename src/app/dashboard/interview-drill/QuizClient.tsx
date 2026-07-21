@@ -277,7 +277,7 @@ export default function QuizClient({ userName }: Props) {
       {/* Header */}
       <div className="space-y-1">
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+          <h1 className="font-display text-lg font-bold text-slate-800 dark:text-slate-100">
             Daily Interview Drill
           </h1>
           {userName && (

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { X, Calendar, Building2, Link2, Sparkles } from "lucide-react";
 import { JobSource } from "@/generated/prisma";
 import { getAdvanceButtonLabel } from "@/lib/jobPipeline";
+import { statusColorClass } from "@/lib/jobStatusColors";
 import { toast } from "sonner";
 
 type JobCardProps = {
@@ -30,17 +31,6 @@ export default function JobCard({
 }: JobCardProps) {
   const router = useRouter();
   const showWalkInPrepLink = source === JobSource.WALK_IN;
-  const statusColors: Record<string, string> = {
-    applying:
-      "bg-indigo-100 text-indigo-900 dark:bg-indigo-600 dark:text-indigo-50",
-    resume:
-      "bg-emerald-100 text-emerald-900 dark:bg-emerald-600 dark:text-emerald-50",
-    interview1: "bg-yellow-100 text-yellow-800 dark:text-yellow-500 dark:text-yellow-100",
-    interview2: "bg-orange-200 text-orange-900 dark:bg-orange-500 dark:text-orange-100",
-    interview3: "bg-orange-400 text-orange-900 dark:bg-orange-500 dark:text-orange-100",
-    offer: "bg-green-200 text-green-800",
-    rejected: "bg-red-200 text-red-800",
-  };
 
   const detailHref =
     status === "applying"
@@ -80,13 +70,13 @@ export default function JobCard({
       }}
     >
       <div
-        className={`w-2 sm:w-3 h-full ${statusColors[status]} absolute left-0 top-0 z-[1]`}
+        className={`w-2 sm:w-3 h-full ${statusColorClass(status)} absolute left-0 top-0 z-[1]`}
       />
 
       <div className="py-2 sm:py-1 px-6 pl-6 flex-1 flex flex-col gap-3">
         <div>
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 min-w-0 flex-1 leading-snug">
+            <h3 className="font-display text-xl font-semibold text-gray-800 dark:text-gray-100 min-w-0 flex-1 leading-snug">
               {title}
             </h3>
             <button
@@ -126,7 +116,7 @@ export default function JobCard({
 
         <div className="flex flex-col gap-1.5 mt-2">
           <span
-            className={`text-xs font-semibold px-2 py-1 rounded-full w-fit ${statusColors[status]}`}
+            className={`text-xs font-semibold px-2 py-1 rounded-full w-fit ${statusColorClass(status)}`}
           >
             {status === "resume"
               ? "APPLIED"

@@ -2,10 +2,10 @@
 
 import LandingHeader from "@/components/landing/LandingHeader";
 import Hero from "@/components/landing/Hero";
-import PipelineSection from "@/components/landing/PipelineSection";
+import CardsSection from "@/components/landing/CardsSection";
+import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import StreakSection from "@/components/landing/StreakSection";
 import PrepSection from "@/components/landing/PrepSection";
-import PayoffSection from "@/components/landing/PayoffSection";
 import FaqSection from "@/components/landing/FaqSection";
 import FinalCta from "@/components/landing/FinalCta";
 import LandingFooter from "@/components/landing/LandingFooter";
@@ -16,10 +16,10 @@ export default function HomePageClient() {
       <LandingHeader />
       <main>
         <Hero />
-        <PipelineSection />
+        <CardsSection />
+        <HowItWorksSection />
         <StreakSection />
         <PrepSection />
-        <PayoffSection />
         <FaqSection />
         <FinalCta />
       </main>

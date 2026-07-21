@@ -35,7 +35,7 @@ export default function TrashClient({ jobs: initialJobs }: Props) {
   return (
     <section className="p-12 text-gray-900 dark:text-gray-100">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 ">
-        <h1 className="text-2xl font-bold mb-4 flex flex-row items-center gap-2 text-gray-900 dark:text-gray-100">
+        <h1 className="font-display text-2xl font-bold mb-4 flex flex-row items-center gap-2 text-gray-900 dark:text-gray-100">
           <Trash2 size={20} /> Deleted Application List
         </h1>
         <Link

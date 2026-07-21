@@ -67,8 +67,12 @@ describe("MissionsSection", () => {
     expect(
       screen.getByText(/Complete your missions to earn XP/i),
     ).toBeInTheDocument();
-    expect(screen.getByText("1 left")).toBeInTheDocument();
-    expect(screen.getAllByText("2 left").length).toBeGreaterThanOrEqual(1);
+    // The remaining-count badge renders its numeral in its own <span> (mono
+    // face), so match on the badge's full textContent rather than a single node.
+    const badge = (text: string) => (_: string, el: Element | null) =>
+      el?.tagName === "SPAN" && el.textContent === text;
+    expect(screen.getByText(badge("1 left"))).toBeInTheDocument();
+    expect(screen.getAllByText(badge("2 left")).length).toBeGreaterThanOrEqual(1);
   });
 
   it("calls onStartNewJob when starting job card mission", async () => {

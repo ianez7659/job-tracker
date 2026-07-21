@@ -14,7 +14,7 @@ export default function AppError({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-b from-slate-200 to-slate-50 dark:from-slate-950 dark:to-slate-800">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-slate-50 dark:bg-slate-900">
       <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 text-center">
         Something went wrong
       </h1>

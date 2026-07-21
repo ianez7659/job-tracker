@@ -37,7 +37,7 @@ export default function WelcomePageClient() {
   if (status === "loading") return <p>loading...</p>;
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen text-center px-4 bg-gradient-to-b from-slate-400 to-slate-50 dark:from-slate-950 dark:to-slate-500">
+    <main className="flex flex-col items-center justify-center min-h-screen text-center px-4 bg-slate-50 dark:bg-slate-900">
       <h1 className="text-3xl sm:text-5xl font-extrabold mb-4 bg-gradient-to-r from-indigo-700 to-violet-400 dark:from-yellow-600 dark:to-yellow-100 bg-clip-text text-transparent ">
         Welcome to <span className="text-red-600 dark:text-orange-600 ">Job</span>{" "}
         <span className="bg-gradient-to-r from-indigo-600 to-indigo-800 bg-clip-text text-transparent dark:from-yellow-400 dark:to-yellow-600">

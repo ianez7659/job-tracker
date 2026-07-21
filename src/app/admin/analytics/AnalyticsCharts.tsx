@@ -223,7 +223,7 @@ function KpiCard({
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
       <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{label}</p>
-      <p className={`mt-2 text-3xl font-bold ${ACCENT_CLASS[accent]}`}>{value}</p>
+      <p className={`mt-2 font-mono text-3xl font-bold tabular-nums ${ACCENT_CLASS[accent]}`}>{value}</p>
       {sub && <p className="mt-1 text-xs text-gray-500">{sub}</p>}
     </div>
   );

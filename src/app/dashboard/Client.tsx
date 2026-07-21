@@ -499,7 +499,7 @@ export default function DashboardClient({
         >
           <div className="flex flex-col gap-3 p-4 pb-0 flex-shrink-0">
             <div className="flex flex-row items-center justify-between gap-3 min-w-0">
-              <h2 className="flex min-w-0 items-center gap-2 font-bold text-2xl text-gray-700 dark:text-gray-200">
+              <h2 className="flex min-w-0 items-center gap-2 font-display font-bold text-2xl text-gray-700 dark:text-gray-200">
                 <LayoutDashboard size={24} aria-hidden="true" className="shrink-0" />
                 <span className="truncate">Overview</span>
               </h2>
@@ -561,7 +561,7 @@ export default function DashboardClient({
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.08, ease: [0.25, 0.1, 0.35, 1] }}
         >
-          <h2 className="flex items-center gap-2 font-bold text-2xl text-gray-700 dark:text-gray-200 p-4 pb-0 flex-shrink-0">
+          <h2 className="flex items-center gap-2 font-display font-bold text-2xl text-gray-700 dark:text-gray-200 p-4 pb-0 flex-shrink-0">
             <LayoutList size={24} aria-hidden="true" />
             Card List
             <motion.span
@@ -569,7 +569,7 @@ export default function DashboardClient({
               initial={{ opacity: 0, scale: 0.7 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.2, ease: [0.25, 0.1, 0.35, 1] }}
-              className={`text-xl font-semibold px-2 py-0.5 rounded-full ${
+              className={`text-xl font-semibold font-mono tabular-nums px-2 py-0.5 rounded-full ${
                 filterStatus === "applying"
                   ? "text-indigo-800 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-900/80"
                   : filterStatus === "postApplying"

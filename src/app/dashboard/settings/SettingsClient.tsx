@@ -60,11 +60,11 @@ export default function SettingsClient({ session }: Props) {
 
   return (
     <main className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Settings</h1>
+      <h1 className="font-display text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Settings</h1>
 
       <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-600 p-6 shadow-sm space-y-8">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+          <h2 className="font-display text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
             {theme === "dark" ? <Moon size={20} /> : <Sun size={20} />}
             Theme Settings
           </h2>
@@ -102,7 +102,7 @@ export default function SettingsClient({ session }: Props) {
         <hr className="border-gray-200 dark:border-slate-600" />
 
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+          <h2 className="font-display text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
             {notifications ? <Bell size={20} /> : <BellOff size={20} />}
             Notification Settings
           </h2>

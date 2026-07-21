@@ -85,7 +85,7 @@ function ProfileHeader({
         </div>
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate">
+            <h1 className="font-display text-lg font-bold text-gray-900 dark:text-gray-100 truncate">
               {userName ?? userEmail}
             </h1>
             {userCategory && (
@@ -215,14 +215,14 @@ function ActiveOfferSection({
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>
         </div>
-        <h2 className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+        <h2 className="font-display text-sm font-semibold text-emerald-700 dark:text-emerald-400">
           Current Position
         </h2>
       </div>
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
+          <p className="font-display text-lg font-bold text-gray-900 dark:text-gray-100">
             {offer.company}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">{offer.title}</p>
@@ -480,7 +480,7 @@ export default function HiredProfileClient({ profile }: Props) {
 
       {/* ── History Section (scrollable) ── */}
       <section>
-        <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+        <h2 className="mb-3 flex items-center gap-2 font-display text-sm font-semibold text-gray-700 dark:text-gray-300">
           <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>

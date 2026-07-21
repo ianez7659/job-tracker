@@ -79,7 +79,7 @@ export default function XpSummaryCard({
         <span className="text-base font-semibold text-gray-50 dark:text-gray-200">
           Level {data.level}
         </span>
-        <span className="text-xs text-gray-50 dark:text-gray-200">
+        <span className="font-mono text-xs text-gray-50 dark:text-gray-200">
           {data.currentLevelXp} / {data.xpToNextLevel} XP
         </span>
       </div>
@@ -121,7 +121,7 @@ export default function XpSummaryCard({
       className="mb-4 rounded-lg bg-white "
       aria-label="XP Summary"
     >
-      <h2 className="flex items-center gap-2 font-bold text-xl text-gray-700 dark:text-gray-200 mb-3">
+      <h2 className="flex items-center gap-2 font-display font-bold text-xl text-gray-700 dark:text-gray-200 mb-3">
         <Zap size={22} aria-hidden="true" />
         Progress
       </h2>

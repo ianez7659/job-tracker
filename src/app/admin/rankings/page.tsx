@@ -78,7 +78,7 @@ export default async function AdminRankingsPage() {
       />
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h2 className="font-display text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Top XP
         </h2>
         <RankTable
@@ -90,7 +90,7 @@ export default async function AdminRankingsPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h2 className="font-display text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Top Login Streak
         </h2>
         <RankTable
