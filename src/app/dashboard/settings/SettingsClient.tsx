@@ -2,7 +2,8 @@
 
 import { Session } from "next-auth";
 import { useState, useEffect } from "react";
-import { Moon, Sun, Bell, BellOff } from "lucide-react";
+import Link from "next/link";
+import { Moon, Sun, Bell, BellOff, Trash2, ChevronRight } from "lucide-react";
 
 interface Props {
   session: Session | null;
@@ -132,6 +133,35 @@ export default function SettingsClient({ session }: Props) {
               />
             </button>
           </div>
+        </div>
+
+        <hr className="border-gray-200 dark:border-slate-600" />
+
+        <div>
+          <h2 className="font-display text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+            <Trash2 size={20} />
+            Data Management
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+            Manage applications you have removed from your board.
+          </p>
+          <Link
+            href="/dashboard/trash"
+            className="flex items-center justify-between gap-3 px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Trash2 size={18} className="text-gray-500 dark:text-gray-400" />
+              <div>
+                <p className="font-medium text-gray-900 dark:text-gray-100">
+                  Deleted applications
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Restore or permanently delete jobs in the trash
+                </p>
+              </div>
+            </div>
+            <ChevronRight size={18} className="text-gray-400 shrink-0" />
+          </Link>
         </div>
       </div>
     </main>

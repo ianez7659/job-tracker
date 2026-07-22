@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { TERMINAL_STATUSES } from "@/lib/jobPipeline";
 import TrashClient from "./TrashClient";
 
 export default async function TrashPage() {
@@ -15,6 +16,10 @@ export default async function TrashPage() {
       deletedAt: {
         not: null,
       },
+      // Exclude closed jobs: reaching a terminal status also sets deletedAt,
+      // so without this filter Trash would fill up with offers/rejections that
+      // belong in the Closed view, not the trash bin.
+      status: { notIn: [...TERMINAL_STATUSES] },
       user: {
         email: session.user.email,
       },

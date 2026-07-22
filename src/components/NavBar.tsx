@@ -122,13 +122,13 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="/dashboard/archive"
+            href="/dashboard/closed"
             className={`flex items-center gap-1 ${isActive(
-              "/dashboard/archive"
+              "/dashboard/closed"
             )}`}
           >
             <Archive size={16} />
-            <span>Archive</span>
+            <span>Closed</span>
           </Link>
 
           <Link
@@ -300,13 +300,13 @@ export default function Navbar() {
               </Link>
 
               <Link
-                href="/dashboard/archive"
+                href="/dashboard/closed"
                 className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 ${isActive(
-                  "/dashboard/archive"
+                  "/dashboard/closed"
                 )}`}
                 onClick={() => setMobileOpen(false)}
               >
-                <Archive size={16} /> Archive
+                <Archive size={16} /> Closed
               </Link>
 
               <Link

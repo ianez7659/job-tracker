@@ -40,20 +40,33 @@ export default function JobCard({
   const handleDeleteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    const ok = window.confirm(
-      "Move this job to Trash? You can restore it from the Trash Bin later.",
-    );
-    if (!ok) return;
     const res = await fetch(`/api/jobs/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ softDelete: true }),
     });
-    if (res.ok) {
-      onDelete(id);
-    } else {
+    if (!res.ok) {
       toast.error("Failed to delete job");
+      return;
     }
+    onDelete(id);
+    toast("Moved to Trash", {
+      description: `${title} @ ${company}`,
+      action: {
+        label: "Undo",
+        onClick: async () => {
+          const restore = await fetch(`/api/jobs/${id}/restore`, {
+            method: "PATCH",
+          });
+          if (restore.ok) {
+            toast.success("Restored");
+            router.refresh();
+          } else {
+            toast.error("Failed to restore job");
+          }
+        },
+      },
+    });
   };
 
   return (
@@ -134,7 +147,7 @@ export default function JobCard({
           )}
           <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-snug">
             {status === "offer" || status === "rejected" ? (
-              <>Archived outcome — open for details.</>
+              <>Closed outcome — open for details.</>
             ) : (
               <>
                 Advance stages from the job detail page

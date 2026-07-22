@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { Job } from "@/generated/prisma";
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
-// import { Job } from "@prisma/client";
+import { toast } from "sonner";
 
 type Props = {
   jobs: Job[];
@@ -17,19 +17,34 @@ export default function TrashClient({ jobs: initialJobs }: Props) {
     const res = await fetch(`/api/jobs/${id}/restore`, { method: "PATCH" });
     if (res.ok) {
       setJobs((prev) => prev.filter((job) => job.id !== id));
+      toast.success("Application restored");
+    } else {
+      toast.error("Failed to restore application");
     }
   };
 
-  const handlePermanentDelete = async (id: string) => {
-    const confirmed = confirm(
-      "Do you really want to delete this application permanently? This action cannot be undone."
-    );
-    if (!confirmed) return;
-
+  const performPermanentDelete = async (id: string) => {
     const res = await fetch(`/api/jobs/${id}/permanent`, { method: "DELETE" });
     if (res.ok) {
       setJobs((prev) => prev.filter((job) => job.id !== id));
+      toast.success("Application permanently deleted");
+    } else {
+      toast.error("Failed to delete application");
     }
+  };
+
+  const handlePermanentDelete = (id: string) => {
+    toast("Delete this application permanently?", {
+      description: "This action cannot be undone.",
+      action: {
+        label: "Delete",
+        onClick: () => performPermanentDelete(id),
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {},
+      },
+    });
   };
 
   return (

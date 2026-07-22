@@ -7,7 +7,6 @@ import {
   Home,
   Archive,
   BarChart,
-  Trash2,
   Settings,
   Plus,
   User,
@@ -20,9 +19,8 @@ import { InstallButton } from "@/components/InstallButton";
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "Dashboard" },
-  { href: "/dashboard/archive", icon: Archive, label: "Archive" },
+  { href: "/dashboard/closed", icon: Archive, label: "Closed" },
   { href: "/dashboard/stats", icon: BarChart, label: "Stats" },
-  { href: "/dashboard/trash", icon: Trash2, label: "Trash" },
   { href: "/dashboard/settings", icon: Settings, label: "Settings" },
 ];
 
