@@ -3,8 +3,20 @@
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { DEMO_ACCOUNT_EMAIL } from "@/lib/constants/demoAccount";
+import Link from "next/link";
+import { PlayCircle } from "lucide-react";
 import { toast } from "sonner";
+import { DEMO_ACCOUNT_EMAIL } from "@/lib/constants/demoAccount";
+import LandingHeader from "@/components/landing/LandingHeader";
+import LandingFooter from "@/components/landing/LandingFooter";
+import Reveal from "@/components/landing/Reveal";
+import { btnPrimary, btnSecondary } from "@/components/landing/buttonStyles";
+import CardsSection from "@/components/landing/CardsSection";
+import HowItWorksSection from "@/components/landing/HowItWorksSection";
+import StreakSection from "@/components/landing/StreakSection";
+import PrepSection from "@/components/landing/PrepSection";
+import FaqSection from "@/components/landing/FaqSection";
+import FinalCta from "@/components/landing/FinalCta";
 
 const DEMO_PASSWORD = "demo1234";
 
@@ -34,46 +46,114 @@ export default function WelcomePageClient() {
     }
   };
 
-  if (status === "loading") return <p>loading...</p>;
-
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen text-center px-4 bg-slate-50 dark:bg-slate-900">
-      <h1 className="text-3xl sm:text-5xl font-extrabold mb-4 bg-gradient-to-r from-indigo-700 to-violet-400 dark:from-yellow-600 dark:to-yellow-100 bg-clip-text text-transparent ">
-        Welcome to <span className="text-red-600 dark:text-orange-600 ">Job</span>{" "}
-        <span className="bg-gradient-to-r from-indigo-600 to-indigo-800 bg-clip-text text-transparent dark:from-yellow-400 dark:to-yellow-600">
-          Tracker
-        </span>
-      </h1>
-      <p className="text-gray-600 dark:text-gray-300 mb-10 text-sm sm:text-xl max-w-lg">
-        Keep track of your job applications with ease and clarity.
-      </p>
+    <div className="min-h-screen bg-canvas font-sans text-ink antialiased">
+      <LandingHeader />
 
-      {session ? (
-        <button
-          type="button"
-          onClick={() => router.push("/dashboard")}
-          className="bg-indigo-600 hover:bg-indigo-700 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-white px-6 py-3 rounded-full text-xl shadow-lg transition-all duration-200 hover:scale-105"
-        >
-          Go to Dashboard
-        </button>
-      ) : (
-        <div className="flex flex-col items-center gap-3">
-          <button
-            type="button"
-            onClick={handleDemoSignIn}
-            disabled={demoLoading}
-            className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-white px-6 py-3 rounded-full text-lg font-medium shadow-lg transition-all duration-200 hover:scale-105"
-          >
-            {demoLoading ? "Signing in…" : "Try demo account"}
-          </button>
-          <a
-            href="/login"
-            className="text-indigo-600 hover:text-indigo-800 dark:text-yellow-500 dark:hover:text-yellow-400 text-sm underline underline-offset-2 transition"
-          >
-            Other sign-in options
-          </a>
-        </div>
-      )}
-    </main>
+      <main>
+        <section className="relative overflow-hidden bg-canvas">
+          <div className="mx-auto flex max-w-3xl flex-col items-center px-5 pb-24 pt-16 text-center sm:px-8 sm:pt-24">
+            <Reveal>
+              <p className="inline-flex items-center rounded-full border border-line bg-surface px-3 py-1 font-mono text-xs font-medium uppercase tracking-[0.18em] text-signal">
+                Demo access
+              </p>
+            </Reveal>
+
+            <Reveal delay={0.08}>
+              <h1 className="mt-6 font-display text-4xl font-bold leading-[1.05] tracking-tight text-ink sm:text-6xl">
+                Try Jobflow with a
+                <br />
+                demo account.
+              </h1>
+            </Reveal>
+
+            <Reveal delay={0.16}>
+              <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-ink-muted sm:text-lg">
+                Explore the full guided pipeline — applied, interviewing, offer —
+                with sample data. No signup required.
+              </p>
+            </Reveal>
+
+            <Reveal delay={0.24}>
+              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                {status === "loading" ? (
+                  <div
+                    className="h-12 w-52 animate-pulse rounded-xl bg-line"
+                    aria-hidden="true"
+                  />
+                ) : session ? (
+                  <Link href="/dashboard" className={`${btnPrimary} px-7 py-3 text-base`}>
+                    Go to dashboard
+                  </Link>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleDemoSignIn}
+                      disabled={demoLoading}
+                      className={`${btnPrimary} gap-2 px-7 py-3 text-base disabled:opacity-60`}
+                    >
+                      <PlayCircle size={18} aria-hidden="true" />
+                      {demoLoading ? "Signing in…" : "Try demo account"}
+                    </button>
+                    <Link href="/login" className={`${btnSecondary} px-7 py-3 text-base`}>
+                      Other sign-in options
+                    </Link>
+                  </>
+                )}
+              </div>
+            </Reveal>
+
+            {!session && (
+              <Reveal delay={0.32}>
+                <div className="mx-auto mt-12 w-full max-w-md rounded-2xl border border-line bg-surface p-6 text-left shadow-[0_10px_40px_-24px_rgba(20,26,36,0.35)]">
+                  <p className="font-mono text-xs font-medium uppercase tracking-[0.16em] text-ink-muted">
+                    Demo credentials
+                  </p>
+                  <dl className="mt-4 space-y-2 text-sm">
+                    <div className="flex items-center justify-between gap-4">
+                      <dt className="text-ink-muted">Email</dt>
+                      <dd>
+                        <code className="rounded-md bg-canvas-alt px-2 py-1 font-mono text-ink">
+                          {DEMO_ACCOUNT_EMAIL}
+                        </code>
+                      </dd>
+                    </div>
+                    <div className="flex items-center justify-between gap-4">
+                      <dt className="text-ink-muted">Password</dt>
+                      <dd>
+                        <code className="rounded-md bg-canvas-alt px-2 py-1 font-mono text-ink">
+                          {DEMO_PASSWORD}
+                        </code>
+                      </dd>
+                    </div>
+                  </dl>
+                  <p className="mt-4 text-sm leading-relaxed text-ink-muted">
+                    Use <span className="font-medium text-ink">Try demo account</span> for
+                    one-click access, or enter these on the{" "}
+                    <Link
+                      href="/login"
+                      className="font-medium text-signal underline underline-offset-2 transition-colors hover:text-ink"
+                    >
+                      log in
+                    </Link>{" "}
+                    page.
+                  </p>
+                </div>
+              </Reveal>
+            )}
+          </div>
+        </section>
+
+        <CardsSection />
+        <HowItWorksSection />
+        <StreakSection />
+        <PrepSection />
+        <FaqSection />
+        <FinalCta />
+      </main>
+
+      <LandingFooter />
+    </div>
   );
 }
