@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -84,7 +84,12 @@ export default function LoginClient() {
     });
 
     if (res?.ok) {
-      router.push("/dashboard");
+      // Route by role. STAFF land on /admin directly — sending them to
+      // /dashboard first makes DashboardLayout redirect("/admin") run during a
+      // client-side navigation, which crashes the App Router with React #310
+      // ("Rendered more hooks than during the previous render").
+      const session = await getSession();
+      router.push(session?.user?.hubStatus === "STAFF" ? "/admin" : "/dashboard");
     } else {
       toast.error("Invalid email or password");
     }

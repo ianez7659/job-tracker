@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { isChunkLoadError, reloadOnceForChunkError } from "@/lib/chunkError";
 
 export default function AppError({
   error,
@@ -11,6 +12,12 @@ export default function AppError({
 }) {
   useEffect(() => {
     console.error("App error:", error);
+    // Post-deploy chunk-load failures self-heal with a single hard reload
+    // instead of stranding the user on the fallback (esp. iOS standalone PWA,
+    // which has no address bar / refresh button).
+    if (isChunkLoadError(error)) {
+      reloadOnceForChunkError();
+    }
   }, [error]);
 
   return (
