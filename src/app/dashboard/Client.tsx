@@ -490,6 +490,9 @@ export default function DashboardClient({
 
       <MissionsSection
         refreshToken={xpRefreshToken}
+        /* Gated on !jobsLoading so users who do have jobs never see it
+           collapse and then expand. */
+        collapsedByDefault={!jobsLoading && hasNoJobsAtAll}
         onStartNewJob={() => void handleAddNew()}
         onXpActivity={() => setXpRefreshToken((t) => t + 1)}
         onPayloadChange={(payload: MissionsPayload) => {

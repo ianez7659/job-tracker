@@ -101,4 +101,105 @@ describe("MissionsSection", () => {
     await user.click(toggle);
     expect(screen.getByText("Claim your daily XP")).toBeInTheDocument();
   });
+
+  describe("collapsedByDefault", () => {
+    it("renders expanded and offers no collapse control when the prop is absent", async () => {
+      render(<MissionsSection refreshToken={0} onStartNewJob={jest.fn()} />);
+      await waitFor(() => {
+        expect(
+          screen.getByRole("heading", { name: "Missions" }),
+        ).toBeInTheDocument();
+      });
+      expect(
+        screen.queryByRole("button", { name: "Collapse missions" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("collapses to a summary header showing the remaining daily count", async () => {
+      render(
+        <MissionsSection
+          refreshToken={0}
+          onStartNewJob={jest.fn()}
+          collapsedByDefault
+        />,
+      );
+      await waitFor(() => {
+        expect(
+          screen.getByRole("button", { expanded: false }),
+        ).toBeInTheDocument();
+      });
+      const summary = screen.getByRole("button", { expanded: false });
+      expect(summary).toHaveTextContent("Missions");
+      expect(summary).toHaveTextContent("1 left");
+      // Mission rows and tabs are not rendered while collapsed.
+      expect(screen.queryByRole("tab", { name: /Daily/i })).not.toBeInTheDocument();
+      expect(screen.queryByText("Add a job card")).not.toBeInTheDocument();
+    });
+
+    it("expands when the summary header is pressed", async () => {
+      const user = userEvent.setup();
+      render(
+        <MissionsSection
+          refreshToken={0}
+          onStartNewJob={jest.fn()}
+          collapsedByDefault
+        />,
+      );
+      await waitFor(() => {
+        expect(screen.getByRole("button", { expanded: false })).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole("button", { expanded: false }));
+
+      expect(screen.getByText("Add a job card")).toBeInTheDocument();
+      expect(screen.getByRole("tab", { name: /Daily/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Collapse missions" }),
+      ).toBeInTheDocument();
+    });
+
+    it("keeps the user's choice when the prop later flips to false", async () => {
+      const user = userEvent.setup();
+      const { rerender } = render(
+        <MissionsSection
+          refreshToken={0}
+          onStartNewJob={jest.fn()}
+          collapsedByDefault
+        />,
+      );
+      await waitFor(() => {
+        expect(screen.getByRole("button", { expanded: false })).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole("button", { expanded: false }));
+      expect(screen.getByText("Add a job card")).toBeInTheDocument();
+
+      // e.g. the user just created their first job
+      rerender(
+        <MissionsSection
+          refreshToken={0}
+          onStartNewJob={jest.fn()}
+          collapsedByDefault={false}
+        />,
+      );
+      expect(screen.getByText("Add a job card")).toBeInTheDocument();
+    });
+
+    it("still reports its payload while collapsed so the drill CTA stays suppressed", async () => {
+      const onPayloadChange = jest.fn();
+      render(
+        <MissionsSection
+          refreshToken={0}
+          onStartNewJob={jest.fn()}
+          onPayloadChange={onPayloadChange}
+          collapsedByDefault
+        />,
+      );
+      await waitFor(() => {
+        expect(onPayloadChange).toHaveBeenCalled();
+      });
+      expect(onPayloadChange.mock.calls[0][0]).toMatchObject({
+        dailyRemaining: 1,
+      });
+    });
+  });
 });

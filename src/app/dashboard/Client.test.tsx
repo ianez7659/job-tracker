@@ -35,7 +35,9 @@ jest.mock("next/navigation", () => ({
 // Child sections that fetch or animate on mount — out of scope for this test.
 jest.mock("@/app/dashboard/components/MissionsSection", () => ({
   __esModule: true,
-  default: () => <div data-testid="missions" />,
+  default: ({ collapsedByDefault }: { collapsedByDefault?: boolean }) => (
+    <div data-testid="missions" data-collapsed={String(!!collapsedByDefault)} />
+  ),
 }));
 jest.mock("@/app/dashboard/components/XpSummaryCard", () => ({
   __esModule: true,
@@ -151,6 +153,36 @@ describe("DashboardClient — Card List zero-row states", () => {
     expect(screen.getByText("No cards match this view.")).toBeInTheDocument();
     expect(screen.getByText(/nothing found for/i)).toHaveTextContent("zzzz");
     expect(screen.queryByText("No job applications yet.")).not.toBeInTheDocument();
+  });
+
+  it("collapses Missions when the user has no jobs, so the empty state is reachable on mobile", () => {
+    setJobsHook([]);
+    renderDashboard();
+
+    expect(screen.getByTestId("missions")).toHaveAttribute(
+      "data-collapsed",
+      "true",
+    );
+  });
+
+  it("leaves Missions expanded for a user who has jobs", () => {
+    setJobsHook([makeJob({ id: "a" })]);
+    renderDashboard();
+
+    expect(screen.getByTestId("missions")).toHaveAttribute(
+      "data-collapsed",
+      "false",
+    );
+  });
+
+  it("does not collapse Missions while jobs are still loading", () => {
+    setJobsHook([], true);
+    renderDashboard();
+
+    expect(screen.getByTestId("missions")).toHaveAttribute(
+      "data-collapsed",
+      "false",
+    );
   });
 
   it("restores the list when the search is cleared from the no-match state", async () => {
