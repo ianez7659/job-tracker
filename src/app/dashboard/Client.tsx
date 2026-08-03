@@ -10,6 +10,9 @@ import { toast } from "sonner";
 import OverviewSection from "@/app/dashboard/components/OverviewSection";
 import ProgressSection from "@/app/dashboard/components/ProgressSection";
 import JobList from "@/app/dashboard/components/JobList";
+import JobListSkeleton from "@/app/dashboard/components/JobListSkeleton";
+import EmptyPipelineState from "@/app/dashboard/components/EmptyPipelineState";
+import NoMatchingJobsState from "@/app/dashboard/components/NoMatchingJobsState";
 import NewJobModal from "@/app/dashboard/components/NewJobModal";
 import NewJobModePicker from "@/app/dashboard/components/NewJobModePicker";
 import SimpleNewJobModal from "@/app/dashboard/components/SimpleNewJobModal";
@@ -103,7 +106,7 @@ export default function DashboardClient({
   const { isSharedEntry, setSharedData, clearSharedData } = useSharedDataStore();
 
   // Data fetching hooks
-  const { jobs, setJobs } = useJobs();
+  const { jobs, setJobs, loading: jobsLoading } = useJobs();
   const { allJobs, setAllJobs } = useAllJobs();
 
   // Ensure arrays are always arrays (defensive programming)
@@ -295,6 +298,26 @@ export default function DashboardClient({
       });
   }, [freshActiveJobs, searchTerm, filterStatus]);
 
+  /**
+   * Card List has three distinct zero-row states. `hasNoJobsAtAll` keys off the
+   * unfiltered list (including stale applying cards, which render as the stacked
+   * card) so an existing user narrowing a filter never sees the first-job invite.
+   */
+  const hasNoJobsAtAll = useMemo(
+    () => activeJobs.filter((j) => !isFinal(j)).length === 0,
+    [activeJobs],
+  );
+  /** The stacked stale-applying card occupies the list area on its own. */
+  const stackedCardVisible =
+    staleCount > 0 && (filterStatus === "all" || filterStatus === "applying");
+  const showNoMatches =
+    !hasNoJobsAtAll && filteredJobs.length === 0 && !stackedCardVisible;
+
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setFilterStatus("all");
+  };
+
   // Add New button handler — attempts clipboard read on user gesture (works on iOS)
   const handleAddNew = async () => {
     // Auto-detect already ran and populated the store → open modal directly
@@ -467,6 +490,9 @@ export default function DashboardClient({
 
       <MissionsSection
         refreshToken={xpRefreshToken}
+        /* Gated on !jobsLoading so users who do have jobs never see it
+           collapse and then expand. */
+        collapsedByDefault={!jobsLoading && hasNoJobsAtAll}
         onStartNewJob={() => void handleAddNew()}
         onXpActivity={() => setXpRefreshToken((t) => t + 1)}
         onPayloadChange={(payload: MissionsPayload) => {
@@ -564,21 +590,24 @@ export default function DashboardClient({
           <h2 className="flex items-center gap-2 font-display font-bold text-2xl text-gray-700 dark:text-gray-200 p-4 pb-0 flex-shrink-0">
             <LayoutList size={24} aria-hidden="true" />
             Card List
-            <motion.span
-              key={filterStatus}
-              initial={{ opacity: 0, scale: 0.7 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.2, ease: [0.25, 0.1, 0.35, 1] }}
-              className={`text-xl font-semibold font-mono tabular-nums px-2 py-0.5 rounded-full ${
-                filterStatus === "applying"
-                  ? "text-indigo-800 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-900/80"
-                  : filterStatus === "postApplying"
-                    ? "text-emerald-800 bg-emerald-100 dark:text-emerald-100 dark:bg-emerald-950/60"
-                    : "text-gray-600 bg-gray-200 dark:text-gray-300 dark:bg-slate-600"
-              }`}
-            >
-              {filteredJobs.length}
-            </motion.span>
+            {/* A "0" chip carries no information while loading or before the first job. */}
+            {!jobsLoading && !hasNoJobsAtAll && (
+              <motion.span
+                key={filterStatus}
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.2, ease: [0.25, 0.1, 0.35, 1] }}
+                className={`text-xl font-semibold font-mono tabular-nums px-2 py-0.5 rounded-full ${
+                  filterStatus === "applying"
+                    ? "text-indigo-800 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-900/80"
+                    : filterStatus === "postApplying"
+                      ? "text-emerald-800 bg-emerald-100 dark:text-emerald-100 dark:bg-emerald-950/60"
+                      : "text-gray-600 bg-gray-200 dark:text-gray-300 dark:bg-slate-600"
+                }`}
+              >
+                {filteredJobs.length}
+              </motion.span>
+            )}
           </h2>
           <div className="flex-1 min-h-0 overflow-y-auto p-4 pt-3 lg:max-h-[calc(100vh-12rem)]">
             {staleCount > 0 && (filterStatus === "all" || filterStatus === "applying") && (
@@ -588,12 +617,24 @@ export default function DashboardClient({
                 onClick={() => router.push("/dashboard/jobs/stale-applying")}
               />
             )}
-            <JobList
-              jobs={filteredJobs}
-              onDelete={onDelete}
-              singleColumn
-              filterKey={filterStatus}
-            />
+            {jobsLoading ? (
+              <JobListSkeleton />
+            ) : hasNoJobsAtAll ? (
+              <EmptyPipelineState onAddFirstJob={() => void handleAddNew()} />
+            ) : showNoMatches ? (
+              <NoMatchingJobsState
+                searchTerm={searchTerm}
+                hasStatusFilter={filterStatus !== "all"}
+                onClear={handleClearFilters}
+              />
+            ) : (
+              <JobList
+                jobs={filteredJobs}
+                onDelete={onDelete}
+                singleColumn
+                filterKey={filterStatus}
+              />
+            )}
           </div>
         </motion.div>
         </div>

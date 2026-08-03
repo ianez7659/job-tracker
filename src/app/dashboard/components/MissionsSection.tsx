@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   BookOpen,
   CalendarDays,
+  ChevronDown,
   CircleCheck,
   ClipboardList,
   FolderOpen,
@@ -178,6 +179,13 @@ type Props = {
   onStartNewJob: () => void;
   onXpActivity?: () => void;
   onPayloadChange?: (payload: MissionsPayload) => void;
+  /**
+   * Collapse to a header-only summary. Used on an empty dashboard so the Card
+   * List's first-job invitation is reachable without scrolling on mobile.
+   * The section stays mounted either way — unmounting it would flip
+   * `hiddenByMission` and surface the Interview Drill button.
+   */
+  collapsedByDefault?: boolean;
 };
 
 type MissionTab = "daily" | "weekly";
@@ -187,6 +195,7 @@ export default function MissionsSection({
   onStartNewJob,
   onXpActivity,
   onPayloadChange,
+  collapsedByDefault = false,
 }: Props) {
   const router = useRouter();
   const [data, setData] = useState<MissionsPayload | null>(null);
@@ -194,6 +203,20 @@ export default function MissionsSection({
   const [busyId, setBusyId] = useState<MissionId | null>(null);
   const [showCompleted, setShowCompleted] = useState(false);
   const [activeTab, setActiveTab] = useState<MissionTab>("daily");
+  const [collapsed, setCollapsed] = useState(collapsedByDefault);
+  /** Once the user decides, their choice outranks the prop. */
+  const [userSetCollapse, setUserSetCollapse] = useState(false);
+
+  useEffect(() => {
+    if (!userSetCollapse) setCollapsed(collapsedByDefault);
+  }, [collapsedByDefault, userSetCollapse]);
+
+  /** Only offer the control where collapsing applies — otherwise render as before. */
+  const collapsible = collapsedByDefault || userSetCollapse;
+  const toggleCollapsed = () => {
+    setUserSetCollapse(true);
+    setCollapsed((v) => !v);
+  };
 
   const load = useCallback(async () => {
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -307,8 +330,33 @@ export default function MissionsSection({
         <p className="text-center text-sm text-gray-600 dark:text-gray-400">
           Loading missions…
         </p>
+      ) : collapsed ? (
+        <button
+          type="button"
+          onClick={toggleCollapsed}
+          aria-expanded={false}
+          aria-controls="missions-content"
+          className="flex w-full items-center gap-2 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-slate-900"
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center text-rose-700 dark:text-rose-300">
+            <Target className="h-5 w-5" aria-hidden />
+          </span>
+          <span className="font-display text-base font-bold text-gray-900 dark:text-gray-100 sm:text-lg">
+            Missions
+          </span>
+          <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-emerald-900 ring-1 ring-emerald-300/80 dark:bg-emerald-950/70 dark:text-emerald-200 dark:ring-emerald-500/35">
+            <span className="font-mono tabular-nums">
+              {payload.dailyRemaining}
+            </span>{" "}
+            left
+          </span>
+          <ChevronDown
+            className="ml-auto h-5 w-5 shrink-0 text-gray-500 dark:text-gray-400"
+            aria-hidden
+          />
+        </button>
       ) : (
-        <>
+        <div id="missions-content">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 font-display text-base font-bold text-gray-900 dark:text-gray-100 sm:text-lg">
               <span className="flex h-9 w-9 items-center justify-center text-rose-700 dark:text-rose-300">
@@ -316,13 +364,27 @@ export default function MissionsSection({
               </span>
               Missions
             </h2>
-            <button
-              type="button"
-              onClick={() => setShowCompleted((v) => !v)}
-              className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-yellow-700 transition-colors hover:bg-yellow-100 dark:border-yellow-500 dark:text-yellow-200 dark:hover:bg-yellow-950/40"
-            >
-              {showCompleted ? "Hide completed" : "Show completed"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowCompleted((v) => !v)}
+                className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-yellow-700 transition-colors hover:bg-yellow-100 dark:border-yellow-500 dark:text-yellow-200 dark:hover:bg-yellow-950/40"
+              >
+                {showCompleted ? "Hide completed" : "Show completed"}
+              </button>
+              {collapsible && (
+                <button
+                  type="button"
+                  onClick={toggleCollapsed}
+                  aria-expanded
+                  aria-controls="missions-content"
+                  aria-label="Collapse missions"
+                  className="rounded-md border border-gray-300 p-1 text-gray-500 transition-colors hover:bg-gray-100 dark:border-slate-500 dark:text-gray-400 dark:hover:bg-slate-700"
+                >
+                  <ChevronDown className="h-4 w-4 rotate-180" aria-hidden />
+                </button>
+              )}
+            </div>
           </div>
 
           <div
@@ -464,7 +526,7 @@ export default function MissionsSection({
               Complete your missions to earn XP!
             </p>
           )}
-        </>
+        </div>
       )}
     </section>
   );
