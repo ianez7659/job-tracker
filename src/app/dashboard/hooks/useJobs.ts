@@ -5,8 +5,9 @@ export function useJobs() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const refetchJobs = useCallback(async () => {
-    setLoading(true);
+  /** `silent` keeps the current list on screen (no skeleton) while reloading, e.g. after Undo. */
+  const refetchJobs = useCallback(async (opts?: { silent?: boolean }) => {
+    if (!opts?.silent) setLoading(true);
     try {
       const res = await fetch("/api/jobs", { cache: "no-store" });
       if (!res.ok) {

@@ -3,24 +3,16 @@
 import type { ReactNode } from "react";
 import { Briefcase, FileInput, BadgeCheck } from "lucide-react";
 import SummarySection from "@/components/SummarySection";
-
-type FilterStatus =
-  | "all"
-  | "applying"
-  | "postApplying"
-  | "resume"
-  | "interview1"
-  | "interview2"
-  | "interview3";
+import type { StatusFilter } from "@/app/dashboard/lib/jobs/metrics";
 
 type Props = {
   /** Active jobs still in the pipeline (not offer/rejected). */
   pipelineTotal: number;
   /** Jobs in the applying stage. */
   applyingCount: number;
-  /** Pipeline jobs past the applying stage (resume + interviews). */
-  appliedCount: number;
-  setFilterStatus: (s: FilterStatus) => void;
+  /** Pipeline jobs past the applying stage (Applied + interviews). */
+  submittedCount: number;
+  setFilterStatus: (s: StatusFilter) => void;
   embedded?: boolean;
   /** Shown below summary cards when embedded (e.g. Progress + desktop Find Jobs CTA). */
   embeddedExtras?: ReactNode;
@@ -29,7 +21,7 @@ type Props = {
 const OverviewSection: React.FC<Props> = ({
   pipelineTotal,
   applyingCount,
-  appliedCount,
+  submittedCount,
   setFilterStatus,
   embedded = false,
   embeddedExtras,
@@ -56,9 +48,10 @@ const OverviewSection: React.FC<Props> = ({
       onClick: () => setFilterStatus("applying"),
     },
     {
-      title: "Applied",
-      shortTitle: "Applied",
-      value: appliedCount,
+      // "Submitted", not "Applied": "Applied" is the stage name for `resume` alone (see Progress).
+      title: "Submitted",
+      shortTitle: "Submitted",
+      value: submittedCount,
       color:
         "bg-emerald-50 border border-emerald-300 dark:bg-emerald-950/40 dark:border-emerald-700",
       textColor: "text-emerald-900 dark:text-emerald-100",

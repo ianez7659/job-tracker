@@ -80,3 +80,57 @@ export function countWaitingActive(active: Job[]) {
   // Now treating "applying" as the waiting/initial stage
   return active.filter((j) => j.status === "applying").length;
 }
+
+/** Dashboard list filters. `postApplying` = every stage past Applying; `interviews` = any interview round. */
+export type StatusFilter =
+  | "all"
+  | "applying"
+  | "postApplying"
+  | "resume"
+  | "interviews"
+  | "interview1"
+  | "interview2"
+  | "interview3";
+
+const INTERVIEW_STATUSES = new Set(["interview1", "interview2", "interview3"]);
+
+export function matchesStatusFilter(job: Job, filter: StatusFilter): boolean {
+  if (filter === "all") return true;
+  if (filter === "postApplying") return job.status !== "applying";
+  if (filter === "interviews") return INTERVIEW_STATUSES.has(job.status);
+  return job.status === filter;
+}
+
+export type DashboardCounts = {
+  /** Active cards still in the pipeline (not offer/rejected). */
+  total: number;
+  /** Applying stage, stale cards included. */
+  applying: number;
+  /** Applying cards untouched for 7+ days (shown as the stacked card, not in the list). */
+  stale: number;
+  /** Every pipeline card past Applying (Applied + interviews). */
+  submitted: number;
+  /** Applied stage only (`resume`). */
+  applied: number;
+  /** Any interview round. */
+  interviews: number;
+};
+
+/** Single source for every number on the dashboard, so Overview, Progress and the list chip agree. */
+export function dashboardCounts(active: Job[]): DashboardCounts {
+  const list = activeOnly(active);
+  const byStatus = statusCountsActive(list);
+  const total = Object.values(byStatus).reduce((sum, n) => sum + n, 0);
+  const applying = byStatus["applying"] ?? 0;
+  return {
+    total,
+    applying,
+    stale: list.filter(isStaleApplying).length,
+    submitted: total - applying,
+    applied: byStatus["resume"] ?? 0,
+    interviews:
+      (byStatus["interview1"] ?? 0) +
+      (byStatus["interview2"] ?? 0) +
+      (byStatus["interview3"] ?? 0),
+  };
+}

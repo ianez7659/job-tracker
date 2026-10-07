@@ -16,7 +16,11 @@ jest.mock("@/app/dashboard/hooks/useJobs", () => ({
   useJobs: jest.fn(),
 }));
 jest.mock("@/app/dashboard/hooks/useAllJobs", () => ({
-  useAllJobs: () => ({ allJobs: [], setAllJobs: jest.fn() }),
+  useAllJobs: () => ({
+    allJobs: [],
+    setAllJobs: jest.fn(),
+    refetchAllJobs: jest.fn(),
+  }),
 }));
 jest.mock("@/app/dashboard/hooks/useSharedEntry", () => ({
   useSharedEntry: () => undefined,
@@ -57,8 +61,25 @@ jest.mock("@/app/dashboard/components/FindJobsCtaCard", () => ({
 }));
 jest.mock("@/app/dashboard/components/JobList", () => ({
   __esModule: true,
-  default: ({ jobs }: { jobs: Job[] }) => (
-    <div data-testid="job-list">{jobs.length} cards</div>
+  default: ({
+    jobs,
+    onDelete,
+    onRestored,
+  }: {
+    jobs: Job[];
+    onDelete: (id: string) => void;
+    onRestored?: (id: string) => void;
+  }) => (
+    <div data-testid="job-list">
+      {jobs.length} cards
+      {/* Stand-ins for JobCard calling back after its own PATCH / Undo. */}
+      <button type="button" onClick={() => onDelete(jobs[0].id)}>
+        mock-deleted
+      </button>
+      <button type="button" onClick={() => onRestored?.(jobs[0].id)}>
+        mock-restored
+      </button>
+    </div>
   ),
 }));
 
@@ -85,12 +106,14 @@ function makeJob(overrides: Partial<Job>): Job {
 }
 
 function setJobsHook(jobs: Job[], loading = false) {
-  mockedUseJobs.mockReturnValue({
+  const hook = {
     jobs,
     setJobs: jest.fn(),
     loading,
     refetchJobs: jest.fn(),
-  });
+  };
+  mockedUseJobs.mockReturnValue(hook);
+  return hook;
 }
 
 function renderDashboard() {
@@ -175,6 +198,23 @@ describe("DashboardClient — Card List zero-row states", () => {
     );
   });
 
+  it("collapses Missions on a phone even when the user has jobs", () => {
+    const original = window.matchMedia;
+    window.matchMedia = jest.fn(() => ({
+      matches: true,
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    })) as unknown as typeof window.matchMedia;
+    setJobsHook([makeJob({ id: "a" })]);
+    renderDashboard();
+
+    expect(screen.getByTestId("missions")).toHaveAttribute(
+      "data-collapsed",
+      "true",
+    );
+    window.matchMedia = original;
+  });
+
   it("does not collapse Missions while jobs are still loading", () => {
     setJobsHook([], true);
     renderDashboard();
@@ -194,5 +234,93 @@ describe("DashboardClient — Card List zero-row states", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Clear search" }));
     expect(screen.getByTestId("job-list")).toHaveTextContent("1 cards");
+  });
+});
+
+describe("DashboardClient — delete and undo", () => {
+  it("does not send a second soft-delete request after JobCard already sent one", async () => {
+    setJobsHook([makeJob({ id: "a" })]);
+    renderDashboard();
+
+    await userEvent.click(screen.getByRole("button", { name: "mock-deleted" }));
+
+    const patchCalls = (global.fetch as jest.Mock).mock.calls.filter(
+      ([url, init]) => url === "/api/jobs/a" && init?.method === "PATCH",
+    );
+    expect(patchCalls).toHaveLength(0);
+  });
+
+  it("removes the deleted card from the list state", async () => {
+    const hook = setJobsHook([makeJob({ id: "a" }), makeJob({ id: "b" })]);
+    renderDashboard();
+
+    await userEvent.click(screen.getByRole("button", { name: "mock-deleted" }));
+
+    expect(hook.setJobs).toHaveBeenCalled();
+    const updater = hook.setJobs.mock.calls[0][0] as (prev: Job[]) => Job[];
+    expect(updater([makeJob({ id: "a" }), makeJob({ id: "b" })]).map((j) => j.id)).toEqual(["b"]);
+  });
+
+  it("refetches jobs when a card is restored from Undo, so it reappears without a reload", async () => {
+    const hook = setJobsHook([makeJob({ id: "a" })]);
+    renderDashboard();
+
+    await userEvent.click(screen.getByRole("button", { name: "mock-restored" }));
+
+    expect(hook.refetchJobs).toHaveBeenCalledTimes(1);
+    expect(hook.refetchJobs).toHaveBeenCalledWith({ silent: true });
+  });
+});
+
+describe("DashboardClient — counts agree", () => {
+  const STALE = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000);
+  const jobs = () => [
+    makeJob({ id: "s1", status: "applying", createdAt: STALE }),
+    makeJob({ id: "s2", status: "applying", createdAt: STALE }),
+    makeJob({ id: "r1", status: "resume" }),
+    makeJob({ id: "r2", status: "resume" }),
+    makeJob({ id: "i1", status: "interview2" }),
+  ];
+
+  it("labels Overview's past-Applying total as Submitted, not Applied", () => {
+    setJobsHook(jobs());
+    renderDashboard();
+
+    expect(screen.getAllByText("Submitted").length).toBeGreaterThan(0);
+  });
+
+  it("gives Progress the same Applying count as Overview and the Applied stage count", () => {
+    setJobsHook(jobs());
+    renderDashboard();
+
+    const applying = screen.getByRole("button", { name: /^Applying\s*2$/ });
+    const applied = screen.getByRole("button", { name: /^Applied\s*2$/ });
+    const interviews = screen.getByRole("button", { name: /^Interviews\s*1$/ });
+    expect(applying).toBeInTheDocument();
+    expect(applied).toBeInTheDocument();
+    expect(interviews).toBeInTheDocument();
+  });
+
+  it("lists every interview round when Interviews is selected", async () => {
+    setJobsHook([
+      makeJob({ id: "i1", status: "interview1" }),
+      makeJob({ id: "i2", status: "interview2" }),
+      makeJob({ id: "i3", status: "interview3" }),
+      makeJob({ id: "r1", status: "resume" }),
+    ]);
+    renderDashboard();
+
+    await userEvent.click(screen.getByRole("button", { name: /^Interviews\s*3$/ }));
+
+    expect(screen.getByTestId("job-list")).toHaveTextContent("3 cards");
+  });
+
+  it("explains the gap between the chip and Total when stale cards are stacked", () => {
+    setJobsHook(jobs());
+    renderDashboard();
+
+    expect(
+      screen.getByRole("heading", { name: /card list/i }),
+    ).toHaveTextContent(/^Card List3 shown · 2 stale$/);
   });
 });

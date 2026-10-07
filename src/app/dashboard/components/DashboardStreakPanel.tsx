@@ -50,7 +50,7 @@ export default function DashboardStreakPanel({ data, loading }: Props) {
     );
 
   return (
-    <div className="mt-1 space-y-3">
+    <div className="mt-1 space-y-2 sm:space-y-3">
       <p className="inline-flex items-center gap-2 text-base font-bold tabular-nums text-white drop-shadow-sm sm:text-lg">
         {streakMilestoneIcon}
         <span>{streak}-day streak</span>
@@ -62,7 +62,7 @@ export default function DashboardStreakPanel({ data, loading }: Props) {
         aria-label="This week daily login progress"
       >
         {data.weekDays.map((day, idx) => (
-          <div key={`${day.calendarKey}-${idx}`} className="flex flex-col items-center gap-1.5" role="listitem">
+          <div key={`${day.calendarKey}-${idx}`} className="flex flex-col items-center gap-1 sm:gap-1.5" role="listitem">
             <span className="text-[0.65rem] font-medium uppercase tracking-wide text-white/85 sm:text-xs">
               {day.letter}
             </span>
@@ -83,7 +83,7 @@ function WeekCircle({ day }: { day: WeekCircleDay }) {
   return (
     <div
       className={[
-        "flex h-9 w-9 shrink-0 items-center justify-center rounded-full sm:h-10 sm:w-10",
+        "flex h-7 w-7 shrink-0 items-center justify-center rounded-full sm:h-10 sm:w-10",
         isFilled
           ? "border-2 border-[#f59e0b] bg-[#ffeb3b] shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
           : "border-2 border-dashed border-white/90 bg-white/10",
@@ -95,7 +95,7 @@ function WeekCircle({ day }: { day: WeekCircleDay }) {
     >
       {isFilled ? (
         <Check
-          className="h-4 w-4 stroke-[3] text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.35)]"
+          className="h-3.5 w-3.5 stroke-[3] text-white sm:h-4 sm:w-4 drop-shadow-[0_1px_1px_rgba(0,0,0,0.35)]"
           aria-hidden
         />
       ) : (

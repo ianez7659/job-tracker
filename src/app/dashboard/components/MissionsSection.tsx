@@ -122,7 +122,8 @@ function MissionRow({
           {row.description}
         </p>
         {(row.progressLabel || row.rewardLabel) && (
-          <div className="mt-1.5 hidden items-center gap-2.5 text-xs sm:flex">
+          // Visible on phones too: what a mission pays is the reason to start it.
+          <div className="mt-1 flex items-center gap-2.5 text-xs sm:mt-1.5">
             {/* progressLabel is "3/5" | "Completed" | "2 cards" — mixed numeric
                 and prose, so only tabular-nums applies here. Forcing font-mono
                 would set the word-only variants in the numeral face. */}

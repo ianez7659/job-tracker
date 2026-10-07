@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ClipboardList } from "lucide-react";
+import { toast } from "sonner";
 import StaleJobCard from "@/components/StaleJobCard";
 
 interface StaleJob {
@@ -48,9 +49,29 @@ export default function StaleApplyingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ softDelete: true }),
       });
-      if (res.ok) {
-        setJobs((prev) => prev.filter((j) => j.id !== jobId));
+      if (!res.ok) {
+        toast.error("Failed to delete job");
+        return;
       }
+      const removed = jobs.find((j) => j.id === jobId);
+      setJobs((prev) => prev.filter((j) => j.id !== jobId));
+      toast("Moved to Trash", {
+        description: removed ? `${removed.title} @ ${removed.company}` : undefined,
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            const restore = await fetch(`/api/jobs/${jobId}/restore`, {
+              method: "PATCH",
+            });
+            if (restore.ok) {
+              toast.success("Restored");
+              await load();
+            } else {
+              toast.error("Failed to restore job");
+            }
+          },
+        },
+      });
     } finally {
       setBusyId(null);
     }
