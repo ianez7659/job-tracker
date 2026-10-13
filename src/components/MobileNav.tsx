@@ -7,27 +7,36 @@ export default function MobileNav() {
   const pathname = usePathname();
 
   const navItems = [
-    { href: "/dashboard", icon: <Home />, label: "Home" },
-    { href: "/dashboard/closed", icon: <Archive />, label: "Closed" },
-    { href: "/dashboard/stats", icon: <BarChart />, label: "Stats" },
-    { href: "/dashboard/profile", icon: <User />, label: "Profile" },
-    { href: "/dashboard/settings", icon: <Settings />, label: "Settings" },
+    { href: "/dashboard", icon: <Home aria-hidden />, label: "Home" },
+    { href: "/dashboard/closed", icon: <Archive aria-hidden />, label: "Closed" },
+    { href: "/dashboard/stats", icon: <BarChart aria-hidden />, label: "Stats" },
+    { href: "/dashboard/profile", icon: <User aria-hidden />, label: "Profile" },
+    { href: "/dashboard/settings", icon: <Settings aria-hidden />, label: "Settings" },
   ];
 
   return (
-    <nav className="fixed bottom-0 w-full bg-white border-t shadow md:hidden flex justify-around py-2 z-50">
-      {navItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={`flex flex-col items-center text-xs ${
-            pathname === item.href ? "text-blue-500" : "text-gray-500"
-          }`}
-        >
-          {item.icon}
-          <span>{item.label}</span>
-        </Link>
-      ))}
+    // pb uses the safe-area inset so the iOS home indicator never covers the labels
+    // in the installed PWA (viewportFit: "cover").
+    <nav
+      aria-label="Primary"
+      className="fixed bottom-0 z-50 flex w-full justify-around border-t border-line bg-surface pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow md:hidden"
+    >
+      {navItems.map((item) => {
+        const active = pathname === item.href;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={active ? "page" : undefined}
+            className={`flex flex-col items-center text-xs ${
+              active ? "font-medium text-signal" : "text-ink-muted"
+            }`}
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </Link>
+        );
+      })}
     </nav>
   );
 }

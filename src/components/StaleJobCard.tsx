@@ -30,13 +30,10 @@ export default function StaleJobCard({
 }: Props) {
   const router = useRouter();
 
-  const handleRemove = async (e: React.MouseEvent) => {
+  // No confirm dialog — the parent offers Undo in a toast instead.
+  const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    const ok = window.confirm(
-      "Move this job to Trash? You can restore it from the Trash Bin later.",
-    );
-    if (!ok) return;
     onRemove(id);
   };
 

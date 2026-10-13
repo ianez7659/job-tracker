@@ -30,6 +30,7 @@ describe("MissionsSection", () => {
                   title: "Add a job card",
                   description: "Log an application.",
                   completed: false,
+                  rewardLabel: "+20 XP",
                 },
               ],
               weekly: [
@@ -73,6 +74,14 @@ describe("MissionsSection", () => {
       el?.tagName === "SPAN" && el.textContent === text;
     expect(screen.getByText(badge("1 left"))).toBeInTheDocument();
     expect(screen.getAllByText(badge("2 left")).length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("shows what a mission pays on every screen size, not only from sm up", async () => {
+    render(<MissionsSection refreshToken={0} onStartNewJob={jest.fn()} />);
+
+    const reward = await screen.findByText("+20 XP");
+    // The reward row used to be `hidden sm:flex`, so phones never saw it.
+    expect(reward.parentElement?.className).not.toMatch(/(^|\s)hidden(\s|$)/);
   });
 
   it("calls onStartNewJob when starting job card mission", async () => {

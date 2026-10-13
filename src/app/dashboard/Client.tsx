@@ -4,7 +4,6 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { LayoutList, LayoutDashboard, Search, Plus } from "lucide-react";
-import { toast } from "sonner";
 
 // Dashboard-local pieces
 import OverviewSection from "@/app/dashboard/components/OverviewSection";
@@ -33,13 +32,15 @@ import { computeLoginStreakDisplay, type WeekCircleDay } from "@/lib/xp/streakDi
 import { useJobs } from "@/app/dashboard/hooks/useJobs";
 import { useAllJobs } from "@/app/dashboard/hooks/useAllJobs";
 import { useSharedEntry } from "@/app/dashboard/hooks/useSharedEntry";
+import { useIsPhone } from "@/app/dashboard/hooks/useIsPhone";
 import { useSharedDataStore } from "@/stores/useSharedDataStore";
 import {
   activeOnly,
-  countWaitingActive,
+  dashboardCounts,
   isFinal,
   isStaleApplying,
-  statusCountsActive,
+  matchesStatusFilter,
+  type StatusFilter,
 } from "@/app/dashboard/lib/jobs/metrics";
 import type { Job } from "@/generated/prisma";
 
@@ -70,16 +71,6 @@ type Props = {
   openJobSearchFromQuery?: boolean;
 };
 
-// Narrowed union for safer filtering (matches your UI statuses)
-type FilterStatus =
-  | "all"
-  | "applying"
-  | "postApplying"
-  | "resume"
-  | "interview1"
-  | "interview2"
-  | "interview3";
-
 /** Add-job UI: mode picker → standard modal or simple (card) placeholder. */
 type NewJobUi = null | "picker" | "standard" | "simple";
 
@@ -100,18 +91,18 @@ export default function DashboardClient({
   openJobSearchFromQuery = false,
 }: Props) {
   const router = useRouter();
+  const isPhone = useIsPhone();
 
   // Hybrid share/clipboard pipeline
   useSharedEntry();
   const { isSharedEntry, setSharedData, clearSharedData } = useSharedDataStore();
 
   // Data fetching hooks
-  const { jobs, setJobs, loading: jobsLoading } = useJobs();
-  const { allJobs, setAllJobs } = useAllJobs();
+  const { jobs, setJobs, loading: jobsLoading, refetchJobs } = useJobs();
+  const { setAllJobs, refetchAllJobs } = useAllJobs();
 
   // Ensure arrays are always arrays (defensive programming)
   const safeJobs = useMemo(() => (Array.isArray(jobs) ? jobs : []), [jobs]);
-  const safeAllJobs = useMemo(() => (Array.isArray(allJobs) ? allJobs : []), [allJobs]);
 
   // Derived sets and counts
   const activeJobs = useMemo(() => activeOnly(safeJobs), [safeJobs]);
@@ -120,37 +111,13 @@ export default function DashboardClient({
     () => activeJobs.filter((j) => !isStaleApplying(j)),
     [activeJobs],
   );
-  /** Client-side count of stale applying cards (drives StackedApplyingCard visibility). */
-  const staleCount = useMemo(
-    () => activeJobs.filter(isStaleApplying).length,
-    [activeJobs],
-  );
-  // Overview counts include stale applying so totals are accurate
-  const counts = useMemo(() => statusCountsActive(activeJobs), [activeJobs]);
-  const pipelineTotal = useMemo(
-    () => activeJobs.filter((j) => !isFinal(j)).length,
-    [activeJobs],
-  );
-  const applyingCount = counts["applying"] ?? 0;
-  const appliedCount = useMemo(
-    () => Math.max(0, pipelineTotal - applyingCount),
-    [pipelineTotal, applyingCount],
-  );
-  const waitingCount = useMemo(
-    () => countWaitingActive(freshActiveJobs),
-    [freshActiveJobs],
-  );
-  const interviewCount = useMemo(
-    () =>
-      (counts["interview1"] ?? 0) +
-      (counts["interview2"] ?? 0) +
-      (counts["interview3"] ?? 0),
-    [counts],
-  );
+  /** Every number on the dashboard (Overview, Progress, list chip) comes from here. */
+  const counts = useMemo(() => dashboardCounts(activeJobs), [activeJobs]);
+  const staleCount = counts.stale;
 
   // Filters
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
+  const [filterStatus, setFilterStatus] = useState<StatusFilter>("all");
   const [newJobUi, setNewJobUi] = useState<NewJobUi>(null);
   const [showJobSearch, setShowJobSearch] = useState(false);
 
@@ -277,10 +244,6 @@ export default function DashboardClient({
     setNewJobUi("standard");
   }, [isSharedEntry]);
 
-  const setFilterStatusFromFilter = (s: FilterStatus) => {
-    setFilterStatus(s);
-  };
-
   // Filtered list — active, non-finalized, stale applying excluded
   const filteredJobs = useMemo(() => {
     return freshActiveJobs
@@ -290,11 +253,7 @@ export default function DashboardClient({
         const company = (job.company ?? "").toLowerCase();
         const title = (job.title ?? "").toLowerCase();
         const matchesSearch = company.includes(q) || title.includes(q);
-        const matchesStatus =
-          filterStatus === "all" ||
-          (filterStatus === "postApplying" && job.status !== "applying") ||
-          job.status === filterStatus;
-        return matchesSearch && matchesStatus;
+        return matchesSearch && matchesStatusFilter(job, filterStatus);
       });
   }, [freshActiveJobs, searchTerm, filterStatus]);
 
@@ -303,10 +262,7 @@ export default function DashboardClient({
    * unfiltered list (including stale applying cards, which render as the stacked
    * card) so an existing user narrowing a filter never sees the first-job invite.
    */
-  const hasNoJobsAtAll = useMemo(
-    () => activeJobs.filter((j) => !isFinal(j)).length === 0,
-    [activeJobs],
-  );
+  const hasNoJobsAtAll = counts.total === 0;
   /** The stacked stale-applying card occupies the list area on its own. */
   const stackedCardVisible =
     staleCount > 0 && (filterStatus === "all" || filterStatus === "applying");
@@ -375,60 +331,49 @@ export default function DashboardClient({
     router.replace("/dashboard", { scroll: false });
   }, [openJobSearchFromQuery, router]);
 
-  // Actions
-  const onDelete = async (id: string) => {
-    // Optimistically remove from active list; mirror deletedAt in allJobs
-    const prevJobs = safeJobs;
-    const prevAll = safeAllJobs;
-
+  // Actions — JobCard owns the soft-delete request and the Undo toast; these only sync state.
+  const onDelete = (id: string) => {
     setJobs((p) => (Array.isArray(p) ? p : []).filter((j) => j.id !== id));
     setAllJobs((p) =>
       (Array.isArray(p) ? p : []).map((j) =>
         j.id === id ? { ...j, deletedAt: new Date() } : j,
       ),
     );
+  };
 
-    const res = await fetch(`/api/jobs/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ softDelete: true }),
-    });
-
-    if (!res.ok) {
-      // Roll back both states on failure
-      setJobs(prevJobs);
-      setAllJobs(prevAll);
-      toast.error("Failed to delete job");
-    }
+  /** Undo restored the job on the server — reload quietly so it reappears in place. */
+  const onRestored = () => {
+    void refetchJobs({ silent: true });
+    void refetchAllJobs();
   };
 
   return (
     <section className="flex min-h-screen flex-col p-4 sm:px-6 sm:py-2">
       {/* Header + compact XP (actions moved to sidebar / mobile menu) */}
       <div
-        className="relative mb-3 flex flex-shrink-0 flex-col gap-3 overflow-hidden rounded-xl bg-gradient-to-br from-fuchsia-500 via-violet-600 to-indigo-700 p-4 shadow-[0_10px_28px_-6px_rgba(109,40,217,0.55),0_0_0_1px_rgba(255,255,255,0.2)_inset,0_-1px_0_0_rgba(0,0,0,0.15)_inset] ring-2 ring-cyan-200/45 dark:from-fuchsia-600 dark:via-violet-600 dark:to-sky-800 dark:shadow-[0_12px_32px_-8px_rgba(76,29,149,0.65),0_0_0_1px_rgba(255,255,255,0.12)_inset] dark:ring-cyan-400/30 sm:p-5 md:flex-row md:items-start md:justify-between"
+        className="relative mb-3 flex flex-shrink-0 flex-col gap-2 overflow-hidden sm:gap-3 rounded-xl bg-gradient-to-br from-celebrate-from via-celebrate-via to-celebrate-to p-3 shadow-celebrate ring-2 ring-celebrate-ring/45 dark:ring-celebrate-ring/30 sm:p-5 md:flex-row md:items-start md:justify-between"
       >
         <span
           className="pointer-events-none absolute -left-1/4 top-0 h-[200%] w-2/3 -rotate-12 bg-gradient-to-r from-white/25 via-white/5 to-transparent dark:from-white/18"
           aria-hidden
         />
         <span
-          className="pointer-events-none absolute -bottom-20 right-0 h-44 w-44 rounded-full bg-cyan-400/35 blur-3xl dark:bg-sky-400/22"
+          className="pointer-events-none absolute -bottom-20 right-0 h-44 w-44 rounded-full bg-celebrate-glow-b/35 blur-3xl dark:bg-celebrate-glow-b/22"
           aria-hidden
         />
         <span
-          className="pointer-events-none absolute -right-10 -top-20 h-40 w-40 rounded-full bg-fuchsia-400/40 blur-3xl dark:bg-fuchsia-500/28"
+          className="pointer-events-none absolute -right-10 -top-20 h-40 w-40 rounded-full bg-celebrate-glow-a/40 blur-3xl dark:bg-celebrate-glow-a/28"
           aria-hidden
         />
         <span
           className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/65 to-transparent dark:via-white/38"
           aria-hidden
         />
-        <div className="relative z-[1] flex w-full flex-col gap-3 md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-start md:gap-x-10 lg:gap-x-14 xl:gap-x-20">
+        <div className="relative z-[1] flex w-full flex-col gap-2 sm:gap-3 md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-start md:gap-x-10 lg:gap-x-14 xl:gap-x-20">
           <div className="min-w-0 md:pr-2">
-            <h1 className="mb-2 text-xl font-bold text-white drop-shadow-sm sm:text-3xl">
+            <h1 className="mb-1 text-xl font-bold text-white drop-shadow-sm sm:mb-2 sm:text-3xl">
               Welcome,{" "}
-              <span className="text-yellow-300 dark:text-yellow-200">{user.name}</span>
+              <span className="text-celebrate-highlight">{user.name}</span>
             </h1>
             <DashboardStreakPanel
               loading={headerSummary === null}
@@ -490,9 +435,11 @@ export default function DashboardClient({
 
       <MissionsSection
         refreshToken={xpRefreshToken}
-        /* Gated on !jobsLoading so users who do have jobs never see it
-           collapse and then expand. */
-        collapsedByDefault={!jobsLoading && hasNoJobsAtAll}
+        /* Collapsed on an empty board (first-job invite stays reachable) and on
+           phones (cards stay close to the top; the order is unchanged and the
+           header still shows what is left). Gated on !jobsLoading so users who
+           do have jobs never see it collapse and then expand. */
+        collapsedByDefault={!jobsLoading && (hasNoJobsAtAll || isPhone === true)}
         onStartNewJob={() => void handleAddNew()}
         onXpActivity={() => setXpRefreshToken((t) => t + 1)}
         onPayloadChange={(payload: MissionsPayload) => {
@@ -552,19 +499,19 @@ export default function DashboardClient({
           </div>
           <div className="flex-1 min-h-0 overflow-y-auto p-4 pt-3">
             <OverviewSection
-              pipelineTotal={pipelineTotal}
-              applyingCount={applyingCount}
-              appliedCount={appliedCount}
+              pipelineTotal={counts.total}
+              applyingCount={counts.applying}
+              submittedCount={counts.submitted}
               setFilterStatus={setFilterStatus}
               embedded
               embeddedExtras={
                 <>
                   <div className="hidden lg:block">
                     <ProgressSection
-                      resumeCount={waitingCount}
-                      totalActive={activeJobs.length}
-                      interviewCount={interviewCount}
-                      setFilterStatus={setFilterStatusFromFilter}
+                      applyingCount={counts.applying}
+                      appliedCount={counts.applied}
+                      interviewCount={counts.interviews}
+                      setFilterStatus={setFilterStatus}
                       embedded
                       currentStatus={filterStatus}
                     />
@@ -606,11 +553,18 @@ export default function DashboardClient({
                 }`}
               >
                 {filteredJobs.length}
+                {/* Stale cards sit in the stacked card, not the list — say so, so the chip and Total reconcile. */}
+                {stackedCardVisible && (
+                  <span className="font-sans text-sm font-medium">
+                    {" "}
+                    shown · <span className="font-mono tabular-nums">{staleCount}</span> stale
+                  </span>
+                )}
               </motion.span>
             )}
           </h2>
           <div className="flex-1 min-h-0 overflow-y-auto p-4 pt-3 lg:max-h-[calc(100vh-12rem)]">
-            {staleCount > 0 && (filterStatus === "all" || filterStatus === "applying") && (
+            {stackedCardVisible && (
               <StackedApplyingCard
                 key={filterStatus}
                 count={staleCount}
@@ -631,6 +585,7 @@ export default function DashboardClient({
               <JobList
                 jobs={filteredJobs}
                 onDelete={onDelete}
+                onRestored={onRestored}
                 singleColumn
                 filterKey={filterStatus}
               />

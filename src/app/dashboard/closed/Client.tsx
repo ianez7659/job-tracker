@@ -44,15 +44,9 @@ export default function ClosedClient({ jobs: initialJobs }: Props) {
 
   const visible = tab === "offers" ? offers : rejected;
 
-  const handleDelete = async (id: string) => {
-    const res = await fetch(`/api/jobs/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ softDelete: true }),
-    });
-    if (res.ok) {
-      setJobs((prev) => prev.filter((j) => j.id !== id));
-    }
+  // JobCard already sent the soft-delete request; only drop the card from state.
+  const handleDelete = (id: string) => {
+    setJobs((prev) => prev.filter((j) => j.id !== id));
   };
 
   return (

@@ -16,13 +16,20 @@ const staggerDelay = 0.04;
 
 type Props = {
   jobs: Job[];
-  onDelete: (id: string) => Promise<void>;
+  onDelete: (id: string) => void;
+  onRestored?: (id: string) => void;
   singleColumn?: boolean;
   /** Changes when the active filter changes — triggers stagger re-animation. */
   filterKey?: string;
 };
 
-export default function JobList({ jobs, onDelete, singleColumn, filterKey }: Props) {
+export default function JobList({
+  jobs,
+  onDelete,
+  onRestored,
+  singleColumn,
+  filterKey,
+}: Props) {
   const [visibleCount, setVisibleCount] = useState(INITIAL_SIZE);
 
   // Reset visible count when filter changes so we start fresh
@@ -59,6 +66,7 @@ export default function JobList({ jobs, onDelete, singleColumn, filterKey }: Pro
             <JobCard
               {...job}
               onDelete={onDelete}
+              onRestored={onRestored}
             />
           </motion.li>
         ))}

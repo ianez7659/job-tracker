@@ -1,28 +1,23 @@
 "use client";
 
 import { FileInput, Send, MessageSquare } from "lucide-react";
-
-type FilterStatus =
-  | "all"
-  | "applying"
-  | "postApplying"
-  | "resume"
-  | "interview1"
-  | "interview2"
-  | "interview3";
+import type { StatusFilter } from "@/app/dashboard/lib/jobs/metrics";
 
 type Props = {
-  resumeCount: number;
-  totalActive: number;
+  /** Applying stage, stale cards included (same number as Overview). */
+  applyingCount: number;
+  /** Applied stage only (`resume`). */
+  appliedCount: number;
+  /** All interview rounds. */
   interviewCount: number;
-  setFilterStatus: (s: FilterStatus) => void;
+  setFilterStatus: (s: StatusFilter) => void;
   embedded?: boolean;
-  currentStatus?: FilterStatus;
+  currentStatus?: StatusFilter;
 };
 
 export default function ProgressSection({
-  resumeCount,
-  totalActive,
+  applyingCount,
+  appliedCount,
   interviewCount,
   setFilterStatus,
   embedded = false,
@@ -31,26 +26,28 @@ export default function ProgressSection({
   const rows = [
     {
       label: "Applying",
-      value: resumeCount,
+      value: applyingCount,
       icon: <FileInput size={18} />,
       onClick: () => setFilterStatus("applying"),
-      isActive: (s?: FilterStatus) => s === "applying",
+      isActive: (s?: StatusFilter) => s === "applying",
     },
     {
       label: "Applied",
-      value: totalActive,
+      value: appliedCount,
       icon: <Send size={18} />,
       onClick: () => setFilterStatus("resume"),
-      isActive: (s?: FilterStatus) =>
-        s === "resume" || s === "postApplying",
+      isActive: (s?: StatusFilter) => s === "resume",
     },
     {
       label: "Interviews",
       value: interviewCount,
       icon: <MessageSquare size={18} />,
-      onClick: () => setFilterStatus("interview1"),
-      isActive: (s?: FilterStatus) =>
-        s === "interview1" || s === "interview2" || s === "interview3",
+      onClick: () => setFilterStatus("interviews"),
+      isActive: (s?: StatusFilter) =>
+        s === "interviews" ||
+        s === "interview1" ||
+        s === "interview2" ||
+        s === "interview3",
     },
   ];
 

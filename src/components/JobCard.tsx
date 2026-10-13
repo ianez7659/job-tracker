@@ -14,7 +14,10 @@ type JobCardProps = {
   company: string;
   status: string;
   appliedAt?: string | Date | null;
+  /** Called after this card's own soft-delete request succeeded — update state only, do not PATCH again. */
   onDelete: (id: string) => void;
+  /** Called after Undo restored the job. Without it the card falls back to `router.refresh()`. */
+  onRestored?: (id: string) => void;
   url?: string | null;
   source?: JobSource | null;
 };
@@ -26,6 +29,7 @@ export default function JobCard({
   status,
   appliedAt,
   onDelete,
+  onRestored,
   url,
   source,
 }: JobCardProps) {
@@ -60,7 +64,8 @@ export default function JobCard({
           });
           if (restore.ok) {
             toast.success("Restored");
-            router.refresh();
+            if (onRestored) onRestored(id);
+            else router.refresh();
           } else {
             toast.error("Failed to restore job");
           }

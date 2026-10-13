@@ -72,14 +72,14 @@ export default function XpSummaryCard({
   const xpRemaining = data.xpToNextLevel - data.currentLevelXp;
 
   const body = loadingEffective ? (
-    <p className="text-sm text-gray-50 dark:text-gray-400">Loading…</p>
+    <p className="text-sm text-white/90">Loading…</p>
   ) : (
     <div>
       <div className="flex items-baseline justify-between mb-1">
-        <span className="text-base font-semibold text-gray-50 dark:text-gray-200">
+        <span className="text-base font-semibold text-white">
           Level {data.level}
         </span>
-        <span className="font-mono text-xs text-gray-50 dark:text-gray-200">
+        <span className="font-mono text-xs text-white">
           {data.currentLevelXp} / {data.xpToNextLevel} XP
         </span>
       </div>
@@ -98,7 +98,7 @@ export default function XpSummaryCard({
         />
       </div>
 
-      <p className="mt-1 text-xs text-gray-50 dark:text-gray-200 text-right">
+      <p className="mt-1 text-right text-xs font-medium text-white">
         {xpRemaining} XP to next level
       </p>
     </div>
@@ -107,7 +107,9 @@ export default function XpSummaryCard({
   if (variant === "inline") {
     return (
       <div
-        className="w-full max-w-xl rounded-lg  px-3 py-2.5 "
+        /* Dark scrim: the banner's fuchsia glow sits behind this strip, and
+           white 12px text on it measured 3.4:1. A 20% black wash lifts it past 4.5:1. */
+        className="w-full max-w-xl rounded-lg bg-black/20 px-3 py-2.5"
         role="group"
         aria-label="XP progress"
       >

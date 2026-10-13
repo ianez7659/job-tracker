@@ -12,8 +12,24 @@ jest.mock("next/link", () => ({
 
 jest.mock("@/components/JobCard", () => ({
   __esModule: true,
-  default: ({ title, status }: { title: string; status: string }) => (
-    <div data-testid="job-card">{`${title} (${status})`}</div>
+  default: ({
+    id,
+    title,
+    status,
+    onDelete,
+  }: {
+    id: string;
+    title: string;
+    status: string;
+    onDelete: (id: string) => void;
+  }) => (
+    <div data-testid="job-card">
+      {`${title} (${status})`}
+      {/* Stand-in for JobCard calling back after its own soft-delete request. */}
+      <button type="button" onClick={() => onDelete(id)}>
+        {`mock-deleted-${id}`}
+      </button>
+    </div>
   ),
 }));
 
@@ -76,5 +92,24 @@ describe("ClosedClient", () => {
       "href",
       "/dashboard/stats",
     );
+  });
+
+  it("drops a deleted card without sending a second soft-delete request", () => {
+    const fetchMock = jest.fn();
+    global.fetch = fetchMock as unknown as typeof fetch;
+    render(
+      <ClosedClient
+        jobs={[
+          makeJob({ id: "o1", title: "Kept", status: "offer" }),
+          makeJob({ id: "o2", title: "Removed", status: "offer" }),
+        ]}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "mock-deleted-o2" }));
+
+    expect(screen.queryByText("Removed (offer)")).not.toBeInTheDocument();
+    expect(screen.getByText("Kept (offer)")).toBeInTheDocument();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
