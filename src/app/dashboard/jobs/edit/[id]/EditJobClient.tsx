@@ -29,6 +29,8 @@ import { JobSource } from "@/generated/prisma";
 import OfferTransitionModal, {
   type OfferFormData,
 } from "@/components/OfferTransitionModal";
+import RejectionSheet from "@/components/RejectionSheet";
+import { CheckCircle2 } from "lucide-react";
 
 type Job = {
   id: string;
@@ -79,6 +81,10 @@ export default function EditJobClient({ job }: Props) {
 
   const [xpToast, setXpToast] = useState(0);
   const [showOfferModal, setShowOfferModal] = useState(false);
+  const [showRejectionSheet, setShowRejectionSheet] = useState(false);
+  // XP earned while the rejection sheet is open waits until it closes; the
+  // toast would otherwise sit under the sheet and time out unseen.
+  const [deferredXp, setDeferredXp] = useState(0);
 
   const [adviceText, setAdviceText] = useState<string | null>(null);
   const [adviceLoading, setAdviceLoading] = useState(false);
@@ -253,7 +259,14 @@ export default function EditJobClient({ job }: Props) {
     router.push("/dashboard");
   };
 
-  const patchStatusOnly = async (nextStatus: string) => {
+  /**
+   * PATCHes the status and mirrors it locally. Resolves to null on success,
+   * or to the server's message (or a fallback) on failure. Network errors throw.
+   */
+  const requestStatusChange = async (
+    nextStatus: string,
+    { deferXp = false }: { deferXp?: boolean } = {},
+  ): Promise<string | null> => {
     setPipelineLoading(true);
     try {
       const res = await fetch(`/api/jobs/${job.id}`, {
@@ -266,12 +279,7 @@ export default function EditJobClient({ job }: Props) {
         xpGained?: number;
       };
       if (!res.ok) {
-        toast.error(
-          typeof data.message === "string"
-            ? data.message
-            : "Could not update stage",
-        );
-        return;
+        return typeof data.message === "string" ? data.message : "Could not update stage";
       }
       // Mirror the API: closing a cycle records the stage it ended at.
       if (nextStatus === "offer" || nextStatus === "rejected") {
@@ -279,11 +287,36 @@ export default function EditJobClient({ job }: Props) {
       }
       setStage(nextStatus);
       if ((data.xpGained ?? 0) > 0) {
-        setXpToast(data.xpGained!);
+        if (deferXp) setDeferredXp(data.xpGained!);
+        else setXpToast(data.xpGained!);
       }
       router.refresh();
+      return null;
     } finally {
       setPipelineLoading(false);
+    }
+  };
+
+  const patchStatusOnly = async (nextStatus: string) => {
+    try {
+      const failure = await requestStatusChange(nextStatus);
+      if (failure) toast.error(failure);
+    } catch {
+      toast.error("Could not update stage");
+    }
+  };
+
+  /** RejectionSheet confirm: throws so the sheet can show its own inline error. */
+  const closeAsRejected = async () => {
+    const failure = await requestStatusChange("rejected", { deferXp: true });
+    if (failure) throw new Error(failure);
+  };
+
+  const closeRejectionSheet = () => {
+    setShowRejectionSheet(false);
+    if (deferredXp > 0) {
+      setXpToast(deferredXp);
+      setDeferredXp(0);
     }
   };
 
@@ -374,29 +407,24 @@ export default function EditJobClient({ job }: Props) {
                       {getAdvanceButtonLabel(stage) ?? "Next stage"}
                     </button>
                   )}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {/* Ends of the rail: the outcome actions sit apart from the next step. */}
+                  <div className="mt-2 flex flex-col gap-1 border-t border-dashed border-line pt-3 sm:flex-row sm:items-center sm:gap-4">
                     <button
                       type="button"
                       disabled={pipelineLoading}
                       onClick={() => setShowOfferModal(true)}
-                      className="text-sm px-3 py-2.5 rounded-md border-2 border-emerald-600 text-emerald-800 hover:bg-emerald-100 dark:border-emerald-500 dark:text-emerald-300 dark:hover:bg-emerald-950/40 disabled:opacity-50 min-h-[44px]"
+                      className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border-2 border-hired bg-surface px-4 text-sm font-semibold text-ink transition-colors hover:bg-hired/12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal disabled:opacity-50"
                     >
-                      Mark as Offer
+                      <CheckCircle2 size={18} className="text-hired" aria-hidden="true" />
+                      Got an offer
                     </button>
                     <button
                       type="button"
                       disabled={pipelineLoading}
-                      onClick={() => {
-                        if (
-                          confirm(
-                            "Mark this application as rejected / withdrawn?",
-                          )
-                        )
-                          patchStatusOnly("rejected");
-                      }}
-                      className="text-sm px-3 py-2.5 rounded-md border-2 border-rose-600 bg-white text-rose-800 hover:bg-rose-100 dark:bg-slate-800 dark:border-rose-400 dark:text-rose-200 dark:hover:bg-rose-950/40 disabled:opacity-50 min-h-[44px]"
+                      onClick={() => setShowRejectionSheet(true)}
+                      className="min-h-[44px] rounded-md px-2 text-sm text-ink-muted underline decoration-line underline-offset-4 transition-colors hover:text-ink hover:decoration-ink-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal disabled:opacity-50"
                     >
-                      Mark as Rejected
+                      Close as rejected / withdrawn
                     </button>
                   </div>
                 </div>
@@ -694,6 +722,11 @@ export default function EditJobClient({ job }: Props) {
         </div>
       </div>
       <XpToast xp={xpToast} onDismiss={() => setXpToast(0)} />
+      <RejectionSheet
+        open={showRejectionSheet}
+        onConfirm={closeAsRejected}
+        onClose={closeRejectionSheet}
+      />
       {showOfferModal && (
         <OfferTransitionModal
           companyName={form.company}
