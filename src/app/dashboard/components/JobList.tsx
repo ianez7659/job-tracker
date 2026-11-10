@@ -18,6 +18,11 @@ type Props = {
   jobs: Job[];
   onDelete: (id: string) => void;
   onRestored?: (id: string) => void;
+  /** One-tap stage advance; omitted where the list is read-only. */
+  onAdvance?: React.ComponentProps<typeof JobCard>["onAdvance"];
+  /** Ids whose move is waiting out its Undo window. */
+  pendingIds?: ReadonlySet<string>;
+  onBeforeOpen?: (id: string) => Promise<void>;
   singleColumn?: boolean;
   /** Changes when the active filter changes — triggers stagger re-animation. */
   filterKey?: string;
@@ -27,6 +32,9 @@ export default function JobList({
   jobs,
   onDelete,
   onRestored,
+  onAdvance,
+  pendingIds,
+  onBeforeOpen,
   singleColumn,
   filterKey,
 }: Props) {
@@ -56,6 +64,9 @@ export default function JobList({
         {visibleJobs.map((job, index) => (
           <motion.li
             key={job.id}
+            // The li carries a transform (its own stacking context), so it must
+            // rise itself for a card's open menu to sit above the next card.
+            className="relative has-[[aria-expanded=true]]:z-30"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -67,6 +78,9 @@ export default function JobList({
               {...job}
               onDelete={onDelete}
               onRestored={onRestored}
+              onAdvance={onAdvance}
+              advancePending={pendingIds?.has(job.id) ?? false}
+              onBeforeOpen={onBeforeOpen}
             />
           </motion.li>
         ))}

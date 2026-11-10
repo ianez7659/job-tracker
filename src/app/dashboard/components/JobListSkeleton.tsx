@@ -4,8 +4,8 @@ const PLACEHOLDER_COUNT = 3;
 
 /**
  * Loading placeholder for the Card List.
- * Mirrors JobCard's outline (rounded-xl, left status stripe) so the list does
- * not shift when real cards arrive.
+ * Mirrors JobCard's anatomy (headline, meta line, five-node rail, next-checkpoint
+ * row) so the list does not shift when real cards arrive.
  */
 export default function JobListSkeleton() {
   return (
@@ -20,12 +20,24 @@ export default function JobListSkeleton() {
         <div
           key={i}
           aria-hidden
-          className="relative animate-pulse overflow-hidden rounded-xl border border-gray-300 bg-white p-4 pl-8 shadow-sm dark:border-slate-700 dark:bg-slate-600/50"
+          className="flex animate-pulse flex-col gap-4 rounded-xl border border-line bg-surface p-4 shadow-sm motion-reduce:animate-none"
         >
-          <span className="absolute left-0 top-0 h-full w-2 bg-gray-200 dark:bg-slate-500 sm:w-3" />
-          <div className="h-5 w-1/2 rounded bg-gray-200 dark:bg-slate-500" />
-          <div className="mt-2.5 h-3.5 w-1/3 rounded bg-gray-200 dark:bg-slate-500" />
-          <div className="mt-5 h-5 w-20 rounded-full bg-gray-200 dark:bg-slate-500" />
+          <div className="flex flex-col gap-2">
+            <div className="h-5 w-1/2 rounded bg-canvas-alt" />
+            <div className="h-4 w-1/3 rounded bg-canvas-alt" />
+          </div>
+          <div className="flex items-center gap-2 py-1.5">
+            {Array.from({ length: 5 }).map((__, n) => (
+              <span key={n} className="flex flex-1 items-center gap-2 last:flex-none">
+                <span className="size-3 shrink-0 rounded-full bg-canvas-alt" />
+                {n < 4 && <span className="h-[2px] flex-1 bg-canvas-alt" />}
+              </span>
+            ))}
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="h-3 w-24 rounded bg-canvas-alt" />
+            <div className="h-10 w-40 rounded-xl bg-canvas-alt" />
+          </div>
         </div>
       ))}
     </div>
