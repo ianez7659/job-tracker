@@ -130,7 +130,7 @@ export default function PipelineRail({
                   data-state={node.state}
                   className={`block rounded-full ${
                     isCurrent
-                      ? `${s.current} rail-token ${nodeFill(node)}`
+                      ? `${s.current} rail-token ${variant === "detail" ? "rail-token-live" : ""} ${nodeFill(node)}`
                       : reached
                         ? `${s.node} ${nodeFill(node)}`
                         : node.state === "notReached"

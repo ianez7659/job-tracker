@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Check, Building2, Calendar, Link2, X } from "lucide-react";
+import { ArrowRight, Check, MoreHorizontal } from "lucide-react";
 import { getAdvanceButtonLabel, statusDisplayLabel } from "@/lib/jobPipeline";
-import { statusColorClass } from "@/lib/jobStatusColors";
+import PipelineRail from "@/components/PipelineRail";
 import Reveal from "./Reveal";
 
 const BENEFITS = [
@@ -16,7 +16,7 @@ const BENEFITS = [
 
 // Named parts of the card, shown as a legend beneath it so the card itself
 // stays a pixel-faithful replica of the in-app JobCard.
-const ANATOMY = ["Company & role", "Applied date", "Current stage", "Next step"] as const;
+const ANATOMY = ["Company & level", "When you added it", "Stage on the rail", "Next checkpoint"] as const;
 
 // The funnel the demo loops through. Mirrors getNextStage() in src/lib/jobPipeline.ts
 // (resume → interview1 → interview2 → interview3); the loop wraps back to the
@@ -24,11 +24,10 @@ const ANATOMY = ["Company & role", "Applied date", "Current stage", "Next step"]
 const STAGES = ["resume", "interview1", "interview2", "interview3"] as const;
 type StageKey = (typeof STAGES)[number];
 
-// JobCard renders "Next: {getAdvanceButtonLabel(status)}", falling back to this
-// line for interview3, which has no single-step successor.
+// JobCard's next-checkpoint action: "Move to …" for single-step stages, and
+// "Record outcome" for interview3, whose outcome is set on the job page.
 function nextStepCopy(stage: StageKey): string {
-  const label = getAdvanceButtonLabel(stage);
-  return label ? `Next: ${label}` : "Next: mark Offer or Rejected on the detail page.";
+  return getAdvanceButtonLabel(stage) ?? "Record outcome";
 }
 
 const AUTO_ADVANCE_MS = 2800;
@@ -110,63 +109,52 @@ export default function CardsSection() {
               onMouseLeave={() => setPaused(false)}
               onFocus={() => setPaused(true)}
               onBlur={() => setPaused(false)}
-              className="relative flex cursor-pointer overflow-hidden rounded-xl border border-gray-400 bg-white shadow-md transition-shadow hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal dark:border-slate-700 dark:bg-slate-600"
+              className="cursor-pointer rounded-xl border border-line bg-surface text-left shadow-md transition-shadow hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
             >
-              {/* Left status stripe — color tracks the current stage */}
-              <div
-                className={`absolute left-0 top-0 z-[1] h-full w-2 transition-colors duration-500 sm:w-3 ${statusColorClass(stage)}`}
-              />
-              <div className="flex flex-1 flex-col gap-3 px-6 py-3">
-                <div>
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="min-w-0 flex-1 font-display text-xl font-semibold leading-snug text-gray-800 dark:text-gray-100">
-                      Frontend Developer
+              {/* Same anatomy and the same rail component as the in-app card. */}
+              <div className="flex flex-col gap-4 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 flex-col gap-1.5">
+                    <h3 className="font-display text-lg font-semibold leading-tight text-ink">
+                      Northwind Studio
                     </h3>
-                    <span
-                      aria-hidden="true"
-                      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white/95 text-gray-500 dark:border-slate-600 dark:bg-slate-800/95 dark:text-slate-400"
-                    >
-                      <X size={18} strokeWidth={2} />
-                    </span>
-                  </div>
-                  <p className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-200">
-                    <Building2 size={14} /> Northwind Studio
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between gap-2 text-xs text-gray-500 dark:text-gray-200">
-                  <span className="flex items-center gap-1">
-                    <Calendar size={14} /> 7/18/2026
-                  </span>
-                  <span className="flex items-center gap-1 text-signal">
-                    <Link2 size={14} /> Link to original posting
-                  </span>
-                </div>
-
-                {/* Fixed min-height keeps the card from reflowing as the
-                    next-step copy changes length between stages. */}
-                <div className="mt-2 flex min-h-[4.75rem] flex-col gap-1.5">
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                      key={stage}
-                      initial={{ opacity: 0, y: reduceMotion ? 0 : 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: reduceMotion ? 0 : -6 }}
-                      transition={{ duration: reduceMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
-                      className="flex flex-col gap-1.5"
-                    >
-                      <span
-                        className={`w-fit rounded-full px-2 py-1 text-xs font-semibold ${statusColorClass(stage)}`}
-                      >
-                        {statusDisplayLabel(stage)}
+                    <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-muted">
+                      <span className="rounded-full border border-line bg-canvas px-2 py-0.5 text-xs font-medium leading-none text-ink-muted">
+                        Frontend Developer
                       </span>
-                      <p className="text-xs leading-snug text-ink-muted">
-                        Advance stages from the job detail page
-                        <span className="mt-0.5 block text-gray-600 dark:text-gray-300">
-                          {nextStepCopy(stage)}
-                        </span>
-                      </p>
-                    </motion.div>
+                      <span>Added 12 days ago</span>
+                    </p>
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    className="-mr-1.5 -mt-1 inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-ink-muted"
+                  >
+                    <MoreHorizontal size={20} />
+                  </span>
+                </div>
+
+                <PipelineRail status={stage} variant="card" />
+
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+                  <span className="text-xs text-ink-muted">Next checkpoint</span>
+                  {/* Non-interactive look-alike: the whole card is the demo's button. */}
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={stage}
+                      aria-hidden="true"
+                      initial={{ opacity: 0, y: reduceMotion ? 0 : 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: reduceMotion ? 0 : -4 }}
+                      transition={{ duration: reduceMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
+                      className={`ml-auto inline-flex min-h-10 items-center gap-1.5 rounded-xl px-4 text-sm font-semibold ${
+                        stage === "interview3"
+                          ? "border-2 border-line bg-surface text-ink"
+                          : "bg-signal-solid text-white"
+                      }`}
+                    >
+                      {nextStepCopy(stage)}
+                      <ArrowRight size={16} />
+                    </motion.span>
                   </AnimatePresence>
                 </div>
               </div>

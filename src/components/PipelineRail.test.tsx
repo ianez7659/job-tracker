@@ -124,6 +124,16 @@ describe("PipelineRail — card", () => {
     expect(visible).toEqual(["Applying", "Applied", "Interview 1", "2", "3"]);
   });
 
+  it("keeps the card halo still — only the job page's single rail breathes", () => {
+    const card = render(<PipelineRail status="interview1" variant="card" />);
+    expect(card.container.querySelector(".rail-token")).not.toBeNull();
+    expect(card.container.querySelector(".rail-token-live")).toBeNull();
+    card.unmount();
+
+    const detail = render(<PipelineRail status="interview1" />);
+    expect(detail.container.querySelector(".rail-token-live")).not.toBeNull();
+  });
+
   it("uses 12px nodes with a 16px current node", () => {
     const { container } = render(<PipelineRail status="interview1" variant="card" />);
     expect(nodes(container)[0]).toHaveClass("size-3");

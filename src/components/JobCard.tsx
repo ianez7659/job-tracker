@@ -44,7 +44,7 @@ const secondaryAction =
   "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border-2 border-line bg-surface px-4 text-sm font-semibold text-ink transition-colors hover:border-signal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal sm:min-h-10";
 
 const menuItem =
-  "flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm text-ink outline-none hover:bg-canvas-alt focus-visible:bg-canvas-alt";
+  "flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm text-ink outline-none hover:bg-canvas-alt focus-visible:bg-canvas-alt focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-signal";
 
 type MenuProps = {
   label: string;
@@ -97,7 +97,10 @@ function CardMenu({ label, url, prepHref, onTrash }: MenuProps) {
   };
 
   return (
-    <div ref={rootRef} className={`${ABOVE_LINK} -mr-1.5 -mt-1 shrink-0`}>
+    // z-[3], one above ABOVE_LINK: this wrapper is the menu's stacking context,
+    // so it must outrank the card's action button, which comes later in the DOM
+    // and would otherwise paint over the open menu where they overlap (phone).
+    <div ref={rootRef} className="relative z-[3] -mr-1.5 -mt-1 shrink-0">
       <button
         ref={triggerRef}
         type="button"

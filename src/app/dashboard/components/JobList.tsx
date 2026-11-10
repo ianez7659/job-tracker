@@ -64,6 +64,9 @@ export default function JobList({
         {visibleJobs.map((job, index) => (
           <motion.li
             key={job.id}
+            // The li carries a transform (its own stacking context), so it must
+            // rise itself for a card's open menu to sit above the next card.
+            className="relative has-[[aria-expanded=true]]:z-30"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{

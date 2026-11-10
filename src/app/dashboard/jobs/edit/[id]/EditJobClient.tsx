@@ -379,7 +379,7 @@ export default function EditJobClient({ job }: Props) {
                       type="button"
                       disabled={pipelineLoading}
                       onClick={() => setShowOfferModal(true)}
-                      className="text-sm px-3 py-2.5 rounded-md border-2 border-emerald-600 text-emerald-800 hover:bg-emerald-100 disabled:opacity-50 min-h-[44px]"
+                      className="text-sm px-3 py-2.5 rounded-md border-2 border-emerald-600 text-emerald-800 hover:bg-emerald-100 dark:border-emerald-500 dark:text-emerald-300 dark:hover:bg-emerald-950/40 disabled:opacity-50 min-h-[44px]"
                     >
                       Mark as Offer
                     </button>

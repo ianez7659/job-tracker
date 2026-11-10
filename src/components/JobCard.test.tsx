@@ -188,6 +188,17 @@ describe("JobCard — actions menu", () => {
     expect(trigger).toHaveFocus();
   });
 
+  it("stacks the open menu above the card's own action button", async () => {
+    renderCard({ status: "resume", onAdvance: jest.fn() });
+    await userEvent.click(screen.getByRole("button", { name: "More actions for Acme" }));
+    // The menu's z-30 only counts inside its wrapper's stacking context, so the
+    // wrapper itself must outrank the later action button (they overlap on phones).
+    const zOf = (el: Element) => Number(/(?:^|\s)z-\[(\d+)\]/.exec(el.className)?.[1] ?? 0);
+    const wrapper = screen.getByRole("menu").parentElement!;
+    const action = screen.getByRole("button", { name: /^Move to Interview 1/ });
+    expect(zOf(wrapper)).toBeGreaterThan(zOf(action));
+  });
+
   it("closes on a click outside", async () => {
     renderCard();
     await userEvent.click(screen.getByRole("button", { name: "More actions for Acme" }));

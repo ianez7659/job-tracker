@@ -133,7 +133,9 @@ body {
 }
 
 /* In-app rail token: a soft Signal halo around the current checkpoint.
-   Static under reduced motion; otherwise it breathes between 3px and 8px. */
+   `.rail-token` is static (cards: many on screen, so none of them move).
+   `.rail-token-live` breathes between 3px and 8px — one rail per screen
+   (the job page), and never under reduced motion. */
 .rail-token {
   --rail-halo: color-mix(in srgb, var(--signal) 14%, transparent);
   box-shadow: 0 0 0 5px var(--rail-halo);
@@ -150,7 +152,7 @@ body {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .rail-token {
+  .rail-token-live {
     animation: rail-token 2.4s ease-in-out infinite;
   }
 }
