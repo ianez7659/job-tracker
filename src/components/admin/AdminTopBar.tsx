@@ -113,7 +113,7 @@ function NotificationToast({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -16 }}
       transition={{ duration: 0.2 }}
-      className="fixed top-4 right-4 z-[60] max-w-sm cursor-pointer rounded-lg bg-indigo-600 px-4 py-3 text-sm text-white shadow-lg dark:bg-indigo-500"
+      className="fixed top-4 right-4 z-[60] max-w-sm cursor-pointer rounded-lg bg-signal-solid px-4 py-3 text-sm text-white shadow-lg"
       onClick={onClick}
       role="alert"
     >
@@ -121,7 +121,7 @@ function NotificationToast({
         <Bell size={14} />
         <span className="font-medium">New offer submitted</span>
       </div>
-      <p className="mt-1 text-xs text-indigo-100">Click to view in Hired Rate</p>
+      <p className="mt-1 text-xs text-white/80">Click to view in Hired Rate</p>
     </motion.div>
   );
 }
@@ -137,7 +137,7 @@ function NotificationPanel({
 }) {
   if (notifications.length === 0) {
     return (
-      <div className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+      <div className="px-4 py-8 text-center text-sm text-ink-muted">
         No new notifications
       </div>
     );
@@ -150,12 +150,12 @@ function NotificationPanel({
           <button
             type="button"
             onClick={() => onItemClick(n)}
-            className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm hover:bg-canvas-alt transition-colors"
           >
-            <span className={n.isRead ? "text-gray-500 dark:text-gray-400" : "font-medium text-gray-900 dark:text-gray-100"}>
+            <span className={n.isRead ? "text-ink-muted" : "font-medium text-ink"}>
               {n.message}
             </span>
-            <span className="text-xs text-gray-400 dark:text-gray-500">
+            <span className="text-xs text-ink-muted">
               {formatRelativeTime(n.createdAt)}
             </span>
           </button>
@@ -258,13 +258,13 @@ export default function AdminTopBar() {
       </AnimatePresence>
 
       {/* Top bar */}
-      <div className="flex h-12 items-center justify-end gap-3 border-b border-gray-200 bg-white px-4 dark:border-gray-800 dark:bg-gray-950 lg:px-6">
+      <div className="flex h-12 items-center justify-end gap-3 border-b border-line bg-surface px-4 lg:px-6">
         {/* Bell icon */}
         <div ref={panelRef} className="relative">
           <button
             type="button"
             onClick={panelOpen ? () => setPanelOpen(false) : openPanel}
-            className="relative rounded-md p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100 transition-colors"
+            className="relative rounded-md p-1.5 text-ink-muted hover:bg-canvas-alt hover:text-ink transition-colors"
             aria-label={`Notifications${count > 0 ? ` (${count} unread)` : ""}`}
           >
             <Bell size={18} />
@@ -283,15 +283,15 @@ export default function AdminTopBar() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -4 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900 z-50"
+                className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-lg border border-line bg-surface shadow-lg z-50"
               >
-                <div className="border-b border-gray-200 px-4 py-2.5 dark:border-gray-700">
-                  <h3 className="font-display text-sm font-semibold text-gray-900 dark:text-gray-100">
+                <div className="border-b border-line px-4 py-2.5">
+                  <h3 className="font-display text-sm font-semibold text-ink">
                     Notifications
                   </h3>
                 </div>
                 {loadingPanel ? (
-                  <div className="px-4 py-8 text-center text-sm text-gray-500">
+                  <div className="px-4 py-8 text-center text-sm text-ink-muted">
                     Loading...
                   </div>
                 ) : (

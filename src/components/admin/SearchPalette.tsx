@@ -92,7 +92,7 @@ const ITEM_CLASS =
 // Group heading class
 function GroupHeading({ label }: { label: string }) {
   return (
-    <span className="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+    <span className="px-2 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
       {label}
     </span>
   );
@@ -256,7 +256,7 @@ export default function SearchPalette() {
                 />
               </svg>
             )}
-            <kbd className="hidden rounded border border-gray-200 px-1.5 py-0.5 text-[10px] text-gray-400 dark:border-gray-700 sm:block">
+            <kbd className="hidden rounded border border-gray-200 px-1.5 py-0.5 text-xs text-gray-400 dark:border-gray-700 sm:block">
               ESC
             </kbd>
           </div>
@@ -370,7 +370,7 @@ export default function SearchPalette() {
                       )}
                     </div>
                     {u.category && (
-                      <span className="ml-auto shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                      <span className="ml-auto shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-400">
                         {u.category}
                       </span>
                     )}
@@ -415,7 +415,7 @@ export default function SearchPalette() {
                         {a.userName ?? a.userEmail}
                       </p>
                     </div>
-                    <span className="ml-auto shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                    <span className="ml-auto shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-400">
                       {STATUS_LABELS[a.status] ?? a.status}
                     </span>
                   </Command.Item>
@@ -426,12 +426,12 @@ export default function SearchPalette() {
 
           {/* Footer hint */}
           <div className="flex items-center justify-between border-t border-gray-100 px-4 py-2 dark:border-gray-800">
-            <span className="text-[10px] text-gray-400">
+            <span className="text-xs text-gray-400">
               <kbd className="rounded border border-gray-200 px-1 py-0.5 dark:border-gray-700">↑</kbd>{" "}
               <kbd className="rounded border border-gray-200 px-1 py-0.5 dark:border-gray-700">↓</kbd>{" "}
               navigate
             </span>
-            <span className="text-[10px] text-gray-400">
+            <span className="text-xs text-gray-400">
               <kbd className="rounded border border-gray-200 px-1 py-0.5 dark:border-gray-700">↵</kbd>{" "}
               select
             </span>

@@ -59,7 +59,7 @@ export default function ProgressSection({
           ? "hover:bg-slate-100 dark:hover:bg-slate-600/40"
           : "bg-slate-100 dark:bg-slate-600/50 hover:bg-slate-200 dark:hover:bg-slate-600";
         const activeClass = isActive
-          ? " ring-2 ring-indigo-300 dark:ring-yellow-400 bg-indigo-100 dark:bg-yellow-900/40"
+          ? " ring-2 ring-signal/40 bg-signal/15"
           : "";
         return (
           <button

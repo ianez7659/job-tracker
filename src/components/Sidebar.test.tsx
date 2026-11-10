@@ -50,6 +50,6 @@ describe("Sidebar — Find Jobs", () => {
   it("keeps Add New as the one primary action", () => {
     render(<Sidebar />);
 
-    expect(screen.getByRole("button", { name: /add new/i }).className).toMatch(/bg-indigo-600/);
+    expect(screen.getByRole("button", { name: /add new/i }).className).toMatch(/bg-signal-solid/);
   });
 });

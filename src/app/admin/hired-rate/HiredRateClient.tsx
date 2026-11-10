@@ -389,7 +389,7 @@ export default function HiredRateClient({ stats, rows }: Props) {
       {/* ── Filter bar ── */}
       <div className="flex flex-wrap items-end gap-3">
         <div className="flex flex-col gap-0.5">
-          <label className="text-[10px] font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
+          <label className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
             Job Category
           </label>
           <select
@@ -410,7 +410,7 @@ export default function HiredRateClient({ stats, rows }: Props) {
         </div>
 
         <div className="flex flex-col gap-0.5">
-          <label className="text-[10px] font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
+          <label className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
             Employment Type
           </label>
           <select
@@ -431,7 +431,7 @@ export default function HiredRateClient({ stats, rows }: Props) {
         </div>
 
         <div className="flex flex-col gap-0.5">
-          <label className="text-[10px] font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
+          <label className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
             Company
           </label>
           <select
@@ -452,7 +452,7 @@ export default function HiredRateClient({ stats, rows }: Props) {
         </div>
 
         <div className="flex flex-col gap-0.5">
-          <label className="text-[10px] font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
+          <label className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
             Search
           </label>
           <div className="relative">

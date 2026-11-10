@@ -118,7 +118,7 @@ export default function ClosedClient({ jobs: initialJobs }: Props) {
               <li key={job.id} className="flex flex-col gap-1">
                 <JobCard {...job} onDelete={handleDelete} />
                 {reached && (
-                  <p className="text-[11px] text-gray-500 dark:text-gray-400 pl-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 pl-1">
                     Closed after: {reached}
                   </p>
                 )}

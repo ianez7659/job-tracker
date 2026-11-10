@@ -13,7 +13,7 @@ export default async function AdminLayout({
   await requireAdmin();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+    <div className="flex h-screen overflow-hidden bg-canvas text-ink">
       <AdminSidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <AdminTopBar />

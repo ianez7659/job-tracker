@@ -27,7 +27,7 @@ export default function XpToast({ xp, onDismiss, duration = 3000 }: Props) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 24 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
-          className="fixed bottom-20 right-4 md:bottom-6 z-50 flex items-center gap-2 rounded-xl bg-indigo-600 dark:bg-yellow-500 px-4 py-2.5 shadow-lg text-white dark:text-gray-900 text-sm font-semibold select-none"
+          className="fixed bottom-20 right-4 md:bottom-6 z-50 flex items-center gap-2 rounded-xl bg-streak px-4 py-2.5 shadow-lg text-on-streak text-sm font-semibold select-none"
           role="status"
           aria-live="polite"
         >

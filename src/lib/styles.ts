@@ -1,15 +1,18 @@
-export const inputBase =
-  "w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 text-black dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-yellow-500";
+// Shared app form / heading / button classes. Colors come from the semantic
+// tokens in src/app/globals.css (see DESIGN.md) — no raw gray/blue/yellow.
 
-export const selectBase =
-  "w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 text-black dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-yellow-500";
+const fieldBase =
+  "w-full px-3 py-2 border border-line rounded-lg bg-surface text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-signal focus:border-signal";
 
-export const labelBase = "block text-sm font-medium text-black dark:text-gray-200 mb-1";
+export const inputBase = `${fieldBase} appearance-none`;
 
-export const headingBase =
-  "font-display text-2xl font-bold text-black dark:text-white my-6";
+export const selectBase = fieldBase;
+
+export const labelBase = "block text-sm font-medium text-ink mb-1";
+
+export const headingBase = "font-display text-2xl font-bold text-ink my-6";
 
 export const buttonBase =
-  "bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 text-sm";
+  "bg-signal-solid text-white py-2 px-4 rounded-xl hover:bg-signal-deep text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal";
 
-export const helperText = "text-xs text-gray-500 dark:text-gray-400 mt-1";
+export const helperText = "text-xs text-ink-muted mt-1";

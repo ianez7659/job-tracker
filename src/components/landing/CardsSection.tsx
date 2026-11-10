@@ -138,7 +138,7 @@ export default function CardsSection() {
                   <span className="flex items-center gap-1">
                     <Calendar size={14} /> 7/18/2026
                   </span>
-                  <span className="flex items-center gap-1 text-blue-600 dark:text-yellow-400">
+                  <span className="flex items-center gap-1 text-signal">
                     <Link2 size={14} /> Link to original posting
                   </span>
                 </div>
@@ -160,7 +160,7 @@ export default function CardsSection() {
                       >
                         {statusDisplayLabel(stage)}
                       </span>
-                      <p className="text-[11px] leading-snug text-gray-500 dark:text-gray-400">
+                      <p className="text-xs leading-snug text-ink-muted">
                         Advance stages from the job detail page
                         <span className="mt-0.5 block text-gray-600 dark:text-gray-300">
                           {nextStepCopy(stage)}

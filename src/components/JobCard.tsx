@@ -76,7 +76,7 @@ export default function JobCard({
 
   return (
     <div
-      className="relative rounded-xl border border-gray-400 dark:border-slate-700 bg-white dark:bg-slate-600 overflow-hidden flex cursor-pointer shadow-md transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-indigo-50/60 hover:shadow-xl hover:border-indigo-500 hover:ring-2 hover:ring-indigo-200/90 dark:hover:bg-slate-500 dark:hover:border-yellow-500/70 dark:hover:ring-yellow-400/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-yellow-400 dark:focus-visible:ring-offset-slate-900"
+      className="relative rounded-xl border border-line bg-surface overflow-hidden flex cursor-pointer shadow-md transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-signal/5 hover:shadow-xl hover:border-signal hover:ring-2 hover:ring-signal/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
       onClick={() => router.push(detailHref)}
       role="button"
       tabIndex={0}
@@ -94,26 +94,26 @@ export default function JobCard({
       <div className="py-2 sm:py-1 px-6 pl-6 flex-1 flex flex-col gap-3">
         <div>
           <div className="flex items-center justify-between gap-2">
-            <h3 className="font-display text-xl font-semibold text-gray-800 dark:text-gray-100 min-w-0 flex-1 leading-snug">
+            <h3 className="font-display text-xl font-semibold text-ink min-w-0 flex-1 leading-snug">
               {title}
             </h3>
             <button
               type="button"
               onClick={handleDeleteClick}
-              className="shrink-0 inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white/95 text-gray-500  transition hover:border-red-300 hover:bg-red-50 hover:text-red-600 dark:border-slate-600 dark:bg-slate-800/95 dark:text-slate-400 dark:hover:border-red-500 dark:hover:bg-red-950/40 dark:hover:text-red-300"
+              className="shrink-0 inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-surface text-ink-muted transition hover:border-red-300 hover:bg-red-50 hover:text-red-600 dark:hover:border-red-500 dark:hover:bg-red-950/40 dark:hover:text-red-300"
               aria-label="Move job to trash"
               title="Move to trash"
             >
               <X size={18} strokeWidth={2} />
             </button>
           </div>
-          <div className="text-sm text-gray-600 dark:text-gray-200 flex items-center gap-1 ">
+          <div className="text-sm text-ink-muted flex items-center gap-1 ">
             <Building2 size={14} />
             {company}
           </div>
         </div>
 
-        <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-200">
+        <div className="flex justify-between items-center text-xs text-ink-muted">
           <div className="flex items-center gap-1">
             <Calendar size={14} />
             {appliedAt ? new Date(appliedAt).toLocaleDateString() : "No date"}
@@ -124,7 +124,7 @@ export default function JobCard({
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-blue-600 flex items-center gap-1 hover:underline dark:text-yellow-400"
+              className="text-signal flex items-center gap-1 hover:underline"
             >
               <Link2 size={14} />
               Link to original posting
@@ -144,24 +144,24 @@ export default function JobCard({
             <Link
               href={`/dashboard/jobs/edit/${id}#interview-prep`}
               onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center gap-1.5 self-start text-xs font-medium px-2.5 py-1.5 rounded-lg border border-amber-400/80 bg-amber-50 text-amber-900 hover:bg-amber-100 dark:border-yellow-600 dark:bg-yellow-950/50 dark:text-yellow-100 dark:hover:bg-yellow-900/40 transition-colors"
+              className="inline-flex items-center gap-1.5 self-start text-xs font-medium px-2.5 py-1.5 rounded-lg border border-signal/30 bg-signal/10 text-signal hover:bg-signal/15 transition-colors"
             >
               <Sparkles size={14} className="shrink-0" />
               Interview prep →
             </Link>
           )}
-          <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-snug">
+          <p className="text-xs text-ink-muted leading-snug">
             {status === "offer" || status === "rejected" ? (
               <>Closed outcome — open for details.</>
             ) : (
               <>
                 Advance stages from the job detail page
                 {getAdvanceButtonLabel(status) ? (
-                  <span className="block mt-0.5 text-gray-600 dark:text-gray-300">
+                  <span className="block mt-0.5 text-ink-muted">
                     Next: {getAdvanceButtonLabel(status)}
                   </span>
                 ) : status === "interview3" ? (
-                  <span className="block mt-0.5 text-gray-600 dark:text-gray-300">
+                  <span className="block mt-0.5 text-ink-muted">
                     Next: mark Offer or Rejected on the detail page.
                   </span>
                 ) : null}

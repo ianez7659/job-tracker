@@ -23,7 +23,7 @@ const components: Components = {
     </h2>
   ),
   h3: ({ children }) => (
-    <h3 className="text-sm font-medium text-indigo-900 dark:text-yellow-100/90 mt-2 mb-1 first:mt-0">
+    <h3 className="text-sm font-medium text-ink mt-2 mb-1 first:mt-0">
       {children}
     </h3>
   ),
@@ -58,7 +58,7 @@ const components: Components = {
     <em className="italic text-gray-800 dark:text-gray-200">{children}</em>
   ),
   blockquote: ({ children }) => (
-    <blockquote className="border-l-4 border-indigo-300 dark:border-yellow-600/60 pl-3 my-2 text-gray-600 dark:text-gray-300 italic">
+    <blockquote className="border-l-2 border-signal/40 pl-3 my-2 text-ink-muted italic">
       {children}
     </blockquote>
   ),
@@ -76,7 +76,7 @@ const components: Components = {
     }
     return (
       <code
-        className="text-[0.9em] bg-indigo-50 dark:bg-slate-900/90 px-1 py-0.5 rounded font-mono text-indigo-900 dark:text-yellow-100/90"
+        className="text-[0.9em] bg-signal/10 px-1 py-0.5 rounded font-mono text-ink"
         {...props}
       >
         {children}
@@ -91,7 +91,7 @@ const components: Components = {
   a: ({ href, children }) => (
     <a
       href={href}
-      className="text-indigo-600 dark:text-yellow-400 underline underline-offset-2 hover:opacity-90"
+      className="text-signal underline underline-offset-2 hover:opacity-90"
       target="_blank"
       rel="noopener noreferrer"
     >

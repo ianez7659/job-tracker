@@ -4,9 +4,6 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #e2e8f0;
-  --foreground: #171717;
-
   /* Landing design tokens — Guided Rail / Signal-Streak duotone.
      Cool (Signal) = disciplined pipeline. Warm (Streak) = reward/motivation. */
   --canvas: #f7f8fa;
@@ -23,6 +20,13 @@
   --surface: #ffffff;
   /* Alternating section tone — a hair darker than canvas for rhythm */
   --canvas-alt: #eef1f5;
+  /* Solid Signal fills (primary buttons, toasts). Same value in both themes:
+     white text on the dark-theme --signal (#818cf8) is only ~2.9:1, so fills
+     stay indigo-600 / indigo-700 (white ≈ 6.3:1 / 7.9:1). */
+  --signal-solid: #4f46e5;
+  --signal-deep: #4338ca;
+  /* Text on a Streak Amber fill (XP toast). Same value in both themes. */
+  --on-streak: #141a24;
 
   /* Celebrate — the dashboard welcome banner only (Duolingo-style reward
      surface). A registered exception to the Signal/Streak duotone; values are
@@ -49,6 +53,9 @@
   --color-ink-muted: var(--ink-muted);
   --color-surface: var(--surface);
   --color-signal: var(--signal);
+  --color-signal-solid: var(--signal-solid);
+  --color-signal-deep: var(--signal-deep);
+  --color-on-streak: var(--on-streak);
   --color-streak: var(--streak);
   --color-hired: var(--hired);
   --color-line: var(--line);
@@ -68,8 +75,8 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--canvas);
+  color: var(--ink);
   /* Body copy = Inter (the --font-sans role from @theme). Landing and dashboard
      share one body face; headings opt into `font-display`, numerals `font-mono`. */
   font-family: var(--font-sans);
@@ -77,9 +84,6 @@ body {
 
 /* Dark theme when .dark is on html */
 .dark {
-  --background: #0f172a;
-  --foreground: #e2e8f0;
-
   /* Landing tokens — dark overrides (Signal/Streak/Hired stay in-family). */
   --canvas: #0d1117;
   --ink: #e6eaf0;
@@ -128,11 +132,6 @@ body {
   }
 }
 
-.dark body {
-  background: #0f172a;
-  color: #e2e8f0;
-}
-
 /* Dashboard Find Jobs CTA: one surface at a time (Tailwind lg == 1024px) */
 .dashboard-cta-desktop-only {
   display: none;
@@ -152,5 +151,5 @@ body {
 /* Recharts axis/labels in dark mode */
 .dark .recharts-cartesian-axis-tick text,
 .dark .recharts-label {
-  fill: #e2e8f0 !important;
+  fill: var(--ink) !important;
 }

@@ -78,16 +78,16 @@ export default function Navbar() {
 
   const isActive = (href: string) =>
     pathname === href
-      ? "text-blue-600 dark:text-blue-400 font-medium"
-      : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400";
+      ? "text-signal font-medium"
+      : "text-ink-muted hover:text-signal";
 
   return (
-    <header className="md:hidden fixed top-0 left-0 w-full z-50 bg-white dark:bg-slate-800 shadow dark:shadow-slate-900/50">
+    <header className="md:hidden fixed top-0 left-0 w-full z-50 bg-surface border-b border-line shadow-sm">
       <div className=" mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400"
+          className="flex items-center gap-2 text-signal"
         >
           <Image
             src="/icons/jobflow-icon.png"
@@ -103,7 +103,7 @@ export default function Navbar() {
 
         {/* Hamburger menu for mobile view */}
         <button
-          className="md:hidden text-gray-700 dark:text-gray-300"
+          className="md:hidden text-ink"
           onClick={() => setMobileOpen((prev) => !prev)}
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
@@ -146,7 +146,7 @@ export default function Navbar() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setProfileOpen((prev) => !prev)}
-                  className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline"
+                  className="flex items-center gap-2 text-sm text-ink hover:text-signal hover:underline"
                 >
                   {(session.user as { image?: string | null })?.image ? (
                     <Image
@@ -157,8 +157,8 @@ export default function Navbar() {
                       className="w-8 h-8 rounded-full object-cover flex-shrink-0"
                     />
                   ) : (
-                    <span className="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-600 flex items-center justify-center flex-shrink-0">
-                      <User size={16} className="text-gray-500 dark:text-gray-400" />
+                    <span className="w-8 h-8 rounded-full bg-canvas-alt flex items-center justify-center flex-shrink-0">
+                      <User size={16} className="text-ink-muted" />
                     </span>
                   )}
                   {session.user?.name}
@@ -172,13 +172,13 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.1 }}
-                      className="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-700 border dark:border-slate-600 rounded shadow-md z-50"
+                      className="absolute right-0 mt-2 w-40 bg-surface border border-line rounded-lg shadow-md z-50"
                     >
 
 
                       <Link
                         href="/dashboard/profile"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-600"
+                        className="block px-4 py-2 text-sm text-ink hover:bg-canvas-alt"
                         onClick={() => setProfileOpen(false)}
                       >
                         <span className="flex items-center gap-2">
@@ -189,7 +189,7 @@ export default function Navbar() {
 
                       <Link
                         href="/dashboard/settings"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-600"
+                        className="block px-4 py-2 text-sm text-ink hover:bg-canvas-alt"
                         onClick={() => setProfileOpen(false)}
                       >
                         <span className="flex items-center gap-2">
@@ -207,7 +207,7 @@ export default function Navbar() {
                             ),
                           });
                         }}
-                        className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-600"
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-canvas-alt"
                       >
                         <span className="flex items-center gap-2">
                           <LogOut size={16} />
@@ -241,11 +241,11 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="md:hidden bg-white dark:bg-slate-800 px-4 pb-4 pt-2 border-t dark:border-slate-600 shadow z-40"
+            className="md:hidden bg-surface px-4 pb-4 pt-2 border-t border-line shadow z-40"
           >
             <div className="flex flex-col gap-2 text-sm">
               {session && (
-                <div className="flex items-center gap-3 px-2 py-3 mb-2 border-b dark:border-slate-600">
+                <div className="flex items-center gap-3 px-2 py-3 mb-2 border-b border-line">
                   {(session.user as { image?: string | null })?.image ? (
                     <Image
                       src={(session.user as { image?: string | null }).image!}
@@ -255,17 +255,17 @@ export default function Navbar() {
                       className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                     />
                   ) : (
-                    <span className="w-10 h-10 rounded-full bg-gray-200 dark:bg-slate-600 flex items-center justify-center flex-shrink-0">
-                      <User size={20} className="text-gray-500 dark:text-gray-400" />
+                    <span className="w-10 h-10 rounded-full bg-canvas-alt flex items-center justify-center flex-shrink-0">
+                      <User size={20} className="text-ink-muted" />
                     </span>
                   )}
-                  <span className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                  <span className="font-medium text-ink truncate">
                     {session.user?.name || "User"}
                   </span>
                 </div>
               )}
               {session && (
-                <div className="flex flex-col gap-2 px-2 pb-3 border-b dark:border-slate-600">
+                <div className="flex flex-col gap-2 px-2 pb-3 border-b border-line">
                   <InstallButton
                     className="w-full justify-center py-2.5"
                     deferredPrompt={installPrompt}
@@ -273,7 +273,7 @@ export default function Navbar() {
                   />
                   <Link
                     href="/dashboard?newJob=auto"
-                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-colors"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-signal-solid hover:bg-signal-deep text-white text-sm font-medium transition-colors"
                     onClick={() => setMobileOpen(false)}
                   >
                     <Plus size={18} />
@@ -291,7 +291,7 @@ export default function Navbar() {
               )}
               <Link
                 href="/dashboard"
-                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 ${isActive(
+                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-canvas-alt ${isActive(
                   "/dashboard"
                 )}`}
                 onClick={() => setMobileOpen(false)}
@@ -301,7 +301,7 @@ export default function Navbar() {
 
               <Link
                 href="/dashboard/closed"
-                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 ${isActive(
+                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-canvas-alt ${isActive(
                   "/dashboard/closed"
                 )}`}
                 onClick={() => setMobileOpen(false)}
@@ -311,7 +311,7 @@ export default function Navbar() {
 
               <Link
                 href="/dashboard/stats"
-                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 ${isActive(
+                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-canvas-alt ${isActive(
                   "/dashboard/stats"
                 )}`}
                 onClick={() => setMobileOpen(false)}
@@ -321,7 +321,7 @@ export default function Navbar() {
 
               <Link
                 href="/dashboard/profile"
-                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 ${isActive(
+                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-canvas-alt ${isActive(
                   "/dashboard/profile"
                 )}`}
                 onClick={() => setMobileOpen(false)}
@@ -331,7 +331,7 @@ export default function Navbar() {
 
               <Link
                 href="/dashboard/settings"
-                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 ${isActive(
+                className={`flex items-center gap-2 px-2 py-2 rounded hover:bg-canvas-alt ${isActive(
                   "/dashboard/settings"
                 )}`}
                 onClick={() => setMobileOpen(false)}
@@ -349,7 +349,7 @@ export default function Navbar() {
                       ),
                     });
                   }}
-                  className="flex items-center gap-2 px-2 py-2 rounded text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700"
+                  className="flex items-center gap-2 px-2 py-2 rounded text-red-600 dark:text-red-400 hover:bg-canvas-alt"
                 >
                   <LogOut size={16} /> Logout
                 </button>
