@@ -51,7 +51,100 @@ export function isAllowedStatusTransition(from: string, to: string): boolean {
   return false;
 }
 
+// Human labels for stored statuses. `resume` is shown as "Applied" (PRODUCT.md terminology).
+const STAGE_LABELS: Record<string, string> = {
+  applying: "Applying",
+  resume: "Applied",
+  interview1: "Interview 1",
+  interview2: "Interview 2",
+  interview3: "Interview 3",
+  offer: "Offer",
+  rejected: "Rejected",
+};
+
+/** User-facing label for a status. Unknown values pass through unchanged. */
 export function statusDisplayLabel(status: string): string {
-  if (status === "resume") return "APPLIED";
-  return status.toUpperCase();
+  return STAGE_LABELS[status] ?? status;
+}
+
+/**
+ * Label of the stage a board card can move to in one tap, or null when the
+ * next step is not a single stage move: applying → Applied goes through the
+ * Apply flow, and interview3 ends with Offer / Rejected on the detail page.
+ */
+export function getNextStageLabel(current: string): string | null {
+  if (current === "applying") return null;
+  const next = getNextStage(current);
+  return next ? statusDisplayLabel(next) : null;
+}
+
+// ── Guided Rail ────────────────────────────────────────────────────────────
+
+/** Open checkpoints in rail order; the sixth node is the outcome. */
+export const RAIL_STAGES = [
+  "applying",
+  "resume",
+  "interview1",
+  "interview2",
+  "interview3",
+] as const;
+
+export type RailNodeState =
+  | "done"
+  | "current"
+  | "upcoming"
+  /** A closed cycle ended before this stage — never drawn as passed. */
+  | "notReached"
+  | "offer"
+  | "rejected";
+
+export type RailNode = {
+  key: (typeof RAIL_STAGES)[number] | "outcome";
+  label: string;
+  state: RailNodeState;
+};
+
+/** "Checkpoint 3 of 6" for an open stage, "Closed" for an outcome, null when unknown. */
+export function railPositionLabel(status: string): string | null {
+  if (status === "offer" || status === "rejected") return "Closed";
+  const i = (RAIL_STAGES as readonly string[]).indexOf(status);
+  return i === -1 ? null : `Checkpoint ${i + 1} of ${RAIL_STAGES.length + 1}`;
+}
+
+/**
+ * Six-node rail for a job: Applying → Applied → Interview 1 → 2 → 3 → Outcome.
+ *
+ * For a closed job (offer / rejected), `cycleEndStage` — the last open stage,
+ * recorded by the API when the outcome was set — decides which stages were
+ * really passed. Stages after it are `notReached`, so an early offer from
+ * Applied never reads as three passed interviews. Without a recorded end stage
+ * no stage is claimed as passed.
+ */
+export function getRailNodes(
+  status: string,
+  cycleEndStage?: string | null,
+): RailNode[] {
+  const isClosed = status === "offer" || status === "rejected";
+  const anchor = isClosed ? cycleEndStage ?? null : status;
+  const anchorIndex = anchor
+    ? (RAIL_STAGES as readonly string[]).indexOf(anchor)
+    : -1;
+
+  const stages: RailNode[] = RAIL_STAGES.map((key, i) => {
+    let state: RailNodeState;
+    if (isClosed) {
+      state = i <= anchorIndex ? "done" : "notReached";
+    } else if (anchorIndex === -1) {
+      state = "upcoming";
+    } else {
+      state = i < anchorIndex ? "done" : i === anchorIndex ? "current" : "upcoming";
+    }
+    return { key, label: statusDisplayLabel(key), state };
+  });
+
+  const outcome: RailNode = isClosed
+    ? { key: "outcome", label: statusDisplayLabel(status), state: status as "offer" | "rejected" }
+    : { key: "outcome", label: "Outcome", state: "upcoming" };
+
+  return [...stages, outcome];
 }

@@ -29,3 +29,26 @@ export const STATUS_COLORS: Record<string, string> = {
 export function statusColorClass(status: string): string {
   return STATUS_COLORS[status] ?? "";
 }
+
+// Solid node fills for the Guided Rail. The badge pairs above are pale fills
+// built to carry text; a rail node carries no text, so it takes the saturated
+// stage hue instead (the values from the 2026-11-09 critique's proposed rail).
+// Same values in both themes. Measured vs surface (#fff / #161d29):
+// indigo 4.47/3.79, emerald 2.54/6.67, yellow 1.92/8.82, amber 2.15/7.87,
+// orange 2.80/6.03, green 3.30/5.13, red 4.83/3.50. Several sit under 3:1 in
+// light mode, so a node never carries the stage alone: every node has a text
+// label, and the current one also has the Signal halo.
+export const STATUS_NODE_COLORS: Record<string, string> = {
+  applying: "bg-indigo-500",
+  resume: "bg-emerald-500",
+  interview1: "bg-yellow-500",
+  interview2: "bg-amber-500",
+  interview3: "bg-orange-500",
+  offer: "bg-green-600",
+  rejected: "bg-red-600",
+};
+
+/** Solid fill class for a rail node in this status. */
+export function statusNodeClass(status: string): string {
+  return STATUS_NODE_COLORS[status] ?? "";
+}

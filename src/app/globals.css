@@ -132,6 +132,29 @@ body {
   }
 }
 
+/* In-app rail token: a soft Signal halo around the current checkpoint.
+   Static under reduced motion; otherwise it breathes between 3px and 8px. */
+.rail-token {
+  --rail-halo: color-mix(in srgb, var(--signal) 14%, transparent);
+  box-shadow: 0 0 0 5px var(--rail-halo);
+}
+
+@keyframes rail-token {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px var(--rail-halo);
+  }
+  50% {
+    box-shadow: 0 0 0 8px var(--rail-halo);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rail-token {
+    animation: rail-token 2.4s ease-in-out infinite;
+  }
+}
+
 /* Dashboard Find Jobs CTA: one surface at a time (Tailwind lg == 1024px) */
 .dashboard-cta-desktop-only {
   display: none;

@@ -16,8 +16,10 @@ import { toast } from "sonner";
 import {
   getAdvanceButtonLabel,
   getNextStage,
+  railPositionLabel,
   statusDisplayLabel,
 } from "@/lib/jobPipeline";
+import PipelineRail from "@/components/PipelineRail";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { AiAssistCheeringCallout } from "@/components/AiAssistCheeringCallout";
 import XpToast from "@/components/XpToast";
@@ -38,6 +40,8 @@ type Job = {
   url?: string | null;
   jd?: string | null;
   source?: JobSource | null;
+  /** Last open stage of a closed cycle; drives the rail for Offer / Rejected. */
+  cycleEndStage?: string | null;
 };
 
 type Props = {
@@ -63,6 +67,7 @@ export default function EditJobClient({ job }: Props) {
   const [fetchJdLoading, setFetchJdLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [stage, setStage] = useState(job.status);
+  const [cycleEndStage, setCycleEndStage] = useState(job.cycleEndStage ?? null);
   const [pipelineLoading, setPipelineLoading] = useState(false);
   const [form, setForm] = useState({
     title: job.title,
@@ -268,6 +273,10 @@ export default function EditJobClient({ job }: Props) {
         );
         return;
       }
+      // Mirror the API: closing a cycle records the stage it ended at.
+      if (nextStatus === "offer" || nextStatus === "rejected") {
+        setCycleEndStage(stage);
+      }
       setStage(nextStatus);
       if ((data.xpGained ?? 0) > 0) {
         setXpToast(data.xpGained!);
@@ -333,19 +342,18 @@ export default function EditJobClient({ job }: Props) {
         <div className="flex flex-col lg:flex-row lg:items-stretch min-h-[32rem]">
           {/* Left: view or edit form */}
           <div className="flex-1 min-w-0 p-4 sm:p-6 border-r-0 lg:border-r border-gray-200 dark:border-slate-600">
-            <div className="rounded-lg border border-signal/30 bg-signal/5 p-3 space-y-2 mb-6">
-              <p className="text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">
-                Pipeline
+            <div className="mb-6 rounded-xl border border-line bg-surface p-4 sm:p-5">
+              <p className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-signal">
+                {["Pipeline", railPositionLabel(stage)].filter(Boolean).join(" · ")}
               </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Current stage:{" "}
-                <strong className="text-gray-800 dark:text-gray-200">
-                  {statusDisplayLabel(stage)}
-                </strong>
-              </p>
+              <PipelineRail
+                status={stage}
+                cycleEndStage={cycleEndStage}
+                className="mt-4 mb-5"
+              />
               {stage === "offer" || stage === "rejected" ? (
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  This application is closed ({stage}).
+                  This application is closed: {statusDisplayLabel(stage)}.
                 </p>
               ) : stage === "applying" ? (
                 <Link

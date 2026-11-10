@@ -65,10 +65,12 @@ jest.mock("@/app/dashboard/components/JobList", () => ({
     jobs,
     onDelete,
     onRestored,
+    onAdvance,
   }: {
     jobs: Job[];
     onDelete: (id: string) => void;
     onRestored?: (id: string) => void;
+    onAdvance?: (job: { id: string; company: string; status: string }) => void;
   }) => (
     <div data-testid="job-list">
       {jobs.length} cards
@@ -78,6 +80,14 @@ jest.mock("@/app/dashboard/components/JobList", () => ({
       </button>
       <button type="button" onClick={() => onRestored?.(jobs[0].id)}>
         mock-restored
+      </button>
+      <button
+        type="button"
+        onClick={() =>
+          onAdvance?.({ id: jobs[0].id, company: jobs[0].company, status: jobs[0].status })
+        }
+      >
+        mock-advance
       </button>
     </div>
   ),
@@ -269,6 +279,22 @@ describe("DashboardClient — delete and undo", () => {
 
     expect(hook.refetchJobs).toHaveBeenCalledTimes(1);
     expect(hook.refetchJobs).toHaveBeenCalledWith({ silent: true });
+  });
+});
+
+describe("DashboardClient — one-tap stage advance", () => {
+  it("moves the card in list state at once and holds the PATCH for the Undo window", async () => {
+    const hook = setJobsHook([makeJob({ id: "a", status: "resume" })]);
+    renderDashboard();
+
+    await userEvent.click(screen.getByRole("button", { name: "mock-advance" }));
+
+    const updater = hook.setJobs.mock.calls.at(-1)![0] as (prev: Job[]) => Job[];
+    expect(updater([makeJob({ id: "a", status: "resume" })])[0].status).toBe("interview1");
+    const patchCalls = (global.fetch as jest.Mock).mock.calls.filter(
+      ([url, init]) => url === "/api/jobs/a" && init?.method === "PATCH",
+    );
+    expect(patchCalls).toHaveLength(0);
   });
 });
 

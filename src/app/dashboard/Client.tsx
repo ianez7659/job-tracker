@@ -33,6 +33,7 @@ import { useJobs } from "@/app/dashboard/hooks/useJobs";
 import { useAllJobs } from "@/app/dashboard/hooks/useAllJobs";
 import { useSharedEntry } from "@/app/dashboard/hooks/useSharedEntry";
 import { useIsPhone } from "@/app/dashboard/hooks/useIsPhone";
+import { useStageAdvance } from "@/app/dashboard/hooks/useStageAdvance";
 import { useSharedDataStore } from "@/stores/useSharedDataStore";
 import {
   activeOnly,
@@ -341,6 +342,22 @@ export default function DashboardClient({
     );
   };
 
+  // One-tap stage advance from a card: optimistic move, Undo window, then PATCH.
+  const setJobStatus = (id: string, status: string) => {
+    const apply = (p: Job[] | undefined) =>
+      (Array.isArray(p) ? p : []).map((j) => (j.id === id ? { ...j, status } : j));
+    setJobs(apply);
+    setAllJobs(apply);
+  };
+  const stageAdvance = useStageAdvance({
+    onLocalStatus: setJobStatus,
+    onCommitted: (_id, _status, xpGained) => {
+      // A stage move counts as daily activity server-side: refresh XP and missions.
+      if (xpGained > 0) setXpToast(xpGained);
+      setXpRefreshToken((t) => t + 1);
+    },
+  });
+
   /** Undo restored the job on the server — reload quietly so it reappears in place. */
   const onRestored = () => {
     void refetchJobs({ silent: true });
@@ -586,6 +603,9 @@ export default function DashboardClient({
                 jobs={filteredJobs}
                 onDelete={onDelete}
                 onRestored={onRestored}
+                onAdvance={stageAdvance.advance}
+                pendingIds={stageAdvance.pendingIds}
+                onBeforeOpen={stageAdvance.flush}
                 singleColumn
                 filterKey={filterStatus}
               />
