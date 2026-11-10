@@ -115,7 +115,7 @@ export default function StaleJobCard({
           )}
 
           <p className="w-full text-[11px] text-gray-500 dark:text-gray-400 leading-snug">
-            Click to edit — update status, add URL or job description.
+            Open to move it to Applied, or remove it.
           </p>
         </div>
       </div>

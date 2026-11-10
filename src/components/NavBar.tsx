@@ -281,7 +281,7 @@ export default function Navbar() {
                   </Link>
                   <Link
                     href="/dashboard?jobSearch=1"
-                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 rounded-lg border-2 border-line bg-surface text-ink hover:border-signal hover:text-signal text-sm font-medium transition-colors"
                     onClick={() => setMobileOpen(false)}
                   >
                     <Search size={18} />

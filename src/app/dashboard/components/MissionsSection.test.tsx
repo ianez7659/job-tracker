@@ -84,6 +84,17 @@ describe("MissionsSection", () => {
     expect(reward.parentElement?.className).not.toMatch(/(^|\s)hidden(\s|$)/);
   });
 
+  it("dresses missions in Streak (reward) — no green, blue or rose", async () => {
+    const { container } = render(
+      <MissionsSection refreshToken={0} onStartNewJob={jest.fn()} />,
+    );
+    await screen.findByText("Add a job card");
+
+    expect(container.innerHTML).not.toMatch(/(emerald|blue|rose|yellow)-\d/);
+    expect(screen.getByRole("tab", { name: /daily/i }).className).toMatch(/streak/);
+    expect(screen.getByText("+20 XP").className).toMatch(/bg-streak/);
+  });
+
   it("calls onStartNewJob when starting job card mission", async () => {
     const onStartNewJob = jest.fn();
     const user = userEvent.setup();
