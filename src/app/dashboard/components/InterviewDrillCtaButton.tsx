@@ -29,15 +29,13 @@ export default function InterviewDrillCtaButton({ drillStatus, allDailyDone, hid
       <button
         type="button"
         onClick={() => router.push(href)}
-        className={`flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold transition-colors ${
-          isAllDone
-            ? "border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:bg-emerald-950/70"
-            : isDone
-            ? "border-emerald-200 bg-emerald-50/60 text-emerald-600 hover:bg-emerald-100/80 dark:border-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-950/60"
-            : "border-indigo-400 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:border-indigo-500 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-950/70"
+        className={`flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold text-ink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 ${
+          isAllDone || isDone
+            ? "border-line bg-surface hover:border-streak"
+            : "border-streak bg-streak/20 hover:bg-streak/30"
         }`}
       >
-        <BookOpen className="h-4 w-4 shrink-0" aria-hidden />
+        <BookOpen className="h-4 w-4 shrink-0 text-streak" aria-hidden />
         {label}
       </button>
     </div>

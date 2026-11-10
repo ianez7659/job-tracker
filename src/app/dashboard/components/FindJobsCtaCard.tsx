@@ -36,7 +36,7 @@ export default function FindJobsCtaCard({
       <button
         type="button"
         onClick={onFindJobs}
-        className="flex w-full items-stretch overflow-hidden rounded-lg bg-emerald-600 text-left font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 dark:bg-emerald-700 dark:hover:bg-emerald-600"
+        className="flex w-full items-stretch overflow-hidden rounded-lg bg-emerald-700 text-left font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 dark:bg-emerald-700 dark:hover:bg-emerald-800"
       >
         <span className="flex flex-1 items-center px-4 py-3 text-sm sm:text-base">
           Find jobs

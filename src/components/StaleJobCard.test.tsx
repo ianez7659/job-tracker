@@ -59,4 +59,12 @@ describe("StaleJobCard — move to trash", () => {
 
     expect(push).toHaveBeenCalledWith("/dashboard/jobs/edit/stale-1");
   });
+
+  it("only suggests actions that actually clear the stale state", () => {
+    renderCard();
+
+    // Staleness is measured from createdAt, so adding a URL or JD would not help.
+    expect(screen.getByText("Open to move it to Applied, or remove it.")).toBeInTheDocument();
+    expect(screen.queryByText(/add URL or job description/i)).not.toBeInTheDocument();
+  });
 });
