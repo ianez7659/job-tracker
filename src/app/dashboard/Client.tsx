@@ -458,7 +458,7 @@ export default function DashboardClient({
 
       {/* Main card: left (overview + Find Jobs CTA) | right (card list) */}
       <motion.div
-        className="flex flex-col flex-1 min-h-0 rounded-lg border border-gray-300 dark:border-slate-300 bg-slate-50 dark:bg-slate-800 shadow-md overflow-hidden"
+        className="flex flex-col flex-1 min-h-0 rounded-lg border border-line bg-canvas-alt shadow-sm overflow-hidden"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.25, 0.1, 0.35, 1] }}

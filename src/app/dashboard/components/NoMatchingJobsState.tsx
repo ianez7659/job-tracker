@@ -39,7 +39,7 @@ export default function NoMatchingJobsState({
       <button
         type="button"
         onClick={onClear}
-        className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-yellow-400 dark:focus-visible:ring-offset-slate-800"
+        className="mt-4 rounded-lg bg-signal-solid px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-signal-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-alt"
       >
         {trimmed && hasStatusFilter
           ? "Clear search and filter"

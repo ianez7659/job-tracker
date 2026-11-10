@@ -91,13 +91,13 @@ export default function WalkInCompanyPrepPanel({ companyName, jd }: Props) {
   return (
     <div
       id="walk-in-company-prep"
-      className="rounded-lg border border-amber-200/90 dark:border-yellow-800/60 bg-amber-50/40 dark:bg-yellow-950/20 p-3 space-y-3"
+      className="rounded-lg border border-signal/30 bg-signal/5 p-3 space-y-3"
     >
-      <h3 className="text-xs font-semibold text-amber-900 dark:text-yellow-200 flex items-center gap-2">
-        <Sparkles className="shrink-0 text-amber-600 dark:text-yellow-400" size={16} />
+      <h3 className="text-xs font-semibold text-ink flex items-center gap-2">
+        <Sparkles className="shrink-0 text-signal" size={16} />
         Company & interview angles (from card)
       </h3>
-      <p className="text-xs text-amber-900/90 dark:text-yellow-100/80">
+      <p className="text-xs text-ink-muted">
         Not saved. Pick the employer that matches your card, then get angle ideas. Verify on the
         official site.
       </p>
@@ -109,7 +109,7 @@ export default function WalkInCompanyPrepPanel({ companyName, jd }: Props) {
       )}
 
       {candidatesLoading && step === "pick" && (
-        <div className="flex items-center gap-2 text-xs text-amber-900/80 dark:text-yellow-100/80">
+        <div className="flex items-center gap-2 text-xs text-ink-muted">
           <Loader2 className="animate-spin" size={16} />
           Loading candidates…
         </div>
@@ -120,7 +120,7 @@ export default function WalkInCompanyPrepPanel({ companyName, jd }: Props) {
           {candidatesPayload.disclaimers.map((d) => (
             <p
               key={d}
-              className="text-[11px] text-amber-900/90 dark:text-yellow-100/80 bg-white/60 dark:bg-slate-900/40 rounded-md px-2 py-1.5"
+              className="text-xs text-ink-muted bg-surface rounded-md px-2 py-1.5"
             >
               {d}
             </p>
@@ -133,25 +133,25 @@ export default function WalkInCompanyPrepPanel({ companyName, jd }: Props) {
                   type="button"
                   onClick={() => void runReport(c)}
                   disabled={reportLoading}
-                  className="w-full text-left rounded-lg border border-amber-200 dark:border-yellow-800/50 px-3 py-2 text-xs hover:bg-white/80 dark:hover:bg-slate-800/80 disabled:opacity-60 transition-colors"
+                  className="w-full text-left rounded-lg border border-signal/30 bg-surface px-3 py-2 text-xs hover:border-signal disabled:opacity-60 transition-colors"
                 >
-                  <div className="font-medium text-gray-900 dark:text-gray-100">
+                  <div className="font-medium text-ink">
                     {c.displayName}
                     {c.primaryDomain ? (
-                      <span className="text-gray-500 dark:text-gray-400 font-normal">
+                      <span className="text-ink-muted font-normal">
                         {" "}
                         · {c.primaryDomain}
                       </span>
                     ) : null}
                   </div>
-                  <div className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">{c.snippet}</div>
-                  <div className="text-[10px] mt-0.5 text-gray-400">Confidence: {c.confidence}</div>
+                  <div className="text-xs text-ink-muted mt-0.5">{c.snippet}</div>
+                  <div className="text-xs mt-0.5 text-ink-muted">Confidence: {c.confidence}</div>
                 </button>
               </li>
             ))}
           </ul>
           {reportLoading && (
-            <div className="flex items-center gap-2 text-xs text-amber-900/80 dark:text-yellow-100/80 pt-1">
+            <div className="flex items-center gap-2 text-xs text-ink-muted pt-1">
               <Loader2 className="animate-spin" size={14} />
               Generating tips…
             </div>
@@ -160,18 +160,18 @@ export default function WalkInCompanyPrepPanel({ companyName, jd }: Props) {
       )}
 
       {step === "report" && reportLoading && !report && (
-        <div className="flex items-center gap-2 text-xs text-amber-900/80 dark:text-yellow-100/80">
+        <div className="flex items-center gap-2 text-xs text-ink-muted">
           <Loader2 className="animate-spin" size={16} />
           Generating tips…
         </div>
       )}
 
       {step === "report" && report && !reportLoading && (
-        <div className="space-y-3 text-xs text-gray-800 dark:text-gray-100">
+        <div className="space-y-3 text-xs text-ink">
           {report.disclaimers.map((d) => (
             <p
               key={d}
-              className="text-[11px] text-amber-900/90 dark:text-yellow-100/80 bg-white/60 dark:bg-slate-900/40 rounded-md px-2 py-1.5"
+              className="text-xs text-ink-muted bg-surface rounded-md px-2 py-1.5"
             >
               {d}
             </p>
@@ -182,7 +182,7 @@ export default function WalkInCompanyPrepPanel({ companyName, jd }: Props) {
               {report.emphasisPoints.map((p, i) => (
                 <li key={i}>
                   {p.text}
-                  <span className="text-[10px] text-gray-400 dark:text-gray-500 ml-1">
+                  <span className="text-xs text-ink-muted ml-1">
                     ({p.basis === "page_excerpt" ? "from page excerpt" : "general"})
                   </span>
                 </li>
@@ -205,7 +205,7 @@ export default function WalkInCompanyPrepPanel({ companyName, jd }: Props) {
               setStep("pick");
               setReport(null);
             }}
-            className="text-xs text-indigo-600 dark:text-yellow-400 hover:underline"
+            className="text-xs text-signal hover:underline"
           >
             ← Back to company list
           </button>

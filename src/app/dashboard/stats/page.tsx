@@ -192,7 +192,7 @@ export default function StatsPage() {
   ];
 
   return (
-    <section className="p-6 bg-slate-50 dark:bg-slate-900 min-h-screen">
+    <section className="p-6 bg-canvas min-h-screen">
       <h1 className="font-display text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">Application Statistics</h1>
       {loading && (
         <p className="mb-4 text-sm text-gray-600 dark:text-gray-300">Loading stats…</p>

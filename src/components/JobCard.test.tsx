@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import { toast } from "sonner";
 import JobCard from "./JobCard";
+import { JobSource } from "@/generated/prisma";
 
 const push = jest.fn();
 const refresh = jest.fn();
@@ -133,5 +134,31 @@ describe("JobCard — undo", () => {
 
     expect(onRestored).not.toHaveBeenCalled();
     expect(mockedToast.error).toHaveBeenCalledWith("Failed to restore job");
+  });
+});
+
+describe("JobCard — design tokens", () => {
+  // Stage stripe/badge come from STATUS_COLORS (documented exception), so use a
+  // non-yellow stage and check only the card's own classes.
+  function ownClasses(container: HTMLElement) {
+    return Array.from(container.querySelectorAll<HTMLElement>("*"))
+      .filter((el) => !/\b(bg|text)-(indigo|emerald|green|red|amber|orange|yellow)-\d+/.test(el.className))
+      .map((el) => el.getAttribute("class") ?? "")
+      .join(" ");
+  }
+
+  it("uses Signal for hover/focus and the posting link, with no dark-mode yellow", () => {
+    const { container } = renderCard({ url: "https://www.linkedin.com/jobs", source: JobSource.WALK_IN });
+    const card = screen.getByRole("button", { name: /frontend developer/i });
+
+    expect(card).toHaveClass("bg-surface", "border-line", "hover:border-signal", "focus-visible:ring-signal");
+    expect(screen.getByRole("link", { name: /link to original posting/i })).toHaveClass("text-signal");
+    expect(screen.getByRole("link", { name: /interview prep/i })).toHaveClass("text-signal", "bg-signal/10");
+    expect(ownClasses(container)).not.toMatch(/yellow-|amber-/);
+  });
+
+  it("keeps helper copy at 12px or larger", () => {
+    const { container } = renderCard();
+    expect(container.innerHTML).not.toMatch(/text-\[1[01]px\]/);
   });
 });

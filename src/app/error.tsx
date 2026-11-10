@@ -21,18 +21,18 @@ export default function AppError({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-slate-50 dark:bg-slate-900">
-      <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 text-center">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-canvas">
+      <h1 className="text-lg font-semibold text-ink mb-2 text-center">
         Something went wrong
       </h1>
-      <p className="text-sm text-gray-600 dark:text-gray-300 text-center max-w-md mb-6">
+      <p className="text-sm text-ink-muted text-center max-w-md mb-6">
         A client error occurred. Try again, refresh the page, or open the site in your
         device&apos;s main browser if you followed a link from email or chat.
       </p>
       <button
         type="button"
         onClick={() => reset()}
-        className="rounded-lg bg-indigo-600 hover:bg-indigo-700 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-white px-5 py-2.5 text-sm font-medium"
+        className="rounded-lg bg-signal-solid hover:bg-signal-deep text-white px-5 py-2.5 text-sm font-medium"
       >
         Try again
       </button>

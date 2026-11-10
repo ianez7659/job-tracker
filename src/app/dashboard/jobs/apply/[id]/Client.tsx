@@ -325,7 +325,7 @@ export default function ApplyJobClient({ job }: Props) {
     <section className="max-w-5xl mx-auto mt-8 p-4 sm:p-6">
       <a
         href="/dashboard"
-        className="inline-block bg-indigo-500 dark:bg-yellow-500 text-white px-4 py-2 rounded hover:bg-indigo-600 dark:hover:bg-yellow-600 text-sm mb-6"
+        className="inline-block bg-signal-solid text-white px-4 py-2 rounded hover:bg-signal-deep text-sm mb-6"
       >
         Back to Dashboard
       </a>
@@ -389,7 +389,7 @@ export default function ApplyJobClient({ job }: Props) {
                       href={form.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-indigo-600 dark:text-yellow-400 underline break-all inline-block max-w-full max-h-[4.5em] overflow-y-auto leading-6 pr-1"
+                      className="text-sm text-signal underline break-all inline-block max-w-full max-h-[4.5em] overflow-y-auto leading-6 pr-1"
                     >
                       {form.url}
                     </a>
@@ -547,7 +547,7 @@ export default function ApplyJobClient({ job }: Props) {
                 accept="application/pdf"
                 onChange={handleResumeFileChange}
                 disabled={resumeUploading}
-                className="block w-full text-sm text-gray-600 dark:text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 dark:file:bg-slate-700 dark:file:text-yellow-300 hover:file:bg-indigo-100 dark:hover:file:bg-slate-600"
+                className="block w-full text-sm text-ink-muted file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-signal/10 file:text-signal hover:file:bg-signal/15"
               />
               {resumeUploading && (
                 <p className="text-xs text-amber-600 dark:text-amber-400">
@@ -566,7 +566,7 @@ export default function ApplyJobClient({ job }: Props) {
                       href={form.resumeFile}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center text-xs text-indigo-600 dark:text-yellow-400 hover:underline"
+                      className="inline-flex items-center text-xs text-signal hover:underline"
                     >
                       Open attached resume
                     </a>
@@ -592,7 +592,7 @@ export default function ApplyJobClient({ job }: Props) {
                       type="button"
                       onClick={handleRunMatch}
                       disabled={matchLoading || resumeUploading}
-                      className="inline-flex items-center gap-1.5 rounded-md border border-indigo-500 text-indigo-600 dark:text-yellow-300 dark:border-yellow-400 px-3 py-1.5 text-xs font-medium hover:bg-indigo-50 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-signal text-signal px-3 py-1.5 text-xs font-medium hover:bg-signal/10 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {matchLoading
                         ? matchHint
@@ -614,13 +614,13 @@ export default function ApplyJobClient({ job }: Props) {
                       <div className="mt-2 rounded-md border border-gray-200 dark:border-slate-600 bg-white/80 dark:bg-slate-800/80 p-2 space-y-1.5">
                         <p className="text-xs font-semibold text-gray-800 dark:text-gray-100">
                           Match score:{" "}
-                          <span className="text-indigo-600 dark:text-yellow-300">
+                          <span className="text-signal">
                             {matchResult.score}
                           </span>
                           /100
                         </p>
                         {matchResult.scoreDelta !== null ? (
-                          <p className="text-[11px] text-gray-600 dark:text-gray-300">
+                          <p className="text-xs text-gray-600 dark:text-gray-300">
                             Score delta vs previous run:{" "}
                             <span
                               className={
@@ -637,7 +637,7 @@ export default function ApplyJobClient({ job }: Props) {
                             </span>
                           </p>
                         ) : (
-                          <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             First match run (no previous snapshot).
                           </p>
                         )}
@@ -645,7 +645,7 @@ export default function ApplyJobClient({ job }: Props) {
                           {matchResult.summary}
                         </p>
                         {matchResult.matchedSkills.length > 0 && (
-                          <p className="text-[11px] text-gray-600 dark:text-gray-300">
+                          <p className="text-xs text-gray-600 dark:text-gray-300">
                             <span className="font-semibold">
                               Strong skills:
                             </span>{" "}
@@ -653,7 +653,7 @@ export default function ApplyJobClient({ job }: Props) {
                           </p>
                         )}
                         {matchResult.missingSkills.length > 0 && (
-                          <p className="text-[11px] text-gray-600 dark:text-gray-300">
+                          <p className="text-xs text-gray-600 dark:text-gray-300">
                             <span className="font-semibold">
                               Gaps to improve:
                             </span>{" "}

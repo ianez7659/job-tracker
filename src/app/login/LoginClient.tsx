@@ -144,7 +144,7 @@ export default function LoginClient() {
                     });
                   }}
                   disabled={loading}
-                  className="mt-2 w-full text-sm py-2 rounded border-2 border-indigo-500 dark:border-yellow-400 text-indigo-600 dark:text-yellow-400 dark:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-yellow-800 transition-colors"
+                  className="mt-2 w-full text-sm py-2 rounded border-2 border-signal text-signal hover:bg-signal/10 transition-colors"
                 >
                   Sign in with demo account
                 </button>

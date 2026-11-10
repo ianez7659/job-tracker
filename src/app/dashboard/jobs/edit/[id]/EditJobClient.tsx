@@ -308,7 +308,7 @@ export default function EditJobClient({ job }: Props) {
     <section className="max-w-5xl mx-auto mt-8 p-4 sm:p-6">
       <a
         href="/dashboard"
-        className="inline-block bg-indigo-500 dark:bg-yellow-500 text-white px-4 py-2 rounded hover:bg-indigo-600 dark:hover:bg-yellow-600 text-sm mb-6"
+        className="inline-block bg-signal-solid text-white px-4 py-2 rounded hover:bg-signal-deep text-sm mb-6"
       >
         Back to Dashboard
       </a>
@@ -333,7 +333,7 @@ export default function EditJobClient({ job }: Props) {
         <div className="flex flex-col lg:flex-row lg:items-stretch min-h-[32rem]">
           {/* Left: view or edit form */}
           <div className="flex-1 min-w-0 p-4 sm:p-6 border-r-0 lg:border-r border-gray-200 dark:border-slate-600">
-            <div className="rounded-lg border border-indigo-200 dark:border-yellow-700/50 bg-indigo-50/50 dark:bg-slate-900/40 p-3 space-y-2 mb-6">
+            <div className="rounded-lg border border-signal/30 bg-signal/5 p-3 space-y-2 mb-6">
               <p className="text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">
                 Pipeline
               </p>
@@ -350,7 +350,7 @@ export default function EditJobClient({ job }: Props) {
               ) : stage === "applying" ? (
                 <Link
                   href={`/dashboard/jobs/apply/${job.id}`}
-                  className="inline-flex text-sm font-medium text-indigo-600 dark:text-yellow-400 hover:underline"
+                  className="inline-flex text-sm font-medium text-signal hover:underline"
                 >
                   Continue on Apply page → submit application
                 </Link>
@@ -361,7 +361,7 @@ export default function EditJobClient({ job }: Props) {
                       type="button"
                       disabled={pipelineLoading}
                       onClick={() => patchStatusOnly(getNextStage(stage)!)}
-                      className="w-full sm:w-auto text-center text-sm px-3 py-2.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-yellow-600 dark:hover:bg-yellow-500 dark:text-slate-900 disabled:opacity-50"
+                      className="w-full sm:w-auto text-center text-sm px-3 py-2.5 rounded-md bg-signal-solid text-white hover:bg-signal-deep disabled:opacity-50"
                     >
                       {getAdvanceButtonLabel(stage) ?? "Next stage"}
                     </button>
@@ -424,7 +424,7 @@ export default function EditJobClient({ job }: Props) {
                       href={form.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-indigo-600 dark:text-yellow-400 underline break-all inline-block max-w-full max-h-[4.5em] overflow-y-auto leading-6 pr-1"
+                      className="text-sm text-signal underline break-all inline-block max-w-full max-h-[4.5em] overflow-y-auto leading-6 pr-1"
                     >
                       {form.url}
                     </a>
@@ -600,7 +600,7 @@ export default function EditJobClient({ job }: Props) {
             <h2 className="text-sm font-semibold text-gray-800 dark:text-gray-100 uppercase tracking-wide">
               Interview prep
               {isWalkIn && (
-                <span className="block normal-case text-xs font-normal text-amber-800 dark:text-amber-200/90 mt-1">
+                <span className="block normal-case text-xs font-normal text-ink-muted mt-1">
                   Walk-in / business card — pick the company below for angle ideas (session only, not saved).
                 </span>
               )}
@@ -624,13 +624,13 @@ export default function EditJobClient({ job }: Props) {
                 )}
               </>
             ) : !form.jd?.trim() ? (
-              <p className="text-sm text-amber-700 dark:text-amber-300">
+              <p className="text-sm text-ink-muted">
                 Add a job description on the left (Edit) to enable AI advice and expected questions.
               </p>
             ) : (
               <>
                 <div className="rounded-lg border border-indigo-200/80 dark:border-slate-600 bg-white/90 dark:bg-slate-800/90 p-3 shadow-sm">
-                  <h3 className="text-xs font-semibold text-indigo-800 dark:text-yellow-200 mb-2">
+                  <h3 className="text-xs font-semibold text-ink mb-2">
                     Stage advice for this role
                   </h3>
                   {adviceLoading && (
@@ -658,7 +658,7 @@ export default function EditJobClient({ job }: Props) {
                     type="button"
                     onClick={handleLoadInterviewQuestions}
                     disabled={questionsLoading || adviceLoading}
-                    className="w-full text-sm font-medium rounded-md bg-indigo-600 text-white px-3 py-2 hover:bg-indigo-700 disabled:opacity-50 dark:bg-yellow-600 dark:hover:bg-yellow-500 dark:text-slate-900"
+                    className="w-full text-sm font-medium rounded-md bg-signal-solid text-white px-3 py-2 hover:bg-signal-deep disabled:opacity-50"
                   >
                     {questionsLoading
                       ? "Generating…"

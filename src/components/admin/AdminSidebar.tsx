@@ -94,8 +94,8 @@ function NavLinks({
             className={[
               "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
               isActive
-                ? "bg-indigo-50 text-indigo-700 dark:bg-gray-700 dark:text-white"
-                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100",
+                ? "bg-signal/10 text-signal"
+                : "text-ink-muted hover:bg-canvas-alt hover:text-ink",
             ].join(" ")}
           >
             {icon}
@@ -115,7 +115,7 @@ function SearchButton() {
   return (
     <button
       onClick={openSearch}
-      className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+      className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas-alt hover:text-ink"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -132,7 +132,7 @@ function SearchButton() {
         <path d="m21 21-4.3-4.3" />
       </svg>
       <span className="flex-1 text-left">Search</span>
-      <kbd className="rounded border border-gray-200 px-1 py-0.5 text-[10px] dark:border-gray-700">
+      <kbd className="rounded border border-line px-1 py-0.5 text-xs">
         ⌘K
       </kbd>
     </button>
@@ -146,7 +146,7 @@ function BottomActions({ onNavigate }: { onNavigate?: () => void }) {
       <Link
         href="/dashboard"
         onClick={onNavigate}
-        className="flex items-center gap-2 rounded-md px-3 py-2 text-xs text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+        className="flex items-center gap-2 rounded-md px-3 py-2 text-xs text-ink-muted transition-colors hover:bg-canvas-alt hover:text-ink"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="m12 19-7-7 7-7" /><path d="M19 12H5" />
@@ -173,8 +173,8 @@ export default function AdminSidebar() {
   return (
     <>
       {/* ── Mobile topbar (hidden on lg+) ── */}
-      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 dark:border-gray-800 dark:bg-gray-900 lg:hidden">
-        <span className="flex items-center gap-2 font-display text-sm font-semibold tracking-wide text-gray-900 dark:text-gray-100">
+      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-line bg-surface px-4 lg:hidden">
+        <span className="flex items-center gap-2 font-display text-sm font-semibold tracking-wide text-ink">
           <Image
             src="/icons/jobflow-icon.png"
             alt=""
@@ -187,7 +187,7 @@ export default function AdminSidebar() {
         <div className="flex items-center gap-1">
           <button
             onClick={openSearch}
-            className="rounded-md p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            className="rounded-md p-2 text-ink-muted hover:bg-canvas-alt"
             aria-label="Open search"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -196,7 +196,7 @@ export default function AdminSidebar() {
           </button>
           <button
             onClick={() => setOpen(true)}
-            className="rounded-md p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            className="rounded-md p-2 text-ink-muted hover:bg-canvas-alt"
             aria-label="Open menu"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -215,10 +215,10 @@ export default function AdminSidebar() {
             onClick={() => setOpen(false)}
           />
           {/* Drawer panel */}
-          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col border-r border-line bg-surface">
             {/* Header */}
-            <div className="flex h-14 items-center justify-between border-b border-gray-200 px-4 dark:border-gray-800">
-              <span className="flex items-center gap-2 font-display text-sm font-semibold tracking-wide text-gray-900 dark:text-gray-100">
+            <div className="flex h-14 items-center justify-between border-b border-line px-4">
+              <span className="flex items-center gap-2 font-display text-sm font-semibold tracking-wide text-ink">
                 <Image
                   src="/icons/jobflow-icon.png"
                   alt=""
@@ -230,7 +230,7 @@ export default function AdminSidebar() {
               </span>
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-md p-1.5 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+                className="rounded-md p-1.5 text-ink-muted hover:bg-canvas-alt"
                 aria-label="Close menu"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -244,7 +244,7 @@ export default function AdminSidebar() {
               <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} />
             </nav>
             {/* Bottom */}
-            <div className="space-y-1 border-t border-gray-200 px-2 py-3 dark:border-gray-800">
+            <div className="space-y-1 border-t border-line px-2 py-3">
               <BottomActions onNavigate={() => setOpen(false)} />
             </div>
           </aside>
@@ -252,10 +252,10 @@ export default function AdminSidebar() {
       )}
 
       {/* ── Desktop sidebar (hidden below lg) ── */}
-      <aside className="hidden w-56 shrink-0 flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 lg:flex">
+      <aside className="hidden w-56 shrink-0 flex-col border-r border-line bg-surface lg:flex">
         {/* Brand */}
-        <div className="flex h-14 items-center border-b border-gray-200 px-4 dark:border-gray-800">
-          <span className="flex items-center gap-2 font-display text-sm font-semibold tracking-wide text-gray-900 dark:text-gray-100">
+        <div className="flex h-14 items-center border-b border-line px-4">
+          <span className="flex items-center gap-2 font-display text-sm font-semibold tracking-wide text-ink">
             <Image
               src="/icons/jobflow-icon.png"
               alt=""
@@ -272,7 +272,7 @@ export default function AdminSidebar() {
           <NavLinks pathname={pathname} />
         </nav>
         {/* Bottom */}
-        <div className="space-y-1 border-t border-gray-200 px-2 py-3 dark:border-gray-800">
+        <div className="space-y-1 border-t border-line px-2 py-3">
           <BottomActions />
         </div>
       </aside>

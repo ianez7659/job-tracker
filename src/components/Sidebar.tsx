@@ -35,12 +35,12 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:w-56 md:z-40 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700">
+    <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:w-56 md:z-40 bg-surface border-r border-line">
       {/* Logo */}
-      <div className="flex items-center h-14 px-4 border-b border-slate-200 dark:border-slate-700">
+      <div className="flex items-center h-14 px-4 border-b border-line">
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400"
+          className="flex items-center gap-2 text-signal"
         >
           <Image
             src="/icons/jobflow-icon.png"
@@ -56,12 +56,12 @@ export default function Sidebar() {
       </div>
 
       {/* Install + Add New + Find Jobs (desktop) */}
-      <div className="p-3 border-b border-slate-200 dark:border-slate-700 space-y-2">
+      <div className="p-3 border-b border-line space-y-2">
         <InstallButton className="w-full justify-center py-2.5" />
         <button
           type="button"
           onClick={() => router.push("/dashboard?newJob=auto")}
-          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-colors"
+          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-signal-solid hover:bg-signal-deep text-white text-sm font-medium transition-colors"
         >
           <Plus size={18} />
           Add New
@@ -89,8 +89,8 @@ export default function Sidebar() {
                   aria-current={active ? "page" : undefined}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                     active
-                      ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium"
-                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                      ? "bg-signal/10 text-signal font-medium"
+                      : "text-ink hover:bg-canvas-alt"
                   }`}
                 >
                   <Icon size={20} className="flex-shrink-0" />
@@ -103,15 +103,15 @@ export default function Sidebar() {
       </nav>
 
       {/* Profile & Logout */}
-      <div className="p-3 border-t border-slate-200 dark:border-slate-700">
+      <div className="p-3 border-t border-line">
         {session && (
           <div className="space-y-0.5">
             <Link
               href="/dashboard/profile"
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                 pathname === "/dashboard/profile"
-                  ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium"
-                  : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                  ? "bg-signal/10 text-signal font-medium"
+                  : "text-ink hover:bg-canvas-alt"
               }`}
             >
               {(session.user as { image?: string | null })?.image ? (
@@ -133,7 +133,7 @@ export default function Sidebar() {
                   callbackUrl: getSignOutCallbackUrl(session.user?.email),
                 })
               }
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 w-full transition-colors"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ink hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 w-full transition-colors"
             >
               <LogOut size={20} className="flex-shrink-0" />
               Logout

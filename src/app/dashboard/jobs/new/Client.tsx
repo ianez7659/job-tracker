@@ -122,7 +122,7 @@ export default function NewJobClient() {
     <section className="max-w-5xl mx-auto mt-8 p-4 sm:p-6">
       <a
         href="/dashboard"
-        className="inline-block bg-indigo-500 dark:bg-yellow-500 text-white px-4 py-2 rounded hover:bg-indigo-600 dark:hover:bg-yellow-600 text-sm mb-6"
+        className="inline-block bg-signal-solid text-white px-4 py-2 rounded hover:bg-signal-deep text-sm mb-6"
       >
         Back to Dashboard
       </a>

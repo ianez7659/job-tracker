@@ -62,7 +62,7 @@ export default function EmptyPipelineState({ onAddFirstJob }: Props) {
           <button
             type="button"
             onClick={onAddFirstJob}
-            className="relative flex w-full items-center gap-3 overflow-hidden rounded-xl border border-indigo-500 bg-indigo-600 py-4 pl-6 pr-4 text-left text-white shadow-md transition-colors hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-indigo-400 dark:focus-visible:ring-yellow-400 dark:focus-visible:ring-offset-slate-800 sm:pl-7"
+            className="relative flex w-full items-center gap-3 overflow-hidden rounded-xl border border-signal bg-signal-solid py-4 pl-6 pr-4 text-left text-white shadow-md transition-colors hover:bg-signal-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-alt sm:pl-7"
           >
             <span
               aria-hidden

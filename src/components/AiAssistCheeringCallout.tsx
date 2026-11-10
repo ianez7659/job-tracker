@@ -16,7 +16,7 @@ export function AiAssistCheeringCallout({ stage }: Props) {
       role="note"
       aria-label="Encouragement"
     >
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-200/95 mb-1 flex items-center gap-1.5">
+      <p className="text-xs font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-200/95 mb-1 flex items-center gap-1.5">
         <Sparkles className="size-3.5 shrink-0 opacity-90" aria-hidden />
         You&apos;ve got this
       </p>
